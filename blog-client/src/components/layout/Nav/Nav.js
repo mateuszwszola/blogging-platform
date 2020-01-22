@@ -9,7 +9,7 @@ const Nav = ({ navOpen }) => {
   const tabIndex = isHidden ? 0 : 1;
 
   const navClassnames = clsx(
-    'flex flex-col justify-center items-center p-8 absolute top-0 left-0 h-screen w-full text-center bg-gray-100 text-gray-900 transform md:max-w-sm shadow-lg',
+    'flex flex-col justify-center items-center p-8 fixed top-0 left-0 h-screen w-full text-center bg-gray-100 text-gray-900 transform md:max-w-sm shadow-lg z-10',
     { 'translate-x-0': navOpen, '-translate-x-full': !navOpen }
   );
   return (
@@ -20,7 +20,7 @@ const Nav = ({ navOpen }) => {
       </NavLink>
       <NavLink href="/" tabIndex={tabIndex}>
         <UserIcon className="w-6 h-6 fill-current text-green-500" />
-        <span className="ml-2">Log In</span>
+        <span className="ml-2">Explore</span>
       </NavLink>
       <NavLink href="/" tabIndex={tabIndex}>
         <LockClosedIcon className="w-6 h-6 fill-current text-green-500" />
