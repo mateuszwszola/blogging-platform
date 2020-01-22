@@ -1,4 +1,0 @@
-Platforma blogowa
-
-U¿ytkownik rejestruje siê, mo¿e dodawaæ w³asne posty i ogl¹daæ posty innych u¿ytkowników (do czytania postów innych u¿ytkowników nie jest wymagane posiadanie konta)
-
