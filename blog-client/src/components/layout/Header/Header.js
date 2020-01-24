@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Nav } from '../Nav';
-import { useOnClickOutside, useUserScrolledAfterEl } from '../../../hooks';
+import { useOnClickOutside, useScrolledAfterEl } from '../../../hooks';
 import { MenuIcon, CloseIcon } from '../../../Icons';
 import devFocusImg from '../../../img/undraw-dev-focus.svg';
 
@@ -29,7 +29,7 @@ const Header = ({
             ) : (
               <MenuIcon
                 className={`w-6 h-6 fill-current ${
-                  scrolledAfterHeader ? 'text-gray-900' : 'text-gray-100'
+                  scrolledAfterHeader ? 'text-black' : 'text-white'
                 }`}
               />
             )}
@@ -66,7 +66,7 @@ function HeaderContainer() {
   const navNode = useRef();
   useOnClickOutside(navNode, () => setNavOpen(false));
   const headerNode = useRef();
-  const scrolledAfterHeader = useUserScrolledAfterEl(headerNode);
+  const scrolledAfterHeader = useScrolledAfterEl(headerNode);
 
   return (
     <Header

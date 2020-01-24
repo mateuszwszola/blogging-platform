@@ -16,7 +16,7 @@ export function useOnClickOutside(ref, callback) {
   }, [ref, callback]);
 }
 
-export function useUserScrolledAfterEl(ref) {
+export function useScrolledAfterEl(ref) {
   const [scrolledAfterEl, setScrolledAfterEl] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export function useUserScrolledAfterEl(ref) {
           .scrollTop;
       if (ref.current) {
         const refHeight = ref.current.clientHeight;
-        if (scrollTop > refHeight - 56) {
+        if (scrollTop >= refHeight - 28) {
           setScrolledAfterEl(true);
         } else {
           setScrolledAfterEl(false);
@@ -39,7 +39,7 @@ export function useUserScrolledAfterEl(ref) {
     return () => {
       document.removeEventListener('scroll', handleScroll);
     };
-  });
+  }, [ref]);
 
   return scrolledAfterEl;
 }
