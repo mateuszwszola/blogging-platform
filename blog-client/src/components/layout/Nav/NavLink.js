@@ -1,14 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
 const NavLink = ({ tabIndex, children, ...props }) => (
-  <a
+  <Link
     {...props}
-    className="text-3xl py-8 flex justify-center items-center"
+    className="text-3xl py-8 flex items-center"
     tabIndex={tabIndex}
   >
     {children}
-  </a>
+  </Link>
 );
 
 NavLink.propTypes = {

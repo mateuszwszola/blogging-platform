@@ -16,8 +16,8 @@ export function useOnClickOutside(ref, callback) {
   }, [ref, callback]);
 }
 
-export function useScrolledAfterEl(ref) {
-  const [scrolledAfterEl, setScrolledAfterEl] = useState(false);
+export function useScrolledAfterVHeight(offset) {
+  const [scrolledAfterVHeight, setScrolledAfterVHeight] = useState(false);
 
   useEffect(() => {
     function handleScroll(event) {
@@ -25,13 +25,10 @@ export function useScrolledAfterEl(ref) {
         window.pageYOffset ||
         (document.documentElement || document.body.parentNode || document.body)
           .scrollTop;
-      if (ref.current) {
-        const refHeight = ref.current.clientHeight;
-        if (scrollTop >= refHeight - 28) {
-          setScrolledAfterEl(true);
-        } else {
-          setScrolledAfterEl(false);
-        }
+      if (scrollTop >= window.innerHeight - offset) {
+        setScrolledAfterVHeight(true);
+      } else {
+        setScrolledAfterVHeight(false);
       }
     }
 
@@ -39,7 +36,7 @@ export function useScrolledAfterEl(ref) {
     return () => {
       document.removeEventListener('scroll', handleScroll);
     };
-  }, [ref]);
+  }, [offset]);
 
-  return scrolledAfterEl;
+  return scrolledAfterVHeight;
 }
