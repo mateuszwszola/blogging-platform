@@ -1,0 +1,14 @@
+name: blogging-platform
+
+frontend:
+  component: '@serverless/website'
+  inputs:
+    code:
+      src: build
+      root: frontend
+      hook: npm run build
+# api:
+#   component: '@serverless/backend'
+#   inputs:
+#     code:
+#       src: api/src

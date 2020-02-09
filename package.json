@@ -1,0 +1,21 @@
+{
+  "name": "blogging-platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "client:start": "cd frontend && npm start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mateuszwszola/blogging-platform.git"
+  },
+  "author": "Mateusz Wszola",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mateuszwszola/blogging-platform/issues"
+  },
+  "homepage": "https://github.com/mateuszwszola/blogging-platform#readme"
+}

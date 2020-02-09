@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const NavLink = ({ tabIndex, children, ...props }) => (
   <Link
     {...props}
-    className="text-3xl py-8 flex items-center"
+    className="text-2xl py-8 flex items-center"
     tabIndex={tabIndex}
   >
     {children}
