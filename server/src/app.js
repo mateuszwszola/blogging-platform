@@ -1,34 +1,30 @@
 const express = require('express');
 const morgan = require('morgan');
 const helmet = require('helmet');
+const cors = require('cors');
 const bodyParser = require('body-parser');
-const routes = require('./api');
+const middlewares = require('./middlewares');
+
 const app = express();
 
 app.use(morgan('common'));
 app.use(helmet());
-app.use(
-  bodyParser.urlencoded({
-    extended: false
-  })
-);
+app.use(cors({
+  origin: 'http://localhost:3000',
+}));
 
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 app.get('/', (req, res) => {
   res.json({ message: 'Hello world!' });
 });
 
-app.use('/api', routes);
+app.use('/api', require('./api'));
 
 // 404 handler
-app.use((req, res) => {
-  res.status(404).json({ error: `Route ${req.url} Not Found` });
-});
+app.use(middlewares.notFound);
 
-// 500 handler
-app.use((err, req, res, next) => {
-  res.status(500).json({ error: err.message || 'Internal Server Error' });
-});
+app.use(middlewares.errorHandler);
 
 module.exports = app;
