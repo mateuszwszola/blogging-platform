@@ -3,14 +3,18 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+
+const connectDb = require('./config/db');
 const middlewares = require('./middlewares');
 
 const app = express();
 
+connectDb();
+
 app.use(morgan('common'));
 app.use(helmet());
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: process.env.CORS_ORIGIN,
 }));
 
 app.use(bodyParser.urlencoded({ extended: false }));

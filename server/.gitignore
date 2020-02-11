@@ -13,7 +13,7 @@
 
 # misc
 .DS_Store
-.env*
+.env
 .serverless
 
 npm-debug.log*
