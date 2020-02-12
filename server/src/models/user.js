@@ -1,43 +1,86 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
-const validator = require('express-validator');
+const validator = require('validator');
+const jwt = require('jsonwebtoken');
+
+const requiredString = {
+  type: String,
+  required: true,
+};
 
 const userSchema = new mongoose.Schema({
   name: {
-    type: String,
-    required: true,
+    ...requiredString,
+    trim: true,
   },
   email: {
-    type: String,
+    ...requiredString,
     unique: true,
-    validate: (value) => validator.check(value).isEmail(),
+    lowercase: true,
+    validate: (value) => {
+      if (!validator.isEmail(value)) {
+        throw new Error('Invalid Email Address');
+      }
+    },
   },
-  password: String,
-  image: String,
+  password: {
+    ...requiredString,
+    minLength: 7,
+  },
+  /*
+    Having a list of tokens enables a user to be logged in on different devices.
+    Every time a user registers or logs in, the token is created and added to this list
+  */
+  tokens: [{
+    token: {
+      ...requiredString,
+    },
+  }],
 }, { timestamps: true });
+
 
 userSchema.pre('save', async function (next) {
   const user = this;
-  if (!user.isModified('password')) {
-    return next();
+  // Hash the password only if it's modified
+  if (user.isModified('password')) {
+    try {
+      const hashedPassword = await bcrypt.hash(user.password, 10);
+      user.password = hashedPassword;
+    } catch (err) {
+      next(err);
+    }
   }
 
-  try {
-    const hashedPassword = await bcrypt.hash(user.password, 10);
-    user.password = hashedPassword;
-    next();
-  } catch (err) {
-    next(err);
-  }
+  next();
 });
 
-userSchema.methods.comparePassword = (candidatePassword, next) => {
-  bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
-    if (err) {
-      return next(err);
-    }
-    next(null, isMatch);
-  });
+// example of document/instance method
+userSchema.methods.generateAuthToken = async function () {
+  const user = this;
+  const payload = {
+    user: {
+      id: user.id,
+    },
+  };
+  const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: 3600 });
+  user.tokens = user.tokens.concat({ token });
+  await user.save();
+  return token;
 };
 
-module.exports = mongoose.model('User', userSchema);
+// model method
+userSchema.statics.findByCredentials = async function (email, password) {
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw new Error('Invalid login credentials');
+  }
+  const isPasswordMatch = await bcrypt.compare(password, user.password);
+  if (!isPasswordMatch) {
+    throw new Error('Invalid login credentials');
+  }
+  return user;
+};
+
+const User = mongoose.model('User', userSchema);
+
+module.exports = User;
