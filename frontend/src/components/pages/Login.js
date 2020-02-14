@@ -19,8 +19,8 @@ function Login() {
             />
           </svg>
         </div>
-        <form className="flex flex-col w-full mt-4">
-          <label className="my-3">
+        <form className="flex flex-col w-full mt-2">
+          <label className="my-2 sm:my-3">
             <input
               className="bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline"
               id="login"
@@ -28,7 +28,7 @@ function Login() {
               placeholder="e-mail address"
             />
           </label>
-          <label className="my-3">
+          <label className="my-2 sm:my-3">
             <input
               className="bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline"
               id="password"
@@ -37,7 +37,7 @@ function Login() {
             />
           </label>
 
-          <div className="flex flex-col sm:flex-row sm:justify-between px-2 py-2 my-2">
+          <div className="flex flex-col sm:flex-row sm:justify-between px-2 py-2 sm:my-1">
             <label className="flex items-center py-1 sm:py-0">
               <input
                 className="bg-gray-100 p-2"
@@ -51,7 +51,7 @@ function Login() {
             </Link>
           </div>
 
-          <div className="w-11/12 mx-auto mt-4 mb-2">
+          <div className="w-11/12 mx-auto mt-2 sm:mt-4">
             <input
               className="w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer"
               type="submit"
@@ -59,7 +59,7 @@ function Login() {
             />
           </div>
 
-          <div className="mt-2 text-center">
+          <div className="mt-2 sm:mt-4 text-center">
             <p className="text-gray-100">Do you have an account?</p>
             <Link to="/register" className="text-red-500 px-4 py-2">
               Register

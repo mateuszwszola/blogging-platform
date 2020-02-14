@@ -14,8 +14,8 @@ function ForgotPassword(props) {
             <path d="M18 2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4c0-1.1.9-2 2-2h16zm-4.37 9.1L20 16v-2l-5.12-3.9L20 6V4l-10 8L0 4v2l5.12 4.1L0 14v2l6.37-4.9L10 14l3.63-2.9z" />
           </svg>
         </div>
-        <form className="flex flex-col w-full mt-4">
-          <label className="my-3">
+        <form className="flex flex-col w-full mt-2">
+          <label className="my-2 sm:my-3">
             <input
               className="bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline"
               name="email"
@@ -24,7 +24,7 @@ function ForgotPassword(props) {
             />
           </label>
 
-          <div className="w-11/12 mx-auto mt-4 mb-2">
+          <div className="w-11/12 mx-auto mt-4">
             <input
               className="w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer"
               type="submit"
