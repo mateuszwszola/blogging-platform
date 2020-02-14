@@ -37,11 +37,11 @@ const Nav = ({ navOpen, setNavOpen }) => {
         </NavLink>
         <NavLink
           onClick={() => setNavOpen(false)}
-          to="/signup"
+          to="/register"
           tabIndex={tabIndex}
         >
           <LockClosedIcon className="w-6 h-6 fill-current text-green-500" />
-          <span className="ml-2">Sign Up</span>
+          <span className="ml-2">Register</span>
         </NavLink>
       </div>
     </nav>
