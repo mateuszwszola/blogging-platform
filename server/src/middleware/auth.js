@@ -15,7 +15,7 @@ const auth = async (req, res, next) => {
   try {
     const data = jwt.verify(token, process.env.JWT_KEY);
     // Checks if there is a user with that id and if token exists in the user's tokens array
-    const user = await User.findOne({ _id: data.user.id, 'tokens.token': token }).select('-password');
+    const user = await User.findOne({ _id: data.user.id, 'tokens.token': token });
     if (!user) {
       throw new Error(errMsg);
     }
