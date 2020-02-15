@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowDownIcon } from '../../Icons';
 import devFocusImg from '../../img/undraw_startman1.svg';
 
@@ -16,9 +17,12 @@ const LandingPage = () => (
           Create and manage your blog
         </p>
       </div>
-      <button className="mt-2 bg-green-600 text-green-100 py-2 px-4 rounded-lg uppercase focus:outline-none focus:shadow-outline hover:bg-green-700">
+      <Link
+        to="/login"
+        className="mt-2 bg-green-600 text-green-100 py-2 px-4 rounded-lg uppercase focus:outline-none focus:shadow-outline hover:bg-green-700"
+      >
         Create a blog
-      </button>
+      </Link>
     </div>
     <div className="absolute bottom-0 left-0 text-center w-full flex justify-center mb-4">
       <ArrowDownIcon className="w-6 h-6 fill-current text-gray-600" />

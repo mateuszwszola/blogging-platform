@@ -58,7 +58,7 @@ function Login() {
           </div>
 
           <div className="mt-2 sm:mt-4 text-center">
-            <p className="text-gray-100">Do you have an account?</p>
+            <p className="text-gray-100">You do not have an account?</p>
             <Link to="/register" className="text-red-500 px-4 py-2">
               Register
             </Link>
