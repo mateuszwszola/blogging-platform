@@ -1,57 +1,59 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from '../../Icons';
 
 function Register() {
   return (
     <main className="w-full h-screen bg-gray-900 font-sans">
       <div className="h-full flex flex-col justify-center items-center px-4 max-w-sm mx-auto">
         <div className="text-red-500">
-          <svg
-            className="w-40 h-40 fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            width="24"
-            height="24"
-          >
-            <path
-              className="heroicon-ui"
-              d="M7 10V7a5 5 0 1 1 10 0v3h2a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-8c0-1.1.9-2 2-2h2zm2 0h6V7a3 3 0 0 0-6 0v3zm-4 2v8h14v-8H5zm7 2a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0v-2a1 1 0 0 1 1-1z"
-            />
-          </svg>
+          <LockClosedIcon className="w-40 h-40 fill-current" />
         </div>
         <form className="flex flex-col w-full mt-2">
-          <label className="my-2 sm:my-3">
+          <label className="my-2 sm:my-3 relative">
             <input
-              className="bg-gray-100 w-full rounded py-2 px-4  outline-none focus:shadow-outline"
+              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               name="name"
               type="text"
               placeholder="name"
             />
+            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
+              <UserIcon className="w-4 h-4 fill-current" />
+            </div>
           </label>
-          <label className="my-2 sm:my-3">
+          <label className="my-2 sm:my-3 relative">
             <input
-              className="bg-gray-100 w-full rounded py-2 px-4  outline-none focus:shadow-outline"
+              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               name="email"
               type="email"
               placeholder="e-mail address"
             />
+            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
+              <EnvelopeIcon className="w-4 h-4 fill-current" />
+            </div>
           </label>
 
-          <label className="my-2 sm:my-3">
+          <label className="my-2 sm:my-3 relative">
             <input
-              className="bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline"
+              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               name="password"
               type="password"
               placeholder="password"
             />
+            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
+              <KeyIcon className="w-4 h-4 fill-current" />
+            </div>
           </label>
-          <label className="my-2 sm:my-3">
+          <label className="my-2 sm:my-3 relative">
             <input
-              className="bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline"
+              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               name="password"
               type="password"
               placeholder="confirm password"
             />
+            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
+              <KeyIcon className="w-4 h-4 fill-current" />
+            </div>
           </label>
 
           <div className="w-11/12 mx-auto mt-3 sm:mt-4">

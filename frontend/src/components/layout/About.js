@@ -4,7 +4,7 @@ import devFocusImg from '../../img/undraw_dev_focus.svg';
 import teamSpiritImg from '../../img/undraw_team_spirit.svg';
 
 const About = () => (
-  <main className="font-sans">
+  <main className="bg-gray-100">
     <div className="py-8 px-6 max-w-6xl mx-auto">
       <h2 className="capitalize text-3xl text-center my-8">How it works?</h2>
       <div className="flex flex-col md:flex-row md:justify-between md:items-center py-12 md:py-16">
