@@ -6,7 +6,8 @@ import {
   Login,
   Register,
   ForgotPassword,
-  NotFound
+  NotFound,
+  Explore
 } from './components/pages';
 import { Header } from './components/layout/Header';
 
@@ -24,6 +25,9 @@ function App() {
           </Route>
           <Route path="/register">
             <Register />
+          </Route>
+          <Route path="/explore">
+            <Explore />
           </Route>
           <Route path="/forgot-password">
             <ForgotPassword />
