@@ -14,7 +14,7 @@ const LandingPage = () => (
           Blogging Platform
         </h1>
         <p className="text-base sm:text-lg md:text-2xl text-gray-400 py-1 font-light">
-          Create and manage your blog
+          Create and manage your personal blog
         </p>
       </div>
       <Link

@@ -22,11 +22,11 @@ const MobileHeader = ({
             aria-expanded={isExpanded}
           >
             {navOpen ? (
-              <CloseIcon className="w-6 h-6 fill-current text-gray-900" />
+              <CloseIcon className="w-6 h-6 fill-current text-gray-400" />
             ) : (
               <MenuIcon
                 className={`w-6 h-6 fill-current ${
-                  burgerScrolledAfterVHeight ? 'text-black' : 'text-white'
+                  burgerScrolledAfterVHeight ? 'text-gray-900' : 'text-gray-100'
                 }`}
               />
             )}

@@ -8,32 +8,34 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
   const tabIndex = isHidden ? 0 : 1;
 
   const navClassnames = clsx(
-    'flex flex-col justify-center items-center p-8 fixed top-0 left-0 h-screen w-full bg-red-100 text-black transform md:max-w-sm shadow-lg z-10',
+    'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full bg-gray-900 text-gray-400 transform md:max-w-sm z-10',
     { 'translate-x-0': navOpen, '-translate-x-full': !navOpen }
   );
   return (
     <nav aria-hidden={!isHidden} className={navClassnames}>
-      <MobileNavLink
-        onClick={() => setNavOpen(false)}
-        to="/"
-        tabIndex={tabIndex}
-      >
-        <span>Home</span>
-      </MobileNavLink>
-      <MobileNavLink
-        onClick={() => setNavOpen(false)}
-        to="/explore"
-        tabIndex={tabIndex}
-      >
-        <span>Explore</span>
-      </MobileNavLink>
-      <MobileNavLink
-        onClick={() => setNavOpen(false)}
-        to="/login"
-        tabIndex={tabIndex}
-      >
-        <span>Login</span>
-      </MobileNavLink>
+      <div className="w-full flex flex-col items-center justify-around h-full py-64">
+        <MobileNavLink
+          onClick={() => setNavOpen(false)}
+          to="/"
+          tabIndex={tabIndex}
+        >
+          Home
+        </MobileNavLink>
+        <MobileNavLink
+          onClick={() => setNavOpen(false)}
+          to="/explore"
+          tabIndex={tabIndex}
+        >
+          Explore
+        </MobileNavLink>
+        <MobileNavLink
+          onClick={() => setNavOpen(false)}
+          to="/login"
+          tabIndex={tabIndex}
+        >
+          Login
+        </MobileNavLink>
+      </div>
     </nav>
   );
 };
