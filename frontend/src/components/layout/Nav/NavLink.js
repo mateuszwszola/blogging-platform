@@ -1,19 +1,6 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const NavLink = ({ tabIndex, children, ...props }) => (
-  <Link
-    {...props}
-    className="text-2xl py-8 flex items-center"
-    tabIndex={tabIndex}
-  >
-    {children}
-  </Link>
-);
-
-NavLink.propTypes = {
-  tabIndex: PropTypes.number.isRequired
-};
+const NavLink = ({ children, ...props }) => <Link {...props}>{children}</Link>;
 
 export default NavLink;
