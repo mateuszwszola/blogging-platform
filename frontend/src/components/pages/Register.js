@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from '../../Icons';
+import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from '../../icons';
 
 function Register() {
   return (

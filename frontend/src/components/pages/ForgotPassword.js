@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import forgotPasswordImg from '../../img/undraw_forgot_password.svg';
-import { EnvelopeIcon } from '../../Icons';
+import { EnvelopeIcon } from '../../icons';
 
 function ForgotPassword(props) {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { MenuIcon, CloseIcon } from '../../../Icons';
+import { MenuIcon, CloseIcon } from '../../../icons';
 import { MobileNav } from '../Nav';
 
 const MobileHeader = ({ navNode, navOpen, setNavOpen }) => {

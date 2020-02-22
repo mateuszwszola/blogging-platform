@@ -1,18 +1,23 @@
-const API_BASE_URL = 'http://localhost:3001/api';
-
-export async function postData(url = '', data = {}) {
-  try {
-    const response = await fetch(API_BASE_URL + url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    return await response.json();
-  } catch (error) {
-    console.log('err catched');
-    return error;
+async function api(endpoint, method = 'GET', body = {}) {
+  const token = window.localStorage.getItem('__token__');
+  const headers = { 'content-type': 'application/json' };
+  if (token) {
+    headers['x-auth-token'] = token;
   }
+  const config = {
+    method,
+    headers
+  };
+
+  if (body) {
+    config.body = JSON.stringify(body);
+  }
+
+  const res = await window.fetch(
+    `${process.env.API_BASE_URL}/${endpoint}`,
+    config
+  );
+  return await res.json();
 }
+
+export default api;

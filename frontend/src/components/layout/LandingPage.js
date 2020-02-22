@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDownIcon } from '../../Icons';
+import { ArrowDownIcon } from '../../icons';
 // import devFocusImg from '../../img/undraw_startman1.svg';
 import landingBg from '../../img/landing-bg.jpg';
 
