@@ -17,9 +17,9 @@ const MobileHeader = ({ navNode, navOpen, setNavOpen }) => {
             aria-expanded={isExpanded}
           >
             {navOpen ? (
-              <CloseIcon className="w-6 h-6 fill-current text-gray-700" />
+              <CloseIcon className="w-6 h-6 fill-current text-gray-500" />
             ) : (
-              <MenuIcon className="w-6 h-6 fill-current text-gray-700" />
+              <MenuIcon className="w-6 h-6 fill-current text-gray-500" />
             )}
           </button>
         </div>
