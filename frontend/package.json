@@ -41,6 +41,5 @@
     "autoprefixer": "^9.7.4",
     "postcss-cli": "^7.1.0",
     "tailwindcss": "^1.1.4"
-  },
-  "proxy": "http://localhost:3001"
+  }
 }

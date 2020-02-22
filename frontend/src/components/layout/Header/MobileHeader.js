@@ -3,12 +3,7 @@ import PropTypes from 'prop-types';
 import { MenuIcon, CloseIcon } from '../../../Icons';
 import { MobileNav } from '../Nav';
 
-const MobileHeader = ({
-  navNode,
-  navOpen,
-  setNavOpen,
-  burgerScrolledAfterVHeight
-}) => {
+const MobileHeader = ({ navNode, navOpen, setNavOpen }) => {
   const isExpanded = navOpen ? true : false;
 
   return (
@@ -22,13 +17,9 @@ const MobileHeader = ({
             aria-expanded={isExpanded}
           >
             {navOpen ? (
-              <CloseIcon className="w-6 h-6 fill-current text-gray-400" />
+              <CloseIcon className="w-6 h-6 fill-current text-gray-700" />
             ) : (
-              <MenuIcon
-                className={`w-6 h-6 fill-current ${
-                  burgerScrolledAfterVHeight ? 'text-gray-900' : 'text-gray-100'
-                }`}
-              />
+              <MenuIcon className="w-6 h-6 fill-current text-gray-700" />
             )}
           </button>
         </div>
@@ -41,8 +32,7 @@ const MobileHeader = ({
 MobileHeader.propTypes = {
   navNode: PropTypes.object.isRequired,
   navOpen: PropTypes.bool.isRequired,
-  setNavOpen: PropTypes.func.isRequired,
-  burgerScrolledAfterVHeight: PropTypes.bool.isRequired
+  setNavOpen: PropTypes.func.isRequired
 };
 
 export default MobileHeader;

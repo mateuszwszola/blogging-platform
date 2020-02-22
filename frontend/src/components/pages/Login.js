@@ -2,18 +2,26 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon, LockOpenIcon, KeyIcon } from '../../Icons';
-import { useInput } from '../../hooks';
+import { useForm } from '../../hooks';
+import { postData } from '../../api/API';
 
 function Login({
   email,
   password,
-  handleEmailChange,
-  handlePasswordChange,
+  handleChange,
   handleSubmit,
+  errors,
   ...props
 }) {
   return (
     <main className="w-full h-screen bg-gray-900 font-sans">
+      {errors.length > 0 && (
+        <ul>
+          {errors.map(error => (
+            <li className="text-red-200 text-lg">{error}</li>
+          ))}
+        </ul>
+      )}
       <div className="h-full flex flex-col justify-center items-center px-4 max-w-sm mx-auto">
         <div className="text-red-500">
           <LockOpenIcon className="w-40 h-40 fill-current" />
@@ -22,11 +30,12 @@ function Login({
           <label className="my-2 sm:my-3 relative">
             <input
               value={email}
-              onChange={handleEmailChange}
+              onChange={handleChange}
               className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               type="email"
+              name="email"
               placeholder="e-mail address"
-              required={true}
+              required
             />
             <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
               <EnvelopeIcon className="w-4 h-4 fill-current" />
@@ -35,11 +44,12 @@ function Login({
           <label className="my-2 sm:my-3 relative">
             <input
               value={password}
-              onChange={handlePasswordChange}
+              onChange={handleChange}
               className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               type="password"
+              name="password"
               placeholder="password"
-              required={true}
+              required
             />
             <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
               <KeyIcon className="w-4 h-4 fill-current" />
@@ -50,7 +60,7 @@ function Login({
             <label className="flex items-center py-1 sm:py-0">
               <input
                 className="bg-gray-100 p-2"
-                id="remember-me"
+                name="remember-me"
                 type="checkbox"
               />
               <span className="text-gray-300 ml-2 select-none">
@@ -86,56 +96,49 @@ Login.propTypes = {
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  handleEmailChange: PropTypes.func.isRequired,
-  handlePasswordChange: PropTypes.func.isRequired
+  handleChange: PropTypes.func.isRequired,
+  errors: PropTypes.array.isRequired
 };
 
 function LoginContainer() {
-  const [email, handleEmailChange] = useInput('');
-  const [password, handlePasswordChange] = useInput('');
+  const {
+    handleChange,
+    handleSubmit,
+    handleReset,
+    values: { email, password }
+  } = useForm(
+    {
+      email: '',
+      password: ''
+    },
+    login
+  );
   const [errors, setErrors] = useState([]);
 
   function createError(field, msg) {
     return { field, msg };
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log('the form has been submitted');
-    login();
-  }
-
-  async function postData(url = '', data = {}) {
-    const response = await fetch(url, {
-      method: 'POST',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(data)
-    });
-
-    return await response.json();
-  }
-
   async function login() {
     const data = { email, password };
+
     try {
-      const res = await postData('/api/users/login', data);
+      const res = await postData('/users/login', data);
       console.log(res);
+      handleReset();
     } catch (error) {
-      console.log(error);
+      console.log('error catched', error);
       setErrors([...errors, error]);
     }
   }
 
   return (
     <Login
+      errors={errors}
       handleSubmit={handleSubmit}
+      handleChange={handleChange}
       email={email}
       password={password}
-      handleEmailChange={handleEmailChange}
-      handlePasswordChange={handlePasswordChange}
     />
   );
 }
