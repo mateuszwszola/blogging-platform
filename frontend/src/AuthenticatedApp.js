@@ -4,7 +4,7 @@ import PageContent from './components/layout/PageContent';
 import { NotFound, Explore } from './components/pages';
 import { Header } from './components/layout/Header';
 
-function UnauthenticatedApp() {
+function AuthenticatedApp() {
   return (
     <Router>
       <PageContent>
@@ -22,4 +22,4 @@ function UnauthenticatedApp() {
   );
 }
 
-export default UnauthenticatedApp;
+export default AuthenticatedApp;

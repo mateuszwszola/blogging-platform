@@ -1,11 +1,20 @@
 import React from 'react';
+import { useUser } from './context/UserContext';
 
-const AuthenticatedApp = React.lazy(() => import('./Authenticated-app'));
-const UnauthenticatedApp = React.lazy(() => import('./Unauthenticated-app'));
+const loadAuthenticatedApp = () => import('./AuthenticatedApp');
+const AuthenticatedApp = React.lazy(() => import('./AuthenticatedApp'));
+const UnauthenticatedApp = React.lazy(() => import('./UnauthenticatedApp'));
 
 function App() {
-  return (
+  const user = useUser();
 
+  React.useEffect(() => {
+    loadAuthenticatedApp();
+  }, []);
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
+    </React.Suspense>
   );
 }
 

@@ -2,13 +2,9 @@ import api from './api';
 
 const localStorageKey = '__token__';
 
-function handleDataResponse({ data: { token, ...user } }) {
+function handleDataResponse({ user, token }) {
   window.localStorage.setItem(localStorageKey, token);
   return user;
-}
-
-function getToken() {
-  return window.localStorage.getItem(localStorageKey);
 }
 
 async function getUser() {
@@ -25,30 +21,39 @@ async function getUser() {
 
 async function login({ email, password }) {
   try {
-    const res = await api('users/login', 'POST', { email, password });
+    const res = await api('users/login', 'POST', { body: { email, password } });
+
     return handleDataResponse(res);
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
   }
 }
 
 async function register({ name, email, username, password }) {
   try {
     const res = await api('users/register', 'POST', {
-      name,
-      email,
-      username,
-      password
+      body: {
+        name,
+        email,
+        username,
+        password
+      }
     });
     return handleDataResponse(res);
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(err);
   }
 }
 
-function logout({ username, password }) {
+function logout() {
   window.localStorage.removeItem(localStorageKey);
   return Promise.resolve();
+}
+
+function getToken() {
+  return window.localStorage.getItem(localStorageKey);
 }
 
 export { login, register, logout, getToken, getUser };

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon, LockOpenIcon, KeyIcon } from '../../icons';
 import { useForm } from '../../hooks';
-import { postData } from '../../api/API';
+import { useAuth } from '../../context/AuthContext';
 
 function Login({
   email,
@@ -113,6 +113,7 @@ function LoginContainer() {
     },
     login
   );
+  const auth = useAuth();
   const [errors, setErrors] = useState([]);
 
   function createError(field, msg) {
@@ -121,15 +122,7 @@ function LoginContainer() {
 
   async function login() {
     const data = { email, password };
-
-    try {
-      const res = await postData('/users/login', data);
-      console.log(res);
-      handleReset();
-    } catch (error) {
-      console.log('error catched', error);
-      setErrors([...errors, error]);
-    }
+    await auth.login(data);
   }
 
   return (
