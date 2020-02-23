@@ -10,6 +10,12 @@ function AuthenticatedApp() {
       <PageContent>
         <Header />
         <Switch>
+          <Route exact path="/">
+            <div>
+              <h1>Authenticated Homepage</h1>
+              <p>List of posts</p>
+            </div>
+          </Route>
           <Route path="/explore">
             <Explore />
           </Route>

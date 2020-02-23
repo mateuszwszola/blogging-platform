@@ -45,14 +45,24 @@ function AuthProvider(props) {
     }
   }
 
-  const login = formData => {
-    auth.login(formData).then(reload);
+  const login = async formData => {
+    try {
+      await auth.login(formData);
+      reload();
+    } catch (err) {
+      return Promise.reject(err);
+    }
   };
   const register = formData => {
     auth.register(formData).then(reload);
   };
-  const logout = () => {
-    auth.logout().then(reload);
+  const logout = async () => {
+    try {
+      await auth.logout();
+      reload();
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (

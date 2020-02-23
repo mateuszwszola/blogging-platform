@@ -104,7 +104,6 @@ function LoginContainer() {
   const {
     handleChange,
     handleSubmit,
-    handleReset,
     values: { email, password }
   } = useForm(
     {
@@ -122,7 +121,11 @@ function LoginContainer() {
 
   async function login() {
     const data = { email, password };
-    await auth.login(data);
+    try {
+      await auth.login(data);
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   return (

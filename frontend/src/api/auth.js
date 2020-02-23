@@ -32,7 +32,7 @@ async function login({ email, password }) {
 
 async function register({ name, email, username, password }) {
   try {
-    const res = await api('users/register', 'POST', {
+    const res = await api('users', 'POST', {
       body: {
         name,
         email,
