@@ -6,10 +6,11 @@ const AuthContext = React.createContext();
 
 async function getUserData() {
   const user = await auth.getUser();
+
   if (!user) {
-    return { user: null };
+    return Promise.resolve({ user: null });
   }
-  return { user };
+  return Promise.resolve({ user });
 }
 
 function AuthProvider(props) {
@@ -53,9 +54,11 @@ function AuthProvider(props) {
       return Promise.reject(err);
     }
   };
-  const register = formData => {
+
+  const register = async formData => {
     auth.register(formData).then(reload);
   };
+
   const logout = async () => {
     try {
       await auth.logout();

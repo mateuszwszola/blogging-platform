@@ -54,7 +54,7 @@ exports.logout = async (req, res, next) => {
   try {
     req.user.tokens = req.user.tokens.filter(({ token }) => token !== req.token);
     await req.user.save();
-    res.sendStatus(200);
+    res.status(200).json({ message: 'OK' });
   } catch (err) {
     next(err);
   }
@@ -64,7 +64,7 @@ exports.logoutAll = async (req, res, next) => {
   try {
     req.user.tokens.splice(0, req.user.tokens.length);
     await req.user.save();
-    res.sendStatus(200);
+    res.status(200).json({ message: 'OK' });
   } catch (err) {
     next(err);
   }

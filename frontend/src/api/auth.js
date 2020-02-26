@@ -20,36 +20,25 @@ async function getUser() {
 }
 
 async function login({ email, password }) {
-  try {
-    const res = await api('users/login', 'POST', { body: { email, password } });
-
-    return handleDataResponse(res);
-  } catch (err) {
-    console.log(err);
-    return Promise.reject(err);
-  }
+  const res = await api('users/login', 'POST', { body: { email, password } });
+  return handleDataResponse(res);
 }
 
 async function register({ name, email, username, password }) {
-  try {
-    const res = await api('users', 'POST', {
-      body: {
-        name,
-        email,
-        username,
-        password
-      }
-    });
-    return handleDataResponse(res);
-  } catch (err) {
-    console.log(err);
-    return Promise.reject(err);
-  }
+  const res = await api('users', 'POST', {
+    body: {
+      name,
+      email,
+      username,
+      password
+    }
+  });
+  return handleDataResponse(res);
 }
 
-function logout() {
+async function logout() {
+  await api('users/me/logout', 'POST');
   window.localStorage.removeItem(localStorageKey);
-  return Promise.resolve();
 }
 
 function getToken() {

@@ -18,6 +18,7 @@ async function api(endpoint, method = 'GET', { body, ...customConfig } = {}) {
 
   const res = await window.fetch(`${API_BASE_URL}/${endpoint}`, config);
   const data = await res.json();
+
   if (!res.ok) {
     return Promise.reject(data);
   }

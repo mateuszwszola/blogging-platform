@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function useForm(initialValues = {}, callback) {
+export function useForm(initialValues = {}, callback, validate) {
   const [values, setValues] = useState(initialValues);
 
   function handleSubmit(event) {

@@ -1,27 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon, LockOpenIcon, KeyIcon } from '../../icons';
 import { useForm } from '../../hooks';
 import { useAuth } from '../../context/AuthContext';
+import validate from '../../utils/LoginFormValidationRules';
 
-function Login({
-  email,
-  password,
-  handleChange,
-  handleSubmit,
-  errors,
-  ...props
-}) {
+function Login({ email, password, handleChange, handleSubmit, ...props }) {
   return (
     <main className="w-full h-screen bg-gray-900 font-sans">
-      {errors.length > 0 && (
-        <ul>
-          {errors.map(error => (
-            <li className="text-red-200 text-lg">{error}</li>
-          ))}
-        </ul>
-      )}
       <div className="h-full flex flex-col justify-center items-center px-4 max-w-sm mx-auto">
         <div className="text-red-500">
           <LockOpenIcon className="w-40 h-40 fill-current" />
@@ -29,12 +16,12 @@ function Login({
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
           <label className="my-2 sm:my-3 relative">
             <input
-              value={email}
-              onChange={handleChange}
               className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               type="email"
               name="email"
               placeholder="e-mail address"
+              value={email}
+              onChange={handleChange}
               required
             />
             <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
@@ -96,8 +83,7 @@ Login.propTypes = {
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  errors: PropTypes.array.isRequired
+  handleChange: PropTypes.func.isRequired
 };
 
 function LoginContainer() {
@@ -110,14 +96,10 @@ function LoginContainer() {
       email: '',
       password: ''
     },
-    login
+    login,
+    validate
   );
   const auth = useAuth();
-  const [errors, setErrors] = useState([]);
-
-  function createError(field, msg) {
-    return { field, msg };
-  }
 
   async function login() {
     const data = { email, password };
@@ -130,7 +112,6 @@ function LoginContainer() {
 
   return (
     <Login
-      errors={errors}
       handleSubmit={handleSubmit}
       handleChange={handleChange}
       email={email}

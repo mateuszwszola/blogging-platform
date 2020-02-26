@@ -10,7 +10,7 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
   const auth = useAuth();
 
   const navClassnames = clsx(
-    'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full bg-gray-900 text-gray-400 transform md:max-w-sm z-10',
+    'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full bg-gray-900 text-gray-400 transition-ease md:max-w-sm z-10',
     { 'translate-x-0': navOpen, '-translate-x-full': !navOpen }
   );
   return (
@@ -32,23 +32,23 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
         </MobileNavLink>
         {auth.data.user ? (
           <MobileNavLink
-          onClick={() => {
-            setNavOpen(false);
-            auth.logout();
+            onClick={() => {
+              setNavOpen(false);
+              auth.logout();
             }}
-          to="/login"
-          tabIndex={tabIndex}
-        >
-          Logout
-        </MobileNavLink>
+            to="/login"
+            tabIndex={tabIndex}
+          >
+            Logout
+          </MobileNavLink>
         ) : (
-        <MobileNavLink
-          onClick={() => setNavOpen(false)}
-          to="/login"
-          tabIndex={tabIndex}
-        >
-          Login
-        </MobileNavLink>
+          <MobileNavLink
+            onClick={() => setNavOpen(false)}
+            to="/login"
+            tabIndex={tabIndex}
+          >
+            Login
+          </MobileNavLink>
         )}
       </div>
     </nav>
