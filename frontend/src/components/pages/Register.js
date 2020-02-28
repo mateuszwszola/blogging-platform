@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom';
 import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from '../../icons';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../context/AuthContext';
+import validate from '../../utils/RegisterFormValidationRules';
+import { InputGroup, InputSubmit } from '../layout/Input';
 
 function Register({
   name,
@@ -12,6 +14,7 @@ function Register({
   password2,
   handleSubmit,
   handleChange,
+  errors,
   ...props
 }) {
   return (
@@ -21,70 +24,49 @@ function Register({
           <LockClosedIcon className="w-40 h-40 fill-current" />
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
-          <label className="my-2 sm:my-3 relative">
-            <input
-              value={name}
-              onChange={handleChange}
-              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
-              name="name"
-              type="text"
-              placeholder="name"
-              required
-            />
-            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
-              <UserIcon className="w-4 h-4 fill-current" />
-            </div>
-          </label>
-          <label className="my-2 sm:my-3 relative">
-            <input
-              value={email}
-              onChange={handleChange}
-              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
-              name="email"
-              type="email"
-              placeholder="e-mail address"
-              required
-            />
-            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
-              <EnvelopeIcon className="w-4 h-4 fill-current" />
-            </div>
-          </label>
-
-          <label className="my-2 sm:my-3 relative">
-            <input
-              value={password}
-              onChange={handleChange}
-              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
-              name="password"
-              type="password"
-              placeholder="password"
-              required
-            />
-            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
-              <KeyIcon className="w-4 h-4 fill-current" />
-            </div>
-          </label>
-          <label className="my-2 sm:my-3 relative">
-            <input
-              value={password2}
-              onChange={handleChange}
-              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
-              name="password2"
-              type="password"
-              placeholder="confirm password"
-              required
-            />
-            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
-              <KeyIcon className="w-4 h-4 fill-current" />
-            </div>
-          </label>
+          <InputGroup
+            isError={Object.keys(errors).length > 0}
+            errors={errors}
+            type="text"
+            name="name"
+            placeholder="name"
+            value={name}
+            handleChange={handleChange}
+            icon={UserIcon}
+          />
+          <InputGroup
+            isError={Object.keys(errors).length > 0}
+            errors={errors}
+            type="email"
+            name="email"
+            placeholder="e-mail address"
+            value={email}
+            handleChange={handleChange}
+            icon={EnvelopeIcon}
+          />
+          <InputGroup
+            isError={Object.keys(errors).length > 0}
+            errors={errors}
+            type="password"
+            name="password"
+            placeholder="password"
+            value={password}
+            handleChange={handleChange}
+            icon={KeyIcon}
+          />
+          <InputGroup
+            isError={Object.keys(errors).length > 0}
+            errors={errors}
+            type="password"
+            name="password2"
+            placeholder="confirm password"
+            value={password2}
+            handleChange={handleChange}
+            icon={KeyIcon}
+          />
 
           <div className="w-11/12 mx-auto mt-3 sm:mt-4">
-            <input
-              className="w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer focus:outline-none focus:shadow-outline"
-              type="submit"
-              value="Sign Up"
-            />
+            <InputSubmit value="Sign Up" />
           </div>
 
           <div className="mt-2 sm:mt-4 text-center">
@@ -103,14 +85,17 @@ Register.propTypes = {
   name: PropTypes.string.isRequired,
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired,
-  password2: PropTypes.string.isRequired
+  password2: PropTypes.string.isRequired,
+  errors: PropTypes.object.isRequired
 };
 
 function RegisterContainer() {
   const {
     handleChange,
     handleSubmit,
-    values: { name, email, password, password2 }
+    values: { name, email, password, password2 },
+    errors,
+    setErrors
   } = useForm(
     {
       name: '',
@@ -118,7 +103,8 @@ function RegisterContainer() {
       password: '',
       password2: ''
     },
-    register
+    register,
+    validate
   );
 
   const auth = useAuth();
@@ -128,7 +114,7 @@ function RegisterContainer() {
     try {
       await auth.register(data);
     } catch (err) {
-      console.log(err);
+      setErrors(err);
     }
   }
 
@@ -140,6 +126,7 @@ function RegisterContainer() {
       email={email}
       password={password}
       password2={password2}
+      errors={errors}
     />
   );
 }
