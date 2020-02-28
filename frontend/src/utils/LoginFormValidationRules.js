@@ -5,5 +5,8 @@ export default function validate(values) {
   } else if (!/\S+@\S+\.\S+/.test(values.email)) {
     errors.email = 'email address is invalid';
   }
+  if (!values.password) {
+    errors.password = 'password is required';
+  }
   return errors;
 }
