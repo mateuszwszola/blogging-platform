@@ -12,11 +12,11 @@ export function useForm(initialValues = {}, callback, validate) {
   }, [errors]);
 
   function handleSubmit(event) {
-    if (event) {
-      event.preventDefault();
+    if (event) event.preventDefault();
+    if (validate) {
+      setErrors(validate(values));
     }
     setIsSubmitting(true);
-    setErrors(validate(values));
   }
 
   function handleChange(event) {
