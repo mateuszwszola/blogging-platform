@@ -8,3 +8,6 @@ export { ArrowDownIcon } from './ArrowDownIcon';
 export { EnvelopeIcon } from './EnvelopeIcon';
 export { KeyIcon } from './KeyIcon';
 export { GithubIcon } from './GithubIcon';
+export { CalendarIcon } from './CalendarIcon';
+export { StarIcon } from './StarIcon';
+export { StarFullIcon } from './StarIcon';

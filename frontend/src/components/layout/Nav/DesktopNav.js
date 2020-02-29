@@ -20,12 +20,26 @@ const DesktopNav = () => {
         Explore
       </NavLink>
       {auth.data.user ? (
-        <button
-          onClick={auth.logout}
-          className="text-lg px-4 py-2 mr-2 font-medium hover:text-gray-400"
-        >
-          Logout
-        </button>
+        <>
+          <NavLink
+            to="/profile"
+            className="text-lg px-4 py-2 mr-2 font-medium hover:text-gray-400"
+          >
+            Profile
+          </NavLink>
+          <NavLink
+            to="/dashboard"
+            className="text-lg px-4 py-2 mr-2 font-medium hover:text-gray-400"
+          >
+            Dashboard
+          </NavLink>
+          <button
+            onClick={auth.logout}
+            className="text-lg px-4 py-2 mr-2 font-medium hover:text-gray-400"
+          >
+            Logout
+          </button>
+        </>
       ) : (
         <NavLink
           to="/login"

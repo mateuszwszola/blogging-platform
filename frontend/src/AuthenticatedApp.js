@@ -2,7 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PageContent from './components/layout/PageContent';
 import { NotFound, Explore } from './components/pages';
+import { Homepage, Profile, Dashboard } from './components/pages/auth';
 import { Header } from './components/layout/Header';
+import { Footer } from './components/layout/Footer';
 
 function AuthenticatedApp() {
   return (
@@ -11,18 +13,22 @@ function AuthenticatedApp() {
         <Header />
         <Switch>
           <Route exact path="/">
-            <div>
-              <h1>Authenticated Homepage</h1>
-              <p>List of posts</p>
-            </div>
+            <Homepage />
           </Route>
           <Route path="/explore">
             <Explore />
+          </Route>
+          <Route path="/profile">
+            <Profile />
+          </Route>
+          <Route path="/dashboard">
+            <Dashboard />
           </Route>
           <Route>
             <NotFound />
           </Route>
         </Switch>
+        <Footer />
       </PageContent>
     </Router>
   );

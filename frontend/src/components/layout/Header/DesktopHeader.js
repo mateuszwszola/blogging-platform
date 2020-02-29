@@ -2,12 +2,14 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { DesktopNav } from '../Nav';
+import { useUser } from '../../../context/UserContext';
 
 const DesktopHeader = ({ headerScrolledAfterVHeight }) => {
   const { pathname } = useLocation();
+  const user = useUser();
 
   const headerBgColor =
-    pathname === '/' && !headerScrolledAfterVHeight
+    pathname === '/' && !user && !headerScrolledAfterVHeight
       ? 'transparent'
       : 'bg-gray-900';
   return (

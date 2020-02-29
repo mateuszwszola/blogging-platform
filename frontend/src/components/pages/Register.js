@@ -143,7 +143,7 @@ function RegisterContainer() {
         setErrors(err.errors);
       } else {
         setErrors({
-          message: 'There is a problem with the server. Try again later.'
+          message: err.message || 'There is a problem with the server. Try again later.'
         });
       }
     }

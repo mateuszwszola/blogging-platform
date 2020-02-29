@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDownIcon } from '../../icons';
-// import devFocusImg from '../../img/undraw_startman1.svg';
 import landingBg from '../../img/landing-bg.jpg';
 
 const LandingPage = () => (
@@ -16,9 +15,6 @@ const LandingPage = () => (
       className="h-full absolute top-0 left-0 bottom-0 right-0 text-gray-100"
     >
       <div className="h-full flex flex-col justify-center items-center px-2">
-        {/* <div className="w-11/12 max-w-xs md:max-w-sm lg:max-w-md">
-        <img src={devFocusImg} alt="Logo" />
-      </div> */}
         <div className="my-3 text-center select-none">
           <h1 className="text-3xl sm:text-4xl md:text-5xl tracking-wide">
             Blogging Platform

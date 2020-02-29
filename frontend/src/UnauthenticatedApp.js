@@ -10,6 +10,7 @@ import {
   Explore
 } from './components/pages';
 import { Header } from './components/layout/Header';
+import { Footer } from './components/layout/Footer';
 
 function UnauthenticatedApp() {
   return (
@@ -28,6 +29,7 @@ function UnauthenticatedApp() {
           </Route>
           <Route path="/explore">
             <Explore />
+            <Footer />
           </Route>
           <Route path="/forgot-password">
             <ForgotPassword />

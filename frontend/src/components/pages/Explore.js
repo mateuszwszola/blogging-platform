@@ -1,38 +1,101 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import PropTypes from 'prop-types';
 import profileImg from '../../img/undraw_profile.svg';
-import { Footer } from '../layout/Footer';
+// import api from '../../api/api';
 
-function Explore() {
-  const cards = Array(10)
-    .fill({})
-    .map((el, idx) => (
+function Explore({ users, blogs, ...props }) {
+  const usersCards = users.map(user => {
+    const blog = blogs.find(b => b.userId === user.id);
+
+    return (
       <div
-        key={idx}
-        className="bg-gray-200 shadow w-full mt-4 md:mx-2 md:max-w-sm py-4 px-2 flex items-center rounded"
+        key={user.id}
+        className="bg-gray-200 shadow py-4 px-2 rounded flex flex-col justify-between"
       >
-        <img src={profileImg} alt="profile" className="w-20 h-20" />
-        <div className="ml-4">
-          <h3 className="text-lg font-medium">Name</h3>
-          <p>Description</p>
+        <div className="flex flex-col items-center text-center">
+          <h3 className="cursor-pointer text-blue-700 hover:text-gray-800 text-2xl font-medium">
+            Blog Title
+          </h3>
+          <p className="text-gray-800">{blog.title}</p>
         </div>
-      </div>
-    ));
-  return (
-    <>
-      <main className="bg-gray-100 font-sans">
-        <div className="py-32">
-          <h2 className="text-center text-3xl font-light">Explore Blogs</h2>
 
-          <div className="px-4 py-2 mt-4">
-            <div className="flex flex-col items-center md:justify-center md:flex-wrap md:flex-row max-w-screen-xl mx-auto">
-              {cards}
-            </div>
+        <div className="flex items-center mt-5">
+          <img
+            src={profileImg}
+            alt="profile"
+            className="w-16 h-16 rounded-full"
+          />
+          <div className="ml-4">
+            <h4 className="text-md font-medium cursor-pointer text-blue-700 hover:text-gray-800">
+              {user.name}
+            </h4>
+            <p className="text-sm text-gray-600">{user.username}</p>
           </div>
         </div>
-      </main>
-      <Footer />
+      </div>
+    );
+  });
+  return (
+    <main className="bg-gray-100">
+      <div className="py-32 max-w-screen-xl mx-auto">
+        <h2 className="text-center text-4xl uppercase font-semibold">
+          Explore Blogs
+        </h2>
+
+        <div className="px-4 py-2 mt-6">
+          {/* <div className="flex flex-col items-center md:justify-center md:flex-wrap md:flex-row max-w-screen-xl mx-auto">
+              {usersCards}
+            </div> */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {usersCards}
+          </div>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+Explore.propTypes = {
+  users: PropTypes.array.isRequired
+};
+
+function ExploreContainer() {
+  const [users, setUsers] = useState([]);
+  const [usersLoading, setUsersLoading] = useState(false);
+
+  const [blogs, setBlogs] = useState([]);
+  const [blogsLoading, setBlogsLoading] = useState(false);
+
+  const getUsers = async () => {
+    setUsersLoading(true);
+    const res = await fetch('https://jsonplaceholder.typicode.com/users');
+    const users = await res.json();
+    setUsers(users);
+    setUsersLoading(false);
+  };
+
+  const getBlogs = async () => {
+    setBlogsLoading(true);
+    const res = await fetch('https://jsonplaceholder.typicode.com/todos');
+    const blogs = await res.json();
+    setBlogs(blogs);
+    setBlogsLoading(false);
+  };
+
+  useEffect(() => {
+    getUsers();
+    getBlogs();
+  }, []);
+
+  if (usersLoading || blogsLoading) {
+    return <div>Loading...</div>;
+  }
+
+  return (
+    <>
+      <Explore users={users} blogs={blogs} />
     </>
   );
 }
 
-export default Explore;
+export default ExploreContainer;

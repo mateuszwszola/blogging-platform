@@ -25,7 +25,7 @@ function Login({
         {errors.message && (
           <p className="text-red-500 text-sm">{errors.message}</p>
         )}
-        
+
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
           <InputGroup
             isError={
@@ -124,7 +124,9 @@ function LoginContainer() {
         setErrors(err.errors);
       } else {
         setErrors({
-          message: 'There is a problem with the server. Try again later.'
+          message:
+            err.message ||
+            'There is a problem with the server. Try again later.'
         });
       }
     }
