@@ -1,13 +1,12 @@
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
-
-const validationResultOptions = { onlyFirstError: true };
+const errorFormatter = require('../validations/errorFormatter');
 
 
 exports.registerUser = async (req, res, next) => {
-  const errors = validationResult(req);
+  const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array(validationResultOptions) });
+    return res.status(422).json({ errors: errors.mapped() });
   }
 
   const { name, email, password } = req.body;
@@ -24,9 +23,9 @@ exports.registerUser = async (req, res, next) => {
 };
 
 exports.loginUser = async (req, res, next) => {
-  const errors = validationResult(req);
+  const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.array(validationResultOptions) });
+    return res.status(422).json({ errors: errors.mapped() });
   }
 
   const { email, password } = req.body;
@@ -52,7 +51,9 @@ exports.getUser = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
   try {
-    req.user.tokens = req.user.tokens.filter(({ token }) => token !== req.token);
+    req.user.tokens = req.user.tokens.filter(
+      ({ token }) => token !== req.token,
+    );
     await req.user.save();
     res.status(200).json({ message: 'OK' });
   } catch (err) {
