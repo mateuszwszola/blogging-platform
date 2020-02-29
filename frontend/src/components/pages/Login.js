@@ -21,9 +21,19 @@ function Login({
         <div className="text-red-500">
           <LockOpenIcon className="w-40 h-40 fill-current" />
         </div>
+
+        {errors.message && (
+          <p className="text-red-500 text-sm">{errors.message}</p>
+        )}
+        
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
           <InputGroup
-            isError={Object.keys(errors).length > 0}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.email || errors.message)
+              )
+            }
             errors={errors}
             type="email"
             name="email"
@@ -33,7 +43,12 @@ function Login({
             icon={EnvelopeIcon}
           />
           <InputGroup
-            isError={Object.keys(errors).length > 0}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.password || errors.message)
+              )
+            }
             errors={errors}
             type="password"
             name="password"
@@ -42,10 +57,6 @@ function Login({
             handleChange={handleChange}
             icon={KeyIcon}
           />
-
-          {errors.message && (
-            <p className="text-red-500 text-sm">{errors.message}</p>
-          )}
 
           <div className="flex flex-col sm:flex-row sm:justify-between px-2 py-2 sm:my-1">
             <label className="flex items-center py-1 sm:py-0">
@@ -109,7 +120,13 @@ function LoginContainer() {
     try {
       await auth.login(data);
     } catch (err) {
-      setErrors(err);
+      if (err.errors) {
+        setErrors(err.errors);
+      } else {
+        setErrors({
+          message: 'There is a problem with the server. Try again later.'
+        });
+      }
     }
   }
 

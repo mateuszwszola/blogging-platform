@@ -9,9 +9,11 @@ export function useForm(initialValues = {}, callback, validate) {
     if (Object.keys(errors).length === 0 && isSubmitting) {
       callback();
     }
+    setIsSubmitting(false);
   }, [errors]);
 
   function handleSubmit(event) {
+    console.log('submit');
     if (event) event.preventDefault();
     if (validate) {
       setErrors(validate(values));

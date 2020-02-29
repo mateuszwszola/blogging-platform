@@ -23,9 +23,19 @@ function Register({
         <div className="text-red-500">
           <LockClosedIcon className="w-40 h-40 fill-current" />
         </div>
+
+        {errors.message && (
+          <p className="text-red-500 text-sm">{errors.message}</p>
+        )}
+
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
           <InputGroup
-            isError={Object.keys(errors).length > 0}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.name || errors.message)
+              )
+            }
             errors={errors}
             type="text"
             name="name"
@@ -35,7 +45,12 @@ function Register({
             icon={UserIcon}
           />
           <InputGroup
-            isError={Object.keys(errors).length > 0}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.email || errors.message)
+              )
+            }
             errors={errors}
             type="email"
             name="email"
@@ -45,7 +60,12 @@ function Register({
             icon={EnvelopeIcon}
           />
           <InputGroup
-            isError={Object.keys(errors).length > 0}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.password || errors.message)
+              )
+            }
             errors={errors}
             type="password"
             name="password"
@@ -55,7 +75,12 @@ function Register({
             icon={KeyIcon}
           />
           <InputGroup
-            isError={Object.keys(errors).length > 0}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.password2 || errors.message)
+              )
+            }
             errors={errors}
             type="password"
             name="password2"
@@ -114,7 +139,13 @@ function RegisterContainer() {
     try {
       await auth.register(data);
     } catch (err) {
-      setErrors(err);
+      if (err.errors) {
+        setErrors(err.errors);
+      } else {
+        setErrors({
+          message: 'There is a problem with the server. Try again later.'
+        });
+      }
     }
   }
 

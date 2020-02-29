@@ -13,7 +13,7 @@ const InputField = ({
   <input
     className={clsx(
       'bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline',
-      isError && 'border-2 border-red-700',
+      isError && 'border-2 border-red-500',
       classnames
     )}
     type={type}
