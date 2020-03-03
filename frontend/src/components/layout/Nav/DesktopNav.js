@@ -2,6 +2,7 @@ import React from 'react';
 import NavLink from './NavLink';
 import { useAuth } from '../../../context/AuthContext';
 import { useOnClickOutside, useToggle } from '../../../hooks';
+import profileImg from '../../../img/undraw_profile.svg';
 
 const DesktopNav = () => {
   const auth = useAuth();
@@ -27,15 +28,20 @@ const DesktopNav = () => {
         <div>
           <button
             onClick={toggleIsOpen}
-            className="max-w-xs flex items-center text-sm rounded-full text-gray-400 focus:outline-none focus:shadow-solid"
+            className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-outline"
           >
-            <svg
+            <img
+              className="h-8 w-8 rounded-full"
+              src={profileImg}
+              alt="User Profile"
+            />
+            {/* <svg
               className="h-8 w-8 rounded-full fill-current"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
             >
               <path d="M10 20a10 10 0 1 1 0-20 10 10 0 0 1 0 20zM7 6v2a3 3 0 1 0 6 0V6a3 3 0 1 0-6 0zm-3.65 8.44a8 8 0 0 0 13.3 0 15.94 15.94 0 0 0-13.3 0z" />
-            </svg>
+            </svg> */}
           </button>
         </div>
         <div
@@ -85,9 +91,9 @@ const DesktopNav = () => {
   );
 
   return (
-    <nav className="py-4" ref={navNode}>
-      <div className="max-w-6xl mx-auto">
-        <div className="flex items-center justify-between">
+    <nav className="px-12 h-16" ref={navNode}>
+      <div className="mx-auto h-full">
+        <div className="h-full flex items-center justify-between">
           <div>
             <NavLink
               to="/"
