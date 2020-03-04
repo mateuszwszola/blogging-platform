@@ -1,10 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
-const InputSubmit = ({ value, ...props }) => {
+const InputSubmit = ({ value, classnames, ...props }) => {
   return (
     <input
-      className="w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer focus:outline-none focus:shadow-outline"
+      className={clsx(
+        `w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer focus:outline-none focus:shadow-outline`,
+        classnames
+      )}
       type="submit"
       value={value}
       {...props}

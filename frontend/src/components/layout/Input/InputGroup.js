@@ -34,12 +34,13 @@ const InputGroup = ({
 };
 
 InputGroup.defaultProps = {
-  isError: false
+  isError: false,
+  errors: {}
 };
 
 InputGroup.propTypes = {
   isError: PropTypes.bool,
-  errors: PropTypes.object.isRequired,
+  errors: PropTypes.object,
   value: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
