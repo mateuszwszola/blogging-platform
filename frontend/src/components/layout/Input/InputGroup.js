@@ -9,6 +9,7 @@ const InputGroup = ({
   handleChange,
   icon: Icon,
   name,
+  classnames,
   ...props
 }) => {
   return (
@@ -20,7 +21,7 @@ const InputGroup = ({
           handleChange={handleChange}
           name={name}
           {...props}
-          classnames={Icon ? 'pl-10' : ''}
+          classnames={`${classnames}${Icon ? 'pl-10' : ''}`}
         />
         {Icon && (
           <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
@@ -44,7 +45,8 @@ InputGroup.propTypes = {
   value: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
-  icon: PropTypes.elementType
+  icon: PropTypes.elementType,
+  classnames: PropTypes.string
 };
 
 export default InputGroup;

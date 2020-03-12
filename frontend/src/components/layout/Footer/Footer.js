@@ -3,17 +3,17 @@ import { GithubIcon } from '../../../icons';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 py-6 px-4 mt-auto">
+    <footer className="bg-gray-900 py-6 px-4 mt-auto">
       <div className="flex flex-col sm:flex-row justify-center items-center">
-        <p className="text-sm text-gray-300 uppercase tracking-wider text-center">
+        <p className="text-sm text-gray-300 uppercase tracking-wider text-center sm:mr-4">
           Mateusz Wszola
         </p>
-        <div className="flex mt-2 sm:mt-0 sm:ml-2">
+        <div className="flex mt-2 sm:mt-0">
           <span className="text-gray-500">Source code on</span>
           <a
             target="_blank"
             rel="noopener noreferrer"
-            className="text-gray-400 flex"
+            className="flex text-gray-300"
             href="https://github.com/mateuszwszola/blogging-platform"
           >
             <span className="ml-2">Github</span>

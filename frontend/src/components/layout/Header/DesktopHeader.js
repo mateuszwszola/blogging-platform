@@ -12,7 +12,7 @@ const DesktopHeader = ({ headerScrolledAfterVHeight }) => {
   const headerBgColor =
     pathname === '/' && !user && !headerScrolledAfterVHeight
       ? 'transparent'
-      : 'bg-gray-800';
+      : 'bg-gray-900';
   return (
     <header className={clsx(`fixed w-full z-10 ${headerBgColor}`)}>
       <DesktopNav />
