@@ -15,6 +15,7 @@ exports.registerUser = async (req, res, next) => {
     const user = new User({ name, email, password });
     await user.save();
     const token = await user.generateAuthToken();
+    delete user.password;
     res.status(201).json({ user, token });
   } catch (err) {
     res.status(400);
@@ -47,26 +48,4 @@ exports.loginUser = async (req, res, next) => {
 // eslint-disable-next-line no-unused-vars
 exports.getUser = async (req, res, next) => {
   res.json(req.user);
-};
-
-exports.logout = async (req, res, next) => {
-  try {
-    req.user.tokens = req.user.tokens.filter(
-      ({ token }) => token !== req.token,
-    );
-    await req.user.save();
-    res.status(200).json({ message: 'OK' });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.logoutAll = async (req, res, next) => {
-  try {
-    req.user.tokens.splice(0, req.user.tokens.length);
-    await req.user.save();
-    res.status(200).json({ message: 'OK' });
-  } catch (err) {
-    next(err);
-  }
 };

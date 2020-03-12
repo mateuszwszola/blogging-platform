@@ -30,17 +30,6 @@ const userSchema = new mongoose.Schema(
       ...requiredString,
       minLength: 7,
     },
-    /*
-    Having a list of tokens enables a user to be logged in on different devices.
-    Every time a user registers or logs in, the token is created and added to this list
-  */
-    tokens: [
-      {
-        token: {
-          ...requiredString,
-        },
-      },
-    ],
   },
   { timestamps: true },
 );
@@ -69,14 +58,12 @@ userSchema.methods.generateAuthToken = async function () {
     },
   };
   const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: 3600 });
-  user.tokens = user.tokens.concat({ token });
-  await user.save();
   return token;
 };
 
 // model method
 userSchema.statics.findByCredentials = async function (email, password) {
-  const user = await User.findOne({ email });
+  const user = await this.findOne({ email });
   if (!user) {
     throw new Error('Invalid login credentials');
   }
@@ -84,6 +71,7 @@ userSchema.statics.findByCredentials = async function (email, password) {
   if (!isPasswordMatch) {
     throw new Error('Invalid login credentials');
   }
+
   return user;
 };
 

@@ -24,18 +24,5 @@ router.post('/login', userValidation.validateLogin, userController.loginUser);
  */
 router.get('/me', auth, userController.getUser);
 
-/*
-  @route   POST api/users/me/logout
-  @desc    Log the user out of the application
-  @access  Private
- */
-router.post('/me/logout', auth, userController.logout);
-
-/*
-  @route   POST api/users/me/logoutall
-  @desc    Log the user out of all devices | Remove all tokens
-  @access  Private
- */
-router.post('/me/logoutall', auth, userController.logoutAll);
 
 module.exports = router;

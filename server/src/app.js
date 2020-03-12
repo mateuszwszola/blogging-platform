@@ -13,11 +13,9 @@ db();
 
 app.use(morgan('dev'));
 app.use(helmet());
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN
-  })
-);
+app.use(cors({
+  origin: process.env.CORS_ORIGIN,
+}));
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
