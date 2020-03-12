@@ -15,8 +15,8 @@ import { Footer } from './components/layout/Footer';
 function UnauthenticatedApp() {
   return (
     <Router>
+      <Header />
       <PageContent>
-        <Header />
         <Switch>
           <Route exact path="/">
             <Homepage />

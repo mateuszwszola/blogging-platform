@@ -4,12 +4,12 @@ import { useUser } from '../../../context/UserContext';
 
 function Profile({ user }) {
   return (
-    <main className="md:pt-16 flex-auto flex-shrink-0">
+    <div className="md:pt-16">
       <h1 className="text-2xl text-center py-6">Your Profile</h1>
       <div className="max-w-sm mx-auto mt-4 bg-green-200 px-6 py-4 rounded text-center text-xl font-bold tracking-wide">
         Hello {user.name}!
       </div>
-    </main>
+    </div>
   );
 }
 

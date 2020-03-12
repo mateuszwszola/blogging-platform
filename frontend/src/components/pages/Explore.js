@@ -35,22 +35,18 @@ function Explore({ users, blogs, ...props }) {
     );
   });
   return (
-    <main className="bg-gray-100">
-      <div className="py-32 max-w-screen-xl mx-auto">
-        <h2 className="text-center text-4xl uppercase font-semibold">
-          Explore Blogs
-        </h2>
+    <div className="md:pt-16 pb-16 max-w-screen-xl mx-auto mt-6">
+      <h1 className="text-3xl text-center leading-loose">Explore Blogs</h1>
 
-        <div className="px-4 py-2 mt-6">
-          {/* <div className="flex flex-col items-center md:justify-center md:flex-wrap md:flex-row max-w-screen-xl mx-auto">
+      <div className="px-4 py-2 mt-6">
+        {/* <div className="flex flex-col items-center md:justify-center md:flex-wrap md:flex-row max-w-screen-xl mx-auto">
               {usersCards}
             </div> */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {usersCards}
-          </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {usersCards}
         </div>
       </div>
-    </main>
+    </div>
   );
 }
 
