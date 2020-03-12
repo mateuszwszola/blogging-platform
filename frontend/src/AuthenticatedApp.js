@@ -2,7 +2,12 @@ import React from 'react';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import PageContent from './components/layout/PageContent';
 import { NotFound, Explore } from './components/pages';
-import { Homepage, Profile, Dashboard } from './components/pages/auth';
+import {
+  Homepage,
+  Profile,
+  Dashboard,
+  Settings
+} from './components/pages/auth';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 
@@ -23,6 +28,9 @@ function AuthenticatedApp() {
           </Route>
           <Route path="/dashboard">
             <Dashboard />
+          </Route>
+          <Route path="/settings">
+            <Settings />
           </Route>
           <Route>
             <NotFound />

@@ -10,18 +10,24 @@ const InputGroup = ({
   icon: Icon,
   name,
   classnames,
+  label,
   ...props
 }) => {
   return (
     <div className="my-2 sm:my-3">
       <label className="relative">
+        {label && (
+          <span className="text-sm uppercase text-gray-800 font-semibold">
+            {label}
+          </span>
+        )}
         <InputField
           isError={isError}
           value={value}
           handleChange={handleChange}
           name={name}
           {...props}
-          classnames={`${classnames}${Icon ? 'pl-10' : ''}`}
+          classnames={`${classnames} ${Icon ? 'pl-10' : ''}`}
         />
         {Icon && (
           <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
@@ -46,7 +52,8 @@ InputGroup.propTypes = {
   handleChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   icon: PropTypes.elementType,
-  classnames: PropTypes.string
+  classnames: PropTypes.string,
+  label: PropTypes.string
 };
 
 export default InputGroup;

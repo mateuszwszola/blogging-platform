@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import profileImg from '../../img/undraw_profile.svg';
-// import api from '../../api/api';
 
 function Explore({ users, blogs, ...props }) {
   const usersCards = users.map(user => {
@@ -60,34 +59,40 @@ Explore.propTypes = {
 };
 
 function ExploreContainer() {
-  const [users, setUsers] = useState([]);
-  const [usersLoading, setUsersLoading] = useState(false);
+  const [users, setUsers] = useState(null);
+  const [blogs, setBlogs] = useState(null);
 
-  const [blogs, setBlogs] = useState([]);
-  const [blogsLoading, setBlogsLoading] = useState(false);
-
-  const getUsers = async () => {
-    setUsersLoading(true);
-    const res = await fetch('https://jsonplaceholder.typicode.com/users');
-    const users = await res.json();
-    setUsers(users);
-    setUsersLoading(false);
+  const getUsers = () => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(res => res.json())
+      .then(users => setUsers(users))
+      .catch(err => {
+        console.error(err);
+      });
   };
 
-  const getBlogs = async () => {
-    setBlogsLoading(true);
-    const res = await fetch('https://jsonplaceholder.typicode.com/todos');
-    const blogs = await res.json();
-    setBlogs(blogs);
-    setBlogsLoading(false);
+  const getBlogs = () => {
+    fetch('https://jsonplaceholder.typicode.com/todos')
+      .then(res => res.json())
+      .then(blogs => setBlogs(blogs))
+      .catch(err => {
+        console.error(err);
+      });
   };
 
   useEffect(() => {
-    getUsers();
-    getBlogs();
+    console.log('component mounts');
+    let canceled = false;
+
+    if (!canceled) {
+      getUsers();
+      getBlogs();
+    }
+
+    return () => (canceled = true);
   }, []);
 
-  if (usersLoading || blogsLoading) {
+  if (users === null || blogs === null) {
     return <div>Loading...</div>;
   }
 
