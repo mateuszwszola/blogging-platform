@@ -29,6 +29,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.8.11",
     "morgan": "^1.9.1",
+    "slugify": "^1.4.0",
     "validator": "^12.2.0"
   },
   "devDependencies": {
