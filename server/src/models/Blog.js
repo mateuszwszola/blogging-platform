@@ -7,7 +7,7 @@ const requiredString = {
 };
 
 const blogSchema = new mongoose.Schema({
-  author: {
+  user: {
     type: mongoose.ObjectId,
     ref: 'User',
   },
@@ -16,6 +16,12 @@ const blogSchema = new mongoose.Schema({
     unique: true,
     minLength: 4,
     maxLength: 40,
+    lowercase: true,
+  },
+  description: {
+    type: String,
+    minLength: 7,
+    maxLength: 80,
   },
   slug: {
     type: String,
@@ -27,8 +33,12 @@ const blogSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-blogSchema.pre('save', async (next) => {
-  // check if name is unique
+blogSchema.pre('validate', function (next) {
+  if (!this.slug) {
+    this.slug = slugify(this.name);
+  }
+
+  next();
 });
 
 const Blog = mongoose.model('Blog', blogSchema);
