@@ -13,33 +13,32 @@ const blogSchema = new mongoose.Schema({
   },
   name: {
     ...requiredString,
-    unique: true,
     minLength: 4,
     maxLength: 40,
-    lowercase: true,
-  },
-  description: {
-    type: String,
-    minLength: 7,
-    maxLength: 80,
   },
   slug: {
     type: String,
     lowercase: true,
     unique: true,
   },
-  tags: {
+  description: {
     type: String,
+    minLength: 7,
+    maxLength: 80,
   },
 }, { timestamps: true });
 
 blogSchema.pre('validate', function (next) {
   if (!this.slug) {
-    this.slug = slugify(this.name);
+    this.slugify();
   }
 
   next();
 });
+
+blogSchema.methods.slugify = function () {
+  this.slug = `${slugify(this.name)}-${(Math.random() * Math.pow(36, 6) | 0).toString(36)}`;
+};
 
 const Blog = mongoose.model('Blog', blogSchema);
 

@@ -8,31 +8,29 @@ const requiredString = {
   required: true,
 };
 
-const userSchema = new mongoose.Schema(
-  {
-    name: {
-      ...requiredString,
-      trim: true,
-      minLength: 2,
-      maxLength: 20,
-    },
-    email: {
-      ...requiredString,
-      unique: true,
-      lowercase: true,
-      validate: (value) => {
-        if (!validator.isEmail(value)) {
-          throw new Error('Invalid Email Address');
-        }
-      },
-    },
-    password: {
-      ...requiredString,
-      minLength: 7,
+const userSchema = new mongoose.Schema({
+  name: {
+    ...requiredString,
+    trim: true,
+    minLength: 2,
+    maxLength: 20,
+  },
+  email: {
+    ...requiredString,
+    unique: true,
+    lowercase: true,
+    validate: (value) => {
+      if (!validator.isEmail(value)) {
+        throw new Error('Invalid Email Address');
+      }
     },
   },
-  { timestamps: true },
-);
+  password: {
+    ...requiredString,
+    minLength: 7,
+  },
+},
+{ timestamps: true });
 
 userSchema.pre('save', async function (next) {
   const user = this;
