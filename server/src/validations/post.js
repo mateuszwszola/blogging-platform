@@ -1,16 +1,18 @@
 const { body } = require('express-validator');
 
-exports.validateCreatePost = [
+exports.validatePost = [
   body('title', 'title is required')
     .exists().trim()
     .not()
     .isEmpty()
     .escape()
     .isLength({ min: 1, max: 60 })
-    .withMessage('The title max chars is 60'),
+    .withMessage('The title must be between 1 and 60 chars'),
   body('body', 'body is required')
     .exists().trim()
     .not()
     .isEmpty()
-    .escape(),
+    .escape()
+    .isLength({ min: 1, max: 255 })
+    .withMessage('The body must be between 1 and 255 chars'),
 ];

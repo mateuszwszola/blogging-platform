@@ -8,7 +8,7 @@ const blogValidation = require('../validations/blog');
   @desc    Create a blog
   @access  Private
  */
-router.post('/', auth, blogValidation.validateCreateBlog, blogController.createBlog);
+router.post('/', auth, blogValidation.validateBlog, blogController.createBlog);
 
 /*
   @route   GET api/blogs
@@ -57,6 +57,6 @@ router.delete('/:blogId', auth, blogController.deleteBlog);
   @desc    Update blog
   @access  Private
  */
-router.put('/:blogId', auth, blogValidation.validateUpdateBlog, blogController.updateBlog);
+router.put('/:blogId', auth, blogValidation.validateBlog, blogController.updateBlog);
 
 module.exports = router;

@@ -37,3 +37,103 @@ exports.createPost = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.updatePost = async (req, res, next) => {
+  const errors = validationResult(req).formatWith(errorFormatter);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.mapped() });
+  }
+
+  const { title, body } = req.body;
+  const { postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      res.status(404);
+      throw new Error('Post Not Found');
+    }
+    if (!post.user.equals(req.user.id)) {
+      res.status(401);
+      throw new Error('you are not allowed to create post in this blog');
+    }
+
+    const updatedPost = await Post.findByIdAndUpdate(postId, { title, body }, { new: true });
+
+    res.json({ post: updatedPost });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};
+
+exports.deletePost = async (req, res, next) => {
+  const { postId } = req.params;
+
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      res.status(404);
+      throw new Error('Post Not Found');
+    }
+    if (!post.user.equals(req.user.id)) {
+      res.status(401);
+      throw new Error('you are not allowed to create post in this blog');
+    }
+
+    await Post.findByIdAndDelete(postId);
+    res.json({ message: 'OK' });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};
+
+exports.getAllPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find({});
+    res.json({ posts });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};
+
+exports.getAllBlogPosts = async (req, res, next) => {
+  const { blogId } = req.params;
+
+  try {
+    const posts = await Post.find({ blog: blogId });
+    res.json({ posts });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};
+
+exports.getPostBySlug = async (req, res, next) => {
+  const { slug } = req.params;
+
+  try {
+    const post = await Post.findOne({ slug });
+    if (!post) {
+      res.status(404);
+      throw new Error('Post Not Found');
+    }
+
+    res.json({ post });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};
+
+exports.getUserPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find({ user: req.user.id });
+    res.json({ posts });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};

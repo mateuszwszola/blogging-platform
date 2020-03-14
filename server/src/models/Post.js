@@ -6,6 +6,17 @@ const requiredString = {
   required: [true, "can't be blank"],
 };
 
+const specifiedStringLength = (field, minlength, maxlength) => {
+  const obj = {};
+  if (minlength) {
+    obj.minlength = [minlength, `${field} must have min ${minlength} characters`];
+  }
+  if (maxlength) {
+    obj.maxlength = [maxlength, `${field} must have max ${maxlength} characters`];
+  }
+  return obj;
+};
+
 const PostSchema = new mongoose.Schema({
   user: {
     type: mongoose.ObjectId,
@@ -26,6 +37,7 @@ const PostSchema = new mongoose.Schema({
   },
   body: {
     ...requiredString,
+    ...specifiedStringLength('body', 1, 255),
   },
   comments: [{
     type: mongoose.ObjectId,
