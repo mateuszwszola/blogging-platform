@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import Moment from 'react-moment';
 import { CalendarIcon, StarFullIcon } from '../../../icons';
-import dummyPosts from './posts.json';
 import { Link } from 'react-router-dom';
+import api from '../../../api/api';
 
-function Homepage({ posts, loading, ...props }) {
+function Homepage({ posts, ...props }) {
   return (
     <div className="md:pt-16 pb-16 max-w-screen-xl mx-auto mt-6">
       <h1 className="text-3xl text-center leading-loose my-4">
@@ -13,7 +14,7 @@ function Homepage({ posts, loading, ...props }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-2">
         {posts.map((post, index) => (
           <div
-            key={post.id}
+            key={post._id}
             className={`${index < posts.length - 1 && 'mb-20'}`}
           >
             <img
@@ -24,23 +25,24 @@ function Homepage({ posts, loading, ...props }) {
             <div className="pl-4">
               <div className="flex items-center my-2">
                 <CalendarIcon className="w-6 h-6 fill-current text-gray-600" />
-                <span className="text-gray-600">{post.created}</span>
+                <span className="text-gray-600 ml-2">
+                  <Moment format="YYYY/MM/DD">{post.createdAt}</Moment>
+                </span>
               </div>
 
               <h3 className="mt-2 text-2xl xl:text-3xl uppercase font-semibold cursor-pointer hover:underline text-gray-800">
-                <Link to={`/posts/${post.title.toLowerCase()}-${post.id}`}>
-                  {post.title}
-                </Link>
+                <Link to={`/posts/${post.slug}`}>{post.title}</Link>
               </h3>
               <span className="ml-2 text-gray-700 font-light text-xl">
                 #blog-name
               </span>
-              <p className="my-2">{post.description.slice(0, 75) + '...'}</p>
+              <p className="my-2">{post.body.slice(0, 75) + '...'}</p>
               <div className="flex items-center my-2">
                 <StarFullIcon className="w-6 h-6 fill-current text-green-900" />
-                <span className="text-gray-600 ml-2">
+                {/* <span className="text-gray-600 ml-2">
                   {Math.floor(Math.random() * 100)}
-                </span>
+                </span> */}
+                {/* TODO: Add star number */}
               </div>
             </div>
           </div>
@@ -51,30 +53,38 @@ function Homepage({ posts, loading, ...props }) {
 }
 
 Homepage.propTypes = {
-  posts: PropTypes.array.isRequired,
-  loading: PropTypes.bool.isRequired
+  posts: PropTypes.array.isRequired
 };
 
 function HomepageContainer(props) {
-  const [posts, setPosts] = React.useState([]);
-  const [loading, setLoading] = React.useState(false);
+  const [posts, setPosts] = useState(null);
+  const [status, setStatus] = useState('loading');
 
-  const getPosts = async () => {
-    setLoading(true);
-    // const res = await fetch('https://jsonplaceholder.typicode.com/posts');
-    // const posts = await res.json();
-    await Promise.resolve(() => {
-      setTimeout(null, 2000);
-    });
-    setPosts(dummyPosts);
-    setLoading(false);
-  };
+  function getUserPosts() {
+    api('posts')
+      .then(res => {
+        setPosts(res.posts);
+        setStatus('loaded');
+      })
+      .catch(err => {
+        console.error(err);
+        setStatus('error');
+      });
+  }
 
-  React.useEffect(() => {
-    getPosts();
-  }, []);
+  useEffect(() => {
+    let canceled = false;
+    if (!canceled && status === 'loading') {
+      getUserPosts();
+    }
+    return () => (canceled = true);
+  }, [status]);
 
-  return <Homepage posts={posts} loading={loading} />;
+  if (status === 'loading') {
+    return <div>Loading...</div>;
+  }
+
+  return <Homepage posts={posts} />;
 }
 
 export default HomepageContainer;

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, useRouteMatch } from 'react-router-dom';
 
-function Sidebar({ blogs, loading, ...props }) {
+function Sidebar({ blogs, loading, setStatus, ...props }) {
   let { url } = useRouteMatch();
 
   return (
@@ -16,7 +16,7 @@ function Sidebar({ blogs, loading, ...props }) {
 
       <div className="mt-8">
         <h2 className="text-center text-2xl">Select Blog</h2>
-        {loading ? (
+        {loading || blogs === null ? (
           <div>Loading...</div>
         ) : (
           <ul className="h-full mt-8 flex flex-col items-center list-none">
@@ -30,7 +30,7 @@ function Sidebar({ blogs, loading, ...props }) {
                 </Link>
               </li>
             ))}
-        </ul>
+          </ul>
         )}
       </div>
     </>
@@ -38,8 +38,8 @@ function Sidebar({ blogs, loading, ...props }) {
 }
 
 Sidebar.propTypes = {
-  blogs: PropTypes.array.isRequired,
-  loading: PropTypes.bool.isRequired,
-}
+  blogs: PropTypes.array,
+  loading: PropTypes.bool.isRequired
+};
 
 export default Sidebar;

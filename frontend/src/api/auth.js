@@ -37,7 +37,6 @@ async function register({ name, email, username, password }) {
 }
 
 async function logout() {
-  api('users/me/logout', 'POST');
   window.localStorage.removeItem(localStorageKey);
 }
 

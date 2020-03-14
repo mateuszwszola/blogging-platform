@@ -8,10 +8,12 @@
     "@testing-library/user-event": "^10.0.0",
     "axios": "^0.19.2",
     "clsx": "^1.1.0",
+    "moment": "^2.24.0",
     "react": "^16.13.0",
     "react-async": "^10.0.0",
     "react-async-devtools": "^10.0.0",
     "react-dom": "^16.13.0",
+    "react-moment": "^0.9.7",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.4.0"
   },

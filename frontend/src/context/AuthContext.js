@@ -51,6 +51,7 @@ function AuthProvider(props) {
     try {
       await auth.login(formData);
       reload();
+      window.location = '/';
     } catch (err) {
       console.log(err);
       return Promise.reject(err);
@@ -62,6 +63,7 @@ function AuthProvider(props) {
     try {
       await auth.register(formData);
       reload();
+      window.location = '/';
     } catch (err) {
       console.log(err);
       return Promise.reject(err);
@@ -72,6 +74,7 @@ function AuthProvider(props) {
     try {
       await auth.logout();
       reload();
+      window.location = '/';
     } catch (err) {
       console.log(err);
     }

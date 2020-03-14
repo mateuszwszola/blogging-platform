@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { InputGroup, InputSubmit } from '../../../layout/Input';
+import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
 import api from '../../../../api/api';
 import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/AddBlogPostValidationRules';
@@ -67,20 +67,23 @@ function AddBlogPost({
                 </span>
               ))}
         </div>
-        <label>
-          <span className="text-sm uppercase text-gray-800 font-semibold">
-            Post Body
-          </span>
-          <textarea
-            name="body"
-            value={body}
-            onChange={handleChange}
-            placeholder="Post Content (You can use markdown)"
-            className="bg-gray-100 rounded py-2 px-4 outline-none focus:shadow-outline w-full border border-gray-400"
-            cols="30"
-            rows="10"
-          ></textarea>
-        </label>
+        <TextareaGroup
+          isError={
+            !!(
+              Object.keys(errors).length > 0 &&
+              (errors.body || errors.message)
+            )
+          }
+          errors={errors}
+          name="body"
+          value={body}
+          handleChange={handleChange}
+          label="Post Body"
+          placeholder="Post Content (You can use markdown)"
+          className="bg-gray-100 rounded py-2 px-4 outline-none focus:shadow-outline w-full border border-gray-400"
+          cols="30"
+          rows="10"
+        />
         <InputSubmit
           value="Create Post"
           classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
@@ -145,7 +148,7 @@ function AddBlogPostContainer(props) {
   useEffect(() => {
     let canceled = false;
 
-    if (!canceled && status === 'loading') {
+    if (!canceled) {
       api(`blogs/slug/${blogSlug}`)
         .then(res => {
           setBlog(res.blog);
@@ -157,7 +160,7 @@ function AddBlogPostContainer(props) {
         });
     }
     return () => (canceled = true);
-  }, [status, blogSlug]);
+  }, [blogSlug]);
 
   if (status === 'loading' || !blog) {
     return <div>Loading...</div>;

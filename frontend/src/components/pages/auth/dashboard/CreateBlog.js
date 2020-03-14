@@ -1,33 +1,43 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { InputGroup, InputSubmit } from '../../../layout/Input';
-import { useInput } from '../../../../hooks';
+import { useForm } from '../../../../hooks';
+import api from '../../../../api/api';
+import validate from '../../../../utils/CreateBlogValidationRules';
 
-function CreateBlogForm() {
-  const [blogName, handleBlogNameChange] = useInput('');
-  const [description, handleDescriptionChange] = useInput('');
-
-  const handleSubmit = event => {
-    event.preventDefault();
-  };
-
+function CreateBlog({ handleChange, handleSubmit, name, description, errors }) {
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
       <h1 className="text-3xl text-center leading-loose">Create A Blog</h1>
       <form onSubmit={handleSubmit}>
         <InputGroup
-          name="blog-name"
+          isError={
+            !!(
+              Object.keys(errors).length > 0 &&
+              (errors.name || errors.message)
+            )
+          }
+          errors={errors}
+          name="name"
           placeholder="Name"
           classnames="border border-gray-400"
-          value={blogName}
-          handleChange={handleBlogNameChange}
+          value={name}
+          handleChange={handleChange}
           label="Blog Name"
         />
-        <InputGroup 
-          name="blog-description"
+        <InputGroup
+          isError={
+            !!(
+              Object.keys(errors).length > 0 &&
+              (errors.description || errors.message)
+            )
+          }
+          errors={errors}
+          name="description"
           placeholder="Describe your blog"
           classnames="border border-gray-400"
           value={description}
-          handleChange={handleDescriptionChange}
+          handleChange={handleChange}
           label="Blog Description"
         />
         <InputSubmit
@@ -39,4 +49,64 @@ function CreateBlogForm() {
   );
 }
 
-export default CreateBlogForm;
+CreateBlog.propTypes = {
+  handleChange: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  name: PropTypes.string.isRequired,
+  description: PropTypes.string.isRequired,
+  errors: PropTypes.object.isRequired
+};
+
+function CreateBlogContainer({ setStatus }) {
+  const {
+    handleChange,
+    handleSubmit,
+    handleReset,
+    values: { name, description },
+    errors,
+    setErrors
+  } = useForm(
+    {
+      name: '',
+      description: ''
+    },
+    createBlog,
+    validate
+  );
+
+  function createBlog() {
+    const data = { name, description };
+    api('blogs', 'POST', { body: data })
+      .then(res => {
+        setStatus('loading');
+        handleReset();
+      })
+      .catch(err => {
+        if (err.errors) {
+          setErrors(err.errors);
+        } else {
+          setErrors({
+            message:
+              err.message ||
+              'There is a problem with the server. Try again later'
+          });
+        }
+      });
+  }
+
+  return (
+    <CreateBlog
+      handleChange={handleChange}
+      handleSubmit={handleSubmit}
+      name={name}
+      description={description}
+      errors={errors}
+    />
+  );
+}
+
+CreateBlogContainer.propTypes = {
+  setStatus: PropTypes.func.isRequired
+};
+
+export default CreateBlogContainer;

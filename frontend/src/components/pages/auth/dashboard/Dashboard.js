@@ -6,11 +6,7 @@ import AddBlogPost from './AddBlogPost';
 import CreateBlog from './CreateBlog';
 import api from '../../../../api/api';
 
-function Dashboard({
-  status,
-  blogs,
-  ...props
-}) {
+function Dashboard({ status, setStatus, blogs, ...props }) {
   let { path } = useRouteMatch();
 
   return (
@@ -19,6 +15,7 @@ function Dashboard({
         <Sidebar
           blogs={blogs}
           loading={status === 'loading'}
+          setStatus={setStatus}
         />
       </div>
 
@@ -30,7 +27,7 @@ function Dashboard({
             </h3>
           </Route>
           <Route path={`${path}/create-blog`}>
-            <CreateBlog />
+            <CreateBlog setStatus={setStatus} />
           </Route>
           <Route path={`${path}/:blogSlug`}>
             <AddBlogPost />
@@ -43,7 +40,7 @@ function Dashboard({
 
 Dashboard.propTypes = {
   status: PropTypes.string.isRequired,
-  blogs: PropTypes.array.isRequired,
+  blogs: PropTypes.array
 };
 
 function DashboardContainer(props) {
@@ -53,28 +50,20 @@ function DashboardContainer(props) {
   useEffect(() => {
     let canceled = false;
     if (!canceled && status === 'loading') {
-      api('blogs').then(res => {
-        setBlogs(res.blogs);
-        setStatus('loaded');
-      })
-      .catch(err => {
-        console.error(err);
-        setStatus('error');
-      });
+      api('blogs')
+        .then(res => {
+          setBlogs(res.blogs);
+          setStatus('loaded');
+        })
+        .catch(err => {
+          console.error(err);
+          setStatus('error');
+        });
     }
-    return () => canceled = true;
+    return () => (canceled = true);
   }, [status]);
 
-  if (status === 'loading') {
-    return <div>Loading...</div>
-  }
-
-  return (
-    <Dashboard
-      status={status}
-      blogs={blogs}
-    />
-  );
+  return <Dashboard status={status} setStatus={setStatus} blogs={blogs} />;
 }
 
 export default DashboardContainer;
