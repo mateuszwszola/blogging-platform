@@ -53,7 +53,7 @@ exports.getPostComments = async (req, res, next) => {
       res.status(404);
       throw new Error('Post Not Found');
     }
-    const comments = await Comment.find({ post: postId });
+    const comments = await Comment.find({ post: postId }).populate('user', ['name', 'bio']);
     res.json({ comments });
   } catch (err) {
     res.status(err.status || 400);

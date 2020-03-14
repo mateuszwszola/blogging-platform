@@ -29,7 +29,10 @@ exports.createBlog = async (req, res, next) => {
 
 exports.getBlogById = async (req, res, next) => {
   try {
-    const blog = await Blog.findById(req.params.blogId);
+    const blog = await Blog.findById(req.params.blogId).populate('user', [
+      'name',
+      'bio',
+    ]);
     if (!blog) {
       res.status(404);
       throw new Error('Blog Not Found');
@@ -45,7 +48,7 @@ exports.getBlogBySlugName = async (req, res, next) => {
   const { slug } = req.params;
 
   try {
-    const blog = await Blog.findOne({ slug });
+    const blog = await Blog.findOne({ slug }).populate('user', ['name', 'bio']);
     if (!blog) {
       res.status(404);
       throw new Error('Blog Not Found');
@@ -59,7 +62,7 @@ exports.getBlogBySlugName = async (req, res, next) => {
 
 exports.getAllBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find({});
+    const blogs = await Blog.find({}).populate('user', ['name', 'bio']);
     res.json({ blogs });
   } catch (err) {
     res.status(err.status || 400);
@@ -69,7 +72,10 @@ exports.getAllBlogs = async (req, res, next) => {
 
 exports.getAuthUserBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find({ user: req.user.id });
+    const blogs = await Blog.find({ user: req.user.id }).populate('user', [
+      'name',
+      'bio',
+    ]);
     res.json({ blogs });
   } catch (err) {
     res.status(err.status || 400);
@@ -79,7 +85,10 @@ exports.getAuthUserBlogs = async (req, res, next) => {
 
 exports.getUserBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find({ user: req.params.userId });
+    const blogs = await Blog.find({ user: req.params.userId }).populate(
+      'user',
+      ['name', 'bio'],
+    );
     res.json({ blogs });
   } catch (err) {
     res.status(err.status || 400);
@@ -128,7 +137,11 @@ exports.updateBlog = async (req, res, next) => {
       throw new Error('You are not authorized to access this resource');
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(req.params.blogId, { name, description }, { new: true });
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.blogId,
+      { name, description },
+      { new: true },
+    );
 
     res.status(200).json({ blog: updatedBlog });
   } catch (err) {
