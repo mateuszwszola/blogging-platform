@@ -27,3 +27,20 @@ exports.addComment = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.deleteComment = async (req, res, next) => {
+  const { commentId } = req.params;
+
+  try {
+    const comment = await Comment.findById(commentId);
+    if (!comment.user.equals(req.user.id)) {
+      res.status(401);
+      throw new Error('You are not authorized to delete this comment');
+    }
+    await Comment.findByIdAndDelete(commentId);
+    res.json({ message: 'OK ' });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};

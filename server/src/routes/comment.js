@@ -10,5 +10,11 @@ const { validateComment } = require('../validations/comment');
  */
 router.post('/:postId', auth, validateComment, commentController.addComment);
 
+/*
+  @route   DELETE api/comments/:commentId
+  @desc    Delete a comment
+  @access  Private
+ */
+router.delete('/:commentId', auth, commentController.deleteComment);
 
 module.exports = router;
