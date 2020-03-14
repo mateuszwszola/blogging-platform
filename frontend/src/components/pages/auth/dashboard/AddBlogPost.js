@@ -54,17 +54,14 @@ function AddBlogPost({
         />
         <div className="py-2">
           {tags.split(',').length > 1 &&
-            tags
-              .split(',')
-              .slice(0, tags.split(',').length - 1)
-              .map(tag => (
-                <span
-                  key={tag}
-                  className="bg-blue-500 p-2 mt-1 text-blue-100 rounded mr-1"
-                >
-                  {tag}
-                </span>
-              ))}
+            tags.split(',').map(tag => (
+              <span
+                key={tag}
+                className="bg-blue-500 p-2 mt-1 text-blue-100 rounded mr-1"
+              >
+                {tag}
+              </span>
+            ))}
         </div>
         <TextareaGroup
           isError={
@@ -102,7 +99,7 @@ AddBlogPost.propTypes = {
   errors: PropTypes.object.isRequired
 };
 
-function AddBlogPostContainer({blog, status, ...props}) {
+function AddBlogPostContainer({ blog, status, ...props }) {
   const {
     handleChange,
     handleSubmit,
@@ -121,7 +118,7 @@ function AddBlogPostContainer({blog, status, ...props}) {
   );
 
   function addBlogPost() {
-    const data = { title, body, tags };
+    const data = { title, body, tags: tags.split(',') };
     if (blog === null) return;
     api(`posts/${blog._id}`, 'POST', { body: data })
       .then(res => {
@@ -159,7 +156,7 @@ function AddBlogPostContainer({blog, status, ...props}) {
 
 AddBlogPostContainer.propTypes = {
   blog: PropTypes.object,
-  status: PropTypes.string.isRequired,
-}
+  status: PropTypes.string.isRequired
+};
 
 export default AddBlogPostContainer;

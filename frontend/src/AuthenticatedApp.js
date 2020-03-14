@@ -6,7 +6,8 @@ import {
   Homepage,
   Profile,
   Dashboard,
-  Settings
+  Settings,
+  Post
 } from './components/pages/auth';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -31,6 +32,9 @@ function AuthenticatedApp() {
           </Route>
           <Route path="/settings">
             <Settings />
+          </Route>
+          <Route path="/posts/:postSlug">
+            <Post />
           </Route>
           <Route>
             <NotFound />
