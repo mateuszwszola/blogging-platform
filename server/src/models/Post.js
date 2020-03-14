@@ -57,6 +57,12 @@ PostSchema.methods.slugify = function () {
   this.slug = `${slugify(this.title)}-${(Math.random() * Math.pow(36, 6) | 0).toString(36)}`;
 };
 
+PostSchema.methods.addComment = function (commentId) {
+  this.comments.push(commentId);
+  this.save();
+};
+
+
 const Post = mongoose.model('Post', PostSchema);
 
 module.exports = Post;
