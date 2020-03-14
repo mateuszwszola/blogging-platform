@@ -1,16 +1,14 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
-import { useInput } from '../../../../hooks';
 import Sidebar from './Sidebar';
 import AddBlogPost from './AddBlogPost';
 import CreateBlog from './CreateBlog';
+import api from '../../../../api/api';
 
 function Dashboard({
-  title,
-  body,
-  handleTitleChange,
-  handleBodyChange,
+  status,
+  blogs,
   ...props
 }) {
   let { path } = useRouteMatch();
@@ -18,7 +16,10 @@ function Dashboard({
   return (
     <div className="flex flex-auto flex-shrink-0 md:pt-16">
       <div className="w-1/5 bg-gray-200 px-2 py-4">
-        <Sidebar />
+        <Sidebar
+          blogs={blogs}
+          loading={status === 'loading'}
+        />
       </div>
 
       <div className="w-4/5 bg-gray-300 py-2 px-4">
@@ -31,13 +32,8 @@ function Dashboard({
           <Route path={`${path}/create-blog`}>
             <CreateBlog />
           </Route>
-          <Route path={`${path}/:blogName`}>
-            <AddBlogPost
-              title={title}
-              body={body}
-              handleTitleChange={handleTitleChange}
-              handleBodyChange={handleBodyChange}
-            />
+          <Route path={`${path}/:blogSlug`}>
+            <AddBlogPost />
           </Route>
         </Switch>
       </div>
@@ -46,22 +42,37 @@ function Dashboard({
 }
 
 Dashboard.propTypes = {
-  title: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
-  handleTitleChange: PropTypes.func.isRequired,
-  handleBodyChange: PropTypes.func.isRequired
+  status: PropTypes.string.isRequired,
+  blogs: PropTypes.array.isRequired,
 };
 
 function DashboardContainer(props) {
-  const [title, handleTitleChange] = useInput('');
-  const [body, handleBodyChange] = useInput('');
+  const [blogs, setBlogs] = useState(null);
+  const [status, setStatus] = useState('loading');
+
+  useEffect(() => {
+    let canceled = false;
+    if (!canceled && status === 'loading') {
+      api('blogs').then(res => {
+        setBlogs(res.blogs);
+        setStatus('loaded');
+      })
+      .catch(err => {
+        console.error(err);
+        setStatus('error');
+      });
+    }
+    return () => canceled = true;
+  }, [status]);
+
+  if (status === 'loading') {
+    return <div>Loading...</div>
+  }
 
   return (
     <Dashboard
-      title={title}
-      handleTitleChange={handleTitleChange}
-      body={body}
-      handleBodyChange={handleBodyChange}
+      status={status}
+      blogs={blogs}
     />
   );
 }

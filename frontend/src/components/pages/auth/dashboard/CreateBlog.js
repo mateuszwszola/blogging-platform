@@ -1,14 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { InputGroup, InputSubmit } from '../../../layout/Input';
 import { useInput } from '../../../../hooks';
 
 function CreateBlogForm() {
   const [blogName, handleBlogNameChange] = useInput('');
-  const [tags, setTags] = useState('');
-
-  const handleTagsChange = event => {
-    setTags(event.target.value);
-  };
+  const [description, handleDescriptionChange] = useInput('');
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -26,25 +22,14 @@ function CreateBlogForm() {
           handleChange={handleBlogNameChange}
           label="Blog Name"
         />
-        <InputGroup
-          name="blog-tags"
-          placeholder="Give it a tags (separate them using comma)"
+        <InputGroup 
+          name="blog-description"
+          placeholder="Describe your blog"
           classnames="border border-gray-400"
-          value={tags}
-          handleChange={handleTagsChange}
-          label="Tags (what the blog is about?)"
+          value={description}
+          handleChange={handleDescriptionChange}
+          label="Blog Description"
         />
-        <div>
-          {tags.split(',').length > 1 &&
-            tags
-              .split(',')
-              .slice(0, tags.split(',').length - 1)
-              .map(tag => (
-                <span className="bg-blue-500 p-2 mt-1 text-blue-100 rounded mr-1">
-                  {tag}
-                </span>
-              ))}
-        </div>
         <InputSubmit
           value="Create A Blog"
           classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"

@@ -10,7 +10,7 @@ export function useForm(initialValues = {}, callback, validate) {
       callback();
     }
     setIsSubmitting(false);
-  }, [errors]);
+  }, [errors, callback, isSubmitting]);
 
   function handleSubmit(event) {
     if (event) event.preventDefault();
