@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link, useRouteMatch } from 'react-router-dom';
+import { Link, NavLink, useRouteMatch } from 'react-router-dom';
 
-function Sidebar({ blogs, loading, setStatus, ...props }) {
+function Sidebar({ blogs, loading, ...props }) {
   let { url } = useRouteMatch();
 
   return (
@@ -22,12 +22,13 @@ function Sidebar({ blogs, loading, setStatus, ...props }) {
           <ul className="h-full mt-8 flex flex-col items-center list-none">
             {blogs.map(blog => (
               <li key={blog.slug} className="block w-4/5 mx-auto">
-                <Link
+                <NavLink
                   to={`${url}/${blog.slug}`}
                   className="block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded transition duration-100 text-center"
+                  activeClassName="bg-gray-400"
                 >
                   {blog.name}
-                </Link>
+                </NavLink>
               </li>
             ))}
           </ul>

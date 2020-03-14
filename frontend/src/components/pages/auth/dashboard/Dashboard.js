@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Sidebar from './Sidebar';
-import AddBlogPost from './AddBlogPost';
+import ManageBlog from './ManageBlog';
 import CreateBlog from './CreateBlog';
 import api from '../../../../api/api';
 
-function Dashboard({ status, setStatus, blogs, ...props }) {
+function Dashboard({ status, reloadBlogs, blogs, ...props }) {
   let { path } = useRouteMatch();
 
   return (
@@ -15,7 +15,6 @@ function Dashboard({ status, setStatus, blogs, ...props }) {
         <Sidebar
           blogs={blogs}
           loading={status === 'loading'}
-          setStatus={setStatus}
         />
       </div>
 
@@ -27,10 +26,10 @@ function Dashboard({ status, setStatus, blogs, ...props }) {
             </h3>
           </Route>
           <Route path={`${path}/create-blog`}>
-            <CreateBlog setStatus={setStatus} />
+            <CreateBlog reloadBlogs={reloadBlogs} />
           </Route>
           <Route path={`${path}/:blogSlug`}>
-            <AddBlogPost />
+            <ManageBlog reloadBlogs={reloadBlogs} />
           </Route>
         </Switch>
       </div>
@@ -40,16 +39,20 @@ function Dashboard({ status, setStatus, blogs, ...props }) {
 
 Dashboard.propTypes = {
   status: PropTypes.string.isRequired,
-  blogs: PropTypes.array
+  blogs: PropTypes.array,
+  reloadBlogs: PropTypes.func.isRequired,
 };
 
 function DashboardContainer(props) {
   const [blogs, setBlogs] = useState(null);
   const [status, setStatus] = useState('loading');
 
+  const reloadBlogs = () => {
+    setStatus('loading');
+  }
+
   useEffect(() => {
-    let canceled = false;
-    if (!canceled && status === 'loading') {
+    function getUserBlogs() {
       api('blogs')
         .then(res => {
           setBlogs(res.blogs);
@@ -60,10 +63,16 @@ function DashboardContainer(props) {
           setStatus('error');
         });
     }
+
+    let canceled = false;
+
+    if (!canceled && status === 'loading') {
+      getUserBlogs();
+    }
     return () => (canceled = true);
   }, [status]);
 
-  return <Dashboard status={status} setStatus={setStatus} blogs={blogs} />;
+  return <Dashboard status={status} reloadBlogs={reloadBlogs} blogs={blogs} />;
 }
 
 export default DashboardContainer;

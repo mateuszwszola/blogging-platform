@@ -57,7 +57,7 @@ CreateBlog.propTypes = {
   errors: PropTypes.object.isRequired
 };
 
-function CreateBlogContainer({ setStatus }) {
+function CreateBlogContainer({ reloadBlogs }) {
   const {
     handleChange,
     handleSubmit,
@@ -78,7 +78,7 @@ function CreateBlogContainer({ setStatus }) {
     const data = { name, description };
     api('blogs', 'POST', { body: data })
       .then(res => {
-        setStatus('loading');
+        reloadBlogs();
         handleReset();
       })
       .catch(err => {
@@ -106,7 +106,7 @@ function CreateBlogContainer({ setStatus }) {
 }
 
 CreateBlogContainer.propTypes = {
-  setStatus: PropTypes.func.isRequired
+  reloadBlogs: PropTypes.func.isRequired
 };
 
 export default CreateBlogContainer;

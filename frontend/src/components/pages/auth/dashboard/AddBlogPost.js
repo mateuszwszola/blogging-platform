@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useParams } from 'react-router-dom';
 import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
 import api from '../../../../api/api';
 import { useForm } from '../../../../hooks';
@@ -103,10 +102,7 @@ AddBlogPost.propTypes = {
   errors: PropTypes.object.isRequired
 };
 
-function AddBlogPostContainer(props) {
-  const { blogSlug } = useParams();
-  const [blog, setBlog] = useState(null);
-  const [status, setStatus] = useState('loading');
+function AddBlogPostContainer({blog, status, ...props}) {
   const {
     handleChange,
     handleSubmit,
@@ -125,7 +121,6 @@ function AddBlogPostContainer(props) {
   );
 
   function addBlogPost() {
-    console.log('Add blog post form submit');
     const data = { title, body, tags };
     if (blog === null) return;
     api(`posts/${blog._id}`, 'POST', { body: data })
@@ -145,23 +140,6 @@ function AddBlogPostContainer(props) {
       });
   }
 
-  useEffect(() => {
-    let canceled = false;
-
-    if (!canceled) {
-      api(`blogs/slug/${blogSlug}`)
-        .then(res => {
-          setBlog(res.blog);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-    return () => (canceled = true);
-  }, [blogSlug]);
-
   if (status === 'loading' || !blog) {
     return <div>Loading...</div>;
   }
@@ -177,6 +155,11 @@ function AddBlogPostContainer(props) {
       errors={errors}
     />
   );
+}
+
+AddBlogPostContainer.propTypes = {
+  blog: PropTypes.object,
+  status: PropTypes.string.isRequired,
 }
 
 export default AddBlogPostContainer;
