@@ -29,6 +29,9 @@ exports.validateRegister = [
     .isEmpty()
     .isLength({ min: 7 })
     .withMessage('The password must have min 7 characters'),
+  body('bio', 'The bio must be between 2 and 60 chars')
+    .optional()
+    .isLength({ min: 2, max: 60 }),
 ];
 
 exports.validateLogin = [

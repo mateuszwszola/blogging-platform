@@ -5,15 +5,25 @@ const jwt = require('jsonwebtoken');
 
 const requiredString = {
   type: String,
-  required: true,
+  required: [true, "can't be blank"],
 };
 
-const userSchema = new mongoose.Schema({
+const specifiedStringLength = (field, minlength, maxlength) => {
+  const obj = {};
+  if (minlength) {
+    obj.minlength = [minlength, `${field} must have min ${minlength} characters`];
+  }
+  if (maxlength) {
+    obj.maxlength = [maxlength, `${field} must have max ${maxlength} characters`];
+  }
+  return obj;
+};
+
+const UserSchema = new mongoose.Schema({
   name: {
     ...requiredString,
+    ...specifiedStringLength('name', 2, 20),
     trim: true,
-    minLength: 2,
-    maxLength: 20,
   },
   email: {
     ...requiredString,
@@ -27,14 +37,17 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     ...requiredString,
-    minLength: 7,
+    ...specifiedStringLength('password', 7),
+  },
+  bio: {
+    type: String,
+    ...specifiedStringLength('bio', 2, 60),
   },
 },
 { timestamps: true });
 
-userSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next) {
   const user = this;
-  // Hash the password only if it's modified
   if (user.isModified('password')) {
     try {
       const hashedPassword = await bcrypt.hash(user.password, 10);
@@ -48,7 +61,7 @@ userSchema.pre('save', async function (next) {
 });
 
 // example of document/instance method
-userSchema.methods.generateAuthToken = async function () {
+UserSchema.methods.generateAuthToken = async function () {
   const user = this;
   const payload = {
     user: {
@@ -60,7 +73,7 @@ userSchema.methods.generateAuthToken = async function () {
 };
 
 // model method
-userSchema.statics.findByCredentials = async function (email, password) {
+UserSchema.statics.findByCredentials = async function (email, password) {
   const user = await this.findOne({ email });
   if (!user) {
     throw new Error('Invalid login credentials');
@@ -73,6 +86,6 @@ userSchema.statics.findByCredentials = async function (email, password) {
   return user;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', UserSchema);
 
 module.exports = User;

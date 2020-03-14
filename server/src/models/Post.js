@@ -3,10 +3,10 @@ const slugify = require('slugify');
 
 const requiredString = {
   type: String,
-  required: true,
+  required: [true, "can't be blank"],
 };
 
-const postSchema = new mongoose.Schema({
+const PostSchema = new mongoose.Schema({
   user: {
     type: mongoose.ObjectId,
     ref: 'User',
@@ -17,6 +17,7 @@ const postSchema = new mongoose.Schema({
   },
   title: {
     ...requiredString,
+    maxlength: 60,
   },
   slug: {
     ...requiredString,
@@ -32,7 +33,7 @@ const postSchema = new mongoose.Schema({
   }],
 }, { timestamps: true });
 
-postSchema.pre('validate', function (next) {
+PostSchema.pre('validate', function (next) {
   if (!this.slug) {
     this.slugify();
   }
@@ -40,10 +41,10 @@ postSchema.pre('validate', function (next) {
   next();
 });
 
-postSchema.methods.slugify = function () {
+PostSchema.methods.slugify = function () {
   this.slug = `${slugify(this.title)}-${(Math.random() * Math.pow(36, 6) | 0).toString(36)}`;
 };
 
-const Post = mongoose.model('Post', postSchema);
+const Post = mongoose.model('Post', PostSchema);
 
 module.exports = Post;

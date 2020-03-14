@@ -5,7 +5,9 @@ exports.validateCreatePost = [
     .exists().trim()
     .not()
     .isEmpty()
-    .escape(),
+    .escape()
+    .isLength({ min: 1, max: 60 })
+    .withMessage('The title max chars is 60'),
   body('body', 'body is required')
     .exists().trim()
     .not()

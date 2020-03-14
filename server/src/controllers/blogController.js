@@ -9,7 +9,7 @@ exports.createBlog = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { name, tags, description } = req.body;
+  const { name, description } = req.body;
 
   try {
     const blog = await Blog.findOne({ name });
@@ -17,7 +17,7 @@ exports.createBlog = async (req, res, next) => {
       res.status(400);
       throw new Error(`blog '${name}' already exists`);
     }
-    const newBlog = new Blog({ name, tags, description });
+    const newBlog = new Blog({ name, description });
     newBlog.user = req.user.id;
     await newBlog.save();
     res.status(201).json({ blog: newBlog });
@@ -114,7 +114,7 @@ exports.updateBlog = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { name, tags, description } = req.body;
+  const { name, description } = req.body;
 
   try {
     const blog = await Blog.findById(req.params.blogId);
@@ -128,7 +128,7 @@ exports.updateBlog = async (req, res, next) => {
       throw new Error('You are not authorized to access this resource');
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(req.params.blogId, { name, tags, description });
+    const updatedBlog = await Blog.findByIdAndUpdate(req.params.blogId, { name, description }, { new: true });
 
     res.status(200).json({ blog: updatedBlog });
   } catch (err) {

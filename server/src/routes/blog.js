@@ -57,6 +57,6 @@ router.delete('/:blogId', auth, blogController.deleteBlog);
   @desc    Update blog
   @access  Private
  */
-router.put('/:blogId', auth, blogController.updateBlog);
+router.put('/:blogId', auth, blogValidation.validateUpdateBlog, blogController.updateBlog);
 
 module.exports = router;

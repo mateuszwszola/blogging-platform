@@ -5,7 +5,7 @@ const requiredString = {
   required: true,
 };
 
-const commentSchema = new mongoose.Schema({
+const CommentSchema = new mongoose.Schema({
   user: {
     type: mongoose.ObjectId,
     ref: 'User',
@@ -19,6 +19,6 @@ const commentSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-const Comment = mongoose.model('Comment', commentSchema);
+const Comment = mongoose.model('Comment', CommentSchema);
 
 module.exports = Comment;
