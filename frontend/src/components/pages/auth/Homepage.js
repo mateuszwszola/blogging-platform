@@ -34,7 +34,7 @@ function Homepage({ posts, ...props }) {
                 <Link to={`/posts/${post.slug}`}>{post.title}</Link>
               </h3>
               <span className="ml-2 text-gray-700 font-light text-xl">
-                #blog-name
+                #{post.blog.name}
               </span>
               <p className="my-2">{post.body.slice(0, 75) + '...'}</p>
               <div className="flex items-center my-2">
