@@ -27,7 +27,7 @@ exports.createPost = async (req, res, next) => {
       user: req.user.id,
       blog: blogId,
       title,
-      body,
+      body
     });
     await post.save();
 
@@ -58,7 +58,11 @@ exports.updatePost = async (req, res, next) => {
       throw new Error('you are not allowed to create post in this blog');
     }
 
-    const updatedPost = await Post.findByIdAndUpdate(postId, { title, body }, { new: true });
+    const updatedPost = await Post.findByIdAndUpdate(
+      postId,
+      { title, body },
+      { new: true }
+    );
 
     res.json({ post: updatedPost });
   } catch (err) {
@@ -91,7 +95,7 @@ exports.deletePost = async (req, res, next) => {
 
 exports.getAllPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find({});
+    const posts = await Post.find({}).sort({ createdAt: -1 });
     res.json({ posts });
   } catch (err) {
     res.status(err.status || 400);
@@ -103,7 +107,7 @@ exports.getAllBlogPosts = async (req, res, next) => {
   const { blogId } = req.params;
 
   try {
-    const posts = await Post.find({ blog: blogId });
+    const posts = await Post.find({ blog: blogId }).sort({ createdAt: -1 });
     res.json({ posts });
   } catch (err) {
     res.status(err.status || 400);
@@ -130,7 +134,9 @@ exports.getPostBySlug = async (req, res, next) => {
 
 exports.getUserPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find({ user: req.user.id });
+    const posts = await Post.find({ user: req.user.id }).sort({
+      createdAt: -1
+    });
     res.json({ posts });
   } catch (err) {
     res.status(err.status || 400);
