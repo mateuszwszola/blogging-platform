@@ -9,7 +9,7 @@ exports.createPost = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { title, body } = req.body;
+  const { title, body, tags } = req.body;
   const { blogId } = req.params;
 
   try {
@@ -28,6 +28,7 @@ exports.createPost = async (req, res, next) => {
       blog: blogId,
       title,
       body,
+      tags
     });
     await post.save();
 
@@ -61,7 +62,7 @@ exports.updatePost = async (req, res, next) => {
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
       { title, body },
-      { new: true },
+      { new: true }
     );
 
     res.json({ post: updatedPost });
@@ -146,7 +147,7 @@ exports.getUserPosts = async (req, res, next) => {
       .populate('user', ['name', 'bio'])
       .populate('blog', ['name', 'slug'])
       .sort({
-        createdAt: -1,
+        createdAt: -1
       });
     res.json({ posts });
   } catch (err) {
