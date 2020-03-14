@@ -44,3 +44,19 @@ exports.deleteComment = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getPostComments = async (req, res, next) => {
+  const { postId } = req.params;
+  try {
+    const post = await Post.findById(postId);
+    if (!post) {
+      res.status(404);
+      throw new Error('Post Not Found');
+    }
+    const comments = await Comment.find({ post: postId });
+    res.json({ comments });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};

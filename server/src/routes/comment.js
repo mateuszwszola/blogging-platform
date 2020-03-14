@@ -17,4 +17,11 @@ router.post('/:postId', auth, validateComment, commentController.addComment);
  */
 router.delete('/:commentId', auth, commentController.deleteComment);
 
+/*
+  @route   GET api/comments/:postId
+  @desc    Get post comments
+  @access  Public
+ */
+router.get('/:postId', commentController.getPostComments);
+
 module.exports = router;
