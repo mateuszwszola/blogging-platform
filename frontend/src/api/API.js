@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:3001/api';
+const API_BASE_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001/api' : 'https://blogging-platform-server.now.sh/api';
 
 async function api(endpoint, method = 'GET', { body, ...customConfig } = {}) {
   const token = window.localStorage.getItem('__token__');
