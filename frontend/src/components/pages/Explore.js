@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import profileImg from '../../img/undraw_profile.svg';
 import api from '../../api/api';
@@ -20,8 +21,8 @@ function Explore({ blogs, status, ...props }) {
                   className="w-64 m-2 bg-gray-200 shadow py-4 px-2 rounded flex flex-col justify-between"
                 >
                   <div className="flex flex-col items-center text-center">
-                    <h3 className="cursor-pointer text-blue-700 hover:text-gray-800 text-2xl font-medium">
-                      {blog.name}
+                    <h3 className="text-blue-700 hover:text-gray-800 text-2xl font-medium">
+                      <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
                     </h3>
                     {blog.description && (
                       <p className="text-gray-800">{blog.description}</p>

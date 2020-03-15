@@ -7,7 +7,9 @@ import {
   Register,
   ForgotPassword,
   NotFound,
-  Explore
+  Explore,
+  Blog,
+  Post
 } from './components/pages';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
@@ -27,12 +29,20 @@ function UnauthenticatedApp() {
           <Route path="/register">
             <Register />
           </Route>
+          <Route path="/forgot-password">
+            <ForgotPassword />
+          </Route>
           <Route path="/explore">
             <Explore />
             <Footer />
           </Route>
-          <Route path="/forgot-password">
-            <ForgotPassword />
+          <Route path="/posts/:postSlug">
+            <Post />
+            <Footer />
+          </Route>
+          <Route path="/blogs/:blogSlug">
+            <Blog />
+            <Footer />
           </Route>
           <Route>
             <NotFound />

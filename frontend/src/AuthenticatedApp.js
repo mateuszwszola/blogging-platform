@@ -6,9 +6,9 @@ import {
   Homepage,
   Profile,
   Dashboard,
-  Settings,
-  Post
+  Settings
 } from './components/pages/auth';
+import { Blog, Post } from './components/pages';
 import { Header } from './components/layout/Header';
 import { Footer } from './components/layout/Footer';
 
@@ -35,6 +35,9 @@ function AuthenticatedApp() {
           </Route>
           <Route path="/posts/:postSlug">
             <Post />
+          </Route>
+          <Route path="/blogs/:blogSlug">
+            <Blog />
           </Route>
           <Route>
             <NotFound />

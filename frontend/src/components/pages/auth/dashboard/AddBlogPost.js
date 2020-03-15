@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
 import api from '../../../../api/api';
 import { useForm } from '../../../../hooks';
@@ -19,7 +20,9 @@ function AddBlogPost({
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
       <h1 className="text-3xl text-center leading-loose">
         Add Blog Post To
-        <span className="uppercase text-green-600 pl-4">{blog.name}</span>
+        <span className="uppercase text-green-600 hover:text-green-700 pl-4">
+          <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
+        </span>
       </h1>
       <form onSubmit={handleSubmit}>
         <InputGroup
