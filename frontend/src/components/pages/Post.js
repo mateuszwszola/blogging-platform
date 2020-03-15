@@ -1,18 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useUser } from '../../context/UserContext';
 import { useParams, useHistory } from 'react-router-dom';
 import Moment from 'react-moment';
-import api from '../../api/api';
+import { useUser } from '../../context/UserContext';
 import profileImg from '../../img/undraw_profile.svg';
+import { usePostBySlug } from '../../hooks/usePost';
+import { deletePost } from '../../api/post';
 
-function Post({ post, isOwner, deletePost, ...props }) {
+function Post({ post, isOwner, handleDeletePost, ...props }) {
   return (
     <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-md w-full mx-auto">
       {isOwner && (
         <div className="w-full flex justify-end">
           <button
-            onClick={deletePost}
+            onClick={handleDeletePost}
             className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600"
           >
             Delete Post
@@ -72,40 +73,18 @@ function Post({ post, isOwner, deletePost, ...props }) {
 Post.propTypes = {
   post: PropTypes.object.isRequired,
   isOwner: PropTypes.bool.isRequired,
-  deletePost: PropTypes.func.isRequired
+  handleDeletePost: PropTypes.func.isRequired
 };
 
 function PostContainer(props) {
   const { postSlug } = useParams();
-  const [post, setPost] = useState(null);
-  const [status, setStatus] = useState('loading');
   const user = useUser();
   let history = useHistory();
+  const [post, status] = usePostBySlug(postSlug);
 
-  useEffect(() => {
-    function getPost() {
-      api(`posts/slug/${postSlug}`)
-        .then(res => {
-          setPost(res.post);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-    let canceled = false;
-
-    if (!canceled && status === 'loading') {
-      getPost();
-    }
-
-    return () => (canceled = true);
-  }, [status, postSlug]);
-
-  function deletePost() {
+  function handleDeletePost() {
     if (post && user && user._id === post.user._id) {
-      api(`posts/${post._id}`, 'DELETE')
+      deletePost(post._id)
         .then(res => {
           history.push('/');
         })
@@ -127,7 +106,7 @@ function PostContainer(props) {
     <Post
       post={post}
       isOwner={!!(user && user._id === post.user._id)}
-      deletePost={deletePost}
+      handleDeletePost={handleDeletePost}
     />
   );
 }

@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import api from '../../../api/api';
 import Posts from '../../Posts';
+import { useUserPosts } from '../../../hooks/usePost';
 
 function Homepage({ posts, loading, ...props }) {
   return (
@@ -20,28 +20,7 @@ Homepage.propTypes = {
 };
 
 function HomepageContainer(props) {
-  const [posts, setPosts] = useState(null);
-  const [status, setStatus] = useState('loading');
-
-  function getUserPosts() {
-    api('posts')
-      .then(res => {
-        setPosts(res.posts);
-        setStatus('loaded');
-      })
-      .catch(err => {
-        console.error(err);
-        setStatus('error');
-      });
-  }
-
-  useEffect(() => {
-    let canceled = false;
-    if (!canceled && status === 'loading') {
-      getUserPosts();
-    }
-    return () => (canceled = true);
-  }, [status]);
+  const [posts, status] = useUserPosts();
 
   if (status === 'error') {
     return <div>There is a problem with the server. Try reload the page</div>;

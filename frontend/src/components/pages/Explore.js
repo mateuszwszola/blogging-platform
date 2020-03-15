@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import profileImg from '../../img/undraw_profile.svg';
-import api from '../../api/api';
+import { useAllBlogs } from '../../hooks/useBlog';
 
 function Explore({ blogs, status, ...props }) {
   return (
@@ -60,36 +60,10 @@ Explore.propTypes = {
 };
 
 function ExploreContainer() {
-  const [blogs, setBlogs] = useState(null);
-  const [status, setStatus] = useState('loading');
-
-  useEffect(() => {
-    function getBlogs() {
-      api('blogs/all')
-        .then(res => {
-          console.log(res);
-          setBlogs(res.blogs);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-
-    let canceled = false;
-
-    if (!canceled && status === 'loading') {
-      getBlogs();
-    }
-
-    return () => (canceled = true);
-  }, [status]);
+  const [blogs, status] = useAllBlogs();
 
   return (
-    <>
-      <Explore blogs={blogs} status={status} />
-    </>
+    <Explore blogs={blogs} status={status} />
   );
 }
 

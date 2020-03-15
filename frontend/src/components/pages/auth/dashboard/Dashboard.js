@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ManageBlog from './ManageBlog';
 import CreateBlog from './CreateBlog';
-import api from '../../../../api/api';
+import { useUserBlogs } from '../../../../hooks/useBlog';
 
 function Dashboard({ status, reloadBlogs, blogs, ...props }) {
   let { path } = useRouteMatch();
@@ -44,33 +44,11 @@ Dashboard.propTypes = {
 };
 
 function DashboardContainer(props) {
-  const [blogs, setBlogs] = useState(null);
-  const [status, setStatus] = useState('loading');
+  const [blogs, status, reloadBlogs] = useUserBlogs();
 
-  const reloadBlogs = () => {
-    setStatus('loading');
+  if (status === 'error') {
+    return <div>There is a problem with the server. Try reload the page</div>
   }
-
-  useEffect(() => {
-    function getUserBlogs() {
-      api('blogs')
-        .then(res => {
-          setBlogs(res.blogs);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-
-    let canceled = false;
-
-    if (!canceled && status === 'loading') {
-      getUserBlogs();
-    }
-    return () => (canceled = true);
-  }, [status]);
 
   return <Dashboard status={status} reloadBlogs={reloadBlogs} blogs={blogs} />;
 }

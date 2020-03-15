@@ -1,14 +1,15 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { useParams , useHistory } from 'react-router-dom';
 import AddBlogPost from './AddBlogPost';
-import api from '../../../../api/api';
+import { useBlogBySlugName } from '../../../../hooks/useBlog';
+import { deleteBlog } from '../../../../api/blog';
 
-function ManageBlog({blog, status, deleteBlog, ...props }) {
+function ManageBlog({ blog, status, handleDeleteBlog, ...props }) {
   return (
     <>
       <div className="w-full flex justify-end">
-        <button onClick={deleteBlog} className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600">Delete Blog</button>
+        <button onClick={handleDeleteBlog} className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600">Delete Blog</button>
       </div>
       <AddBlogPost 
         blog={blog}
@@ -21,40 +22,17 @@ function ManageBlog({blog, status, deleteBlog, ...props }) {
 ManageBlog.propTypes = {
   blog: PropTypes.object,
   status: PropTypes.string.isRequired,
-  deleteBlog: PropTypes.func.isRequired,
+  handleDeleteBlog: PropTypes.func.isRequired,
 }
 
 function ManageBlogContainer({ reloadBlogs }) {
   const { blogSlug } = useParams();
-  const [blog, setBlog] = useState(null);
-  const [status, setStatus] = useState('loading');
+  const [blog, status] = useBlogBySlugName(blogSlug);
   let history = useHistory();
 
-  useEffect(() => {
-    function getBlog() {
-      api(`blogs/slug/${blogSlug}`)
-        .then(res => {
-          setBlog(res.blog);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-
-    let canceled = false;
-
-    if (!canceled) {
-      getBlog();
-    }
-
-    return () => (canceled = true);
-  }, [blogSlug]);
-
-  function deleteBlog() {
+  function handleDeleteBlog() {
     if (blog) {
-      api(`blogs/${blog._id}`, 'DELETE')
+      deleteBlog(blog._id)
         .then(res => {
           reloadBlogs();
           history.push('/dashboard');
@@ -66,7 +44,7 @@ function ManageBlogContainer({ reloadBlogs }) {
   }
   
   return <ManageBlog 
-    deleteBlog={deleteBlog}
+    handleDeleteBlog={handleDeleteBlog}
     blog={blog}
     status={status}
    />

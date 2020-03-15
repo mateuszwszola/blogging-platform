@@ -2,8 +2,8 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, InputSubmit } from '../../../layout/Input';
 import { useForm } from '../../../../hooks';
-import api from '../../../../api/api';
 import validate from '../../../../utils/CreateBlogValidationRules';
+import { createBlog } from '../../../../api/blog';
 
 function CreateBlog({ handleChange, handleSubmit, name, description, errors }) {
   return (
@@ -70,13 +70,13 @@ function CreateBlogContainer({ reloadBlogs }) {
       name: '',
       description: ''
     },
-    createBlog,
+    handleCreateBlog,
     validate
   );
 
-  function createBlog() {
+  function handleCreateBlog() {
     const data = { name, description };
-    api('blogs', 'POST', { body: data })
+    createBlog(data)
       .then(res => {
         reloadBlogs();
         handleReset();

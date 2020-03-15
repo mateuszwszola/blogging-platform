@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
-import api from '../../../../api/api';
 import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/AddBlogPostValidationRules';
+import { addBlogPost } from '../../../../api/post';
 
 function AddBlogPost({
   blog,
@@ -116,17 +116,15 @@ function AddBlogPostContainer({ blog, status, ...props }) {
       tags: '',
       body: ''
     },
-    addBlogPost,
+    handleAddBlogPost,
     validate
   );
 
-  function addBlogPost() {
-    const data = { title, body, tags: tags.split(',') };
+  function handleAddBlogPost() {
     if (blog === null) return;
-    api(`posts/${blog._id}`, 'POST', { body: data })
-      .then(res => {
-        handleReset();
-      })
+    const data = { title, body, tags: tags.split(',') };
+    addBlogPost(blog._id, data)
+      .then(handleReset)
       .catch(err => {
         if (err.errors) {
           setErrors(err.errors);

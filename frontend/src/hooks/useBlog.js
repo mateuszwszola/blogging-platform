@@ -24,7 +24,7 @@ function useBlogBySlugName(slug) {
         })
     }
 
-    if (!canceled && status === 'loading') {
+    if (!canceled && slug) {
       getBlog();
     }
 
@@ -34,4 +34,70 @@ function useBlogBySlugName(slug) {
   return [blog, status, reloadBlog];
 }
 
-export { useBlogBySlugName };
+function useAllBlogs() {
+  const [status, setStatus] = useState('loading');
+  const [blogs, setBlogs] = useState(null);
+
+  function reloadBlogs() {
+    setStatus('loading');
+  }
+  
+  useEffect(() => {
+    function getBlogs() {
+      blogAPI.getAllBlogs()
+        .then(res => {
+          setBlogs(res.blogs);
+          setStatus('loaded');
+        })
+        .catch(err => {
+          console.error(err);
+          setStatus('error');
+        })
+    }
+
+    let canceled = false;
+
+    if (!canceled && status === 'loading') {
+      getBlogs();
+    }
+
+    return () => canceled = true;
+  }, [status]);
+
+  return [blogs, status, reloadBlogs];
+}
+
+function useUserBlogs() {
+  const [blogs, setBlogs] = useState(null);
+  const [status, setStatus] = useState('loading');
+
+  function reloadBlogs() {
+    setStatus('loading');
+  }
+  
+  useEffect(() => {
+    function getBlogs() {
+      blogAPI.getUserBlogs()
+        .then(res => {
+          setBlogs(res.blogs);
+          setStatus('loaded');
+        })
+        .catch(err => {
+          console.error(err);
+          setStatus('error');
+        })
+    }
+
+    let canceled = false;
+
+    if (!canceled && status === 'loading') {
+      getBlogs();
+    }
+
+    return () => canceled = true;
+  }, [status]);
+
+  return [blogs, status, reloadBlogs];
+}
+
+export { useBlogBySlugName, useAllBlogs, useUserBlogs };
