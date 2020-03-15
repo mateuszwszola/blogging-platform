@@ -95,11 +95,11 @@ function PostContainer(props) {
   }
 
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <div className="mt-16">Loading...</div>;
   }
 
   if (status === 'error') {
-    return <div>There is a problem with the server. Try reload the page</div>;
+    return <div className="mt-16">There is a problem with the server. Try reload the page</div>;
   }
 
   return (

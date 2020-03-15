@@ -23,7 +23,7 @@ function HomepageContainer(props) {
   const [posts, status] = useUserPosts();
 
   if (status === 'error') {
-    return <div>There is a problem with the server. Try reload the page</div>;
+    return <div className="mt-16">There is a problem with the server. Try reload the page</div>;
   }
 
   return <Homepage posts={posts} loading={status === 'loading'} />;

@@ -62,6 +62,10 @@ Explore.propTypes = {
 function ExploreContainer() {
   const [blogs, status] = useAllBlogs();
 
+  if (status === 'error') {
+    return <div className="mt-16">There is a problem with the server. Try again later!</div>
+  }
+
   return (
     <Explore blogs={blogs} status={status} />
   );

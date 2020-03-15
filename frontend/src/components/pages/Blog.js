@@ -9,8 +9,11 @@ function Blog({ blog, ...props }) {
   const [posts, status] = useBlogPosts(blog._id);
 
   return (
-    <div className="mt-16">
-      <h1>{blog.name}</h1>
+    <div className="md:pt-16 pb-16 max-w-screen-xl mx-auto mt-6">
+      <div className="py-4">
+          <h1 className="text-3xl text-center leading-loose my-2">{blog.name}</h1>
+          {blog.description && <p className="text-center text-lg text-gray-700 uppercase">{blog.description}</p>}
+      </div>
       {status === 'loading' ? (
         <div>Loading...</div>
       ) : (
@@ -29,11 +32,11 @@ function BlogContainer(props) {
   const [blog, status] = useBlogBySlugName(blogSlug);
   
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <div className="mt-16">Loading...</div>;
   }
 
   if (status === 'error') {
-    return <div>There is a problem with the server. Try reload the page</div>;
+    return <div className="mt-16">There is a problem with the server. Try reload the page</div>;
   }
 
   return <Blog blog={blog} />;

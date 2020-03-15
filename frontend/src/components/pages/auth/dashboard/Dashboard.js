@@ -47,7 +47,7 @@ function DashboardContainer(props) {
   const [blogs, status, reloadBlogs] = useUserBlogs();
 
   if (status === 'error') {
-    return <div>There is a problem with the server. Try reload the page</div>
+    return <div className="mt-16">There is a problem with the server. Try reload the page</div>
   }
 
   return <Dashboard status={status} reloadBlogs={reloadBlogs} blogs={blogs} />;

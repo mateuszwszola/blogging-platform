@@ -139,7 +139,7 @@ function AddBlogPostContainer({ blog, status, ...props }) {
   }
 
   if (status === 'loading' || !blog) {
-    return <div>Loading...</div>;
+    return <div className="mt-16">Loading...</div>;
   }
 
   return (
