@@ -8,6 +8,9 @@ const db = require('./config/db');
 const errorMiddlewares = require('./middleware/error');
 
 const app = express();
+
+app.enable('trust proxy'); // for rate limiting by Client IP
+
 // Connect to the db
 db();
 

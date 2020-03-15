@@ -8,14 +8,24 @@ const postValidation = require('../validations/post');
   @desc    Create a post
   @access  Private
  */
-router.post('/:blogId', auth, postValidation.validatePost, postController.createPost);
+router.post(
+  '/:blogId',
+  auth,
+  postValidation.validatePost,
+  postController.createPost
+);
 
 /*
   @route   PUT api/posts/:postId
   @desc    Update a post
   @access  Private
  */
-router.put('/:postId', auth, postValidation.validatePost, postController.updatePost);
+router.put(
+  '/:postId',
+  auth,
+  postValidation.validatePost,
+  postController.updatePost
+);
 
 /*
   @route   DELETE api/posts/:postId
@@ -51,6 +61,5 @@ router.get('/blog/:blogId', postController.getAllBlogPosts);
   @access  Public
  */
 router.get('/slug/:slug', postController.getPostBySlug);
-
 
 module.exports = router;

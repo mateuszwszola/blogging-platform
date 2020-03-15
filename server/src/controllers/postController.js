@@ -28,7 +28,7 @@ exports.createPost = async (req, res, next) => {
       blog: blogId,
       title,
       body,
-      tags
+      tags,
     });
     await post.save();
 
@@ -62,7 +62,7 @@ exports.updatePost = async (req, res, next) => {
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
       { title, body },
-      { new: true }
+      { new: true },
     );
 
     res.json({ post: updatedPost });
@@ -98,7 +98,7 @@ exports.getAllPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({})
       .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug'])
+      .populate('blog', ['name', 'slug', 'description'])
       .sort({ createdAt: -1 });
     res.json({ posts });
   } catch (err) {
@@ -113,7 +113,7 @@ exports.getAllBlogPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({ blog: blogId })
       .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug'])
+      .populate('blog', ['name', 'slug', 'description'])
       .sort({ createdAt: -1 });
     res.json({ posts });
   } catch (err) {
@@ -128,7 +128,7 @@ exports.getPostBySlug = async (req, res, next) => {
   try {
     const post = await Post.findOne({ slug })
       .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug']);
+      .populate('blog', ['name', 'slug', 'description']);
     if (!post) {
       res.status(404);
       throw new Error('Post Not Found');
@@ -145,9 +145,9 @@ exports.getUserPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({ user: req.user.id })
       .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug'])
+      .populate('blog', ['name', 'slug', 'description'])
       .sort({
-        createdAt: -1
+        createdAt: -1,
       });
     res.json({ posts });
   } catch (err) {

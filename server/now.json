@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "name": "blogging-platform-server",
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@now/node-server"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/.*",
+      "dest": "src/index.js"
+    }
+  ],
+  "alias": [
+    "blogging-platform-server"
+  ],
+  "env": {
+    "NODE_ENV": "production",
+    "PORT": "3001",
+    "DB_URL": "@blogging-platform-db",
+    "CORS_ORIGIN": "https://blogging-platform.netlify.com",
+    "JWT_KEY": "@blogging-platform-jwt-key"
+  }
+}
