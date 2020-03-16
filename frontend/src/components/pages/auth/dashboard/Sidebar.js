@@ -6,10 +6,10 @@ function Sidebar({ blogs, loading, ...props }) {
   let { url } = useRouteMatch();
 
   return (
-    <>
+    <div>
       <Link
         to={`${url}/create-blog`}
-        className="block w-4/5 mx-auto my-4 py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
+        className="block w-4/5 max-w-xs mx-auto my-4 py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
       >
         Create Blog
       </Link>
@@ -19,9 +19,12 @@ function Sidebar({ blogs, loading, ...props }) {
         {loading || blogs === null ? (
           <div>Loading...</div>
         ) : (
-          <ul className="h-full mt-8 flex flex-col items-center list-none">
+          <ul className="h-full mt-8 flex flex-row flex-wrap justify-around md:flex-col md:justify-center items-center list-none">
             {blogs.map(blog => (
-              <li key={blog.slug} className="block w-4/5 mx-auto">
+              <li
+                key={blog.slug}
+                className="block w-2/5 md:w-4/5 max-w-xs mx-auto"
+              >
                 <NavLink
                   to={`${url}/${blog.slug}`}
                   className="block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded transition duration-100 text-center"
@@ -34,7 +37,7 @@ function Sidebar({ blogs, loading, ...props }) {
           </ul>
         )}
       </div>
-    </>
+    </div>
   );
 }
 

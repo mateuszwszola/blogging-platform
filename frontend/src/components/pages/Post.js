@@ -20,15 +20,15 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
           </button>
         </div>
       )}
-      <div className="">
-        <div className="py-4 px-2">
+      <div className="px-2 py-4">
+        <div className="">
           <div className="flex flex-col md:flex-row items-center">
-            <p className="text-sm md:text-base text-gray-600 font-semibold tracking-wide">
+            <p className="text-sm sm:text-base text-gray-600 font-semibold tracking-wide">
               <Moment format="YYYY/MM/DD">{post.createdAt}</Moment>
             </p>
             {post.tags && post.tags.length > 0 && (
-              <div>
-                <span className="mx-2">/</span>
+              <div className="py-2 md:py-0">
+                <span className="hidden md:inline-block mx-2">/</span>
                 {post.tags.map(tag => (
                   <span
                     key={tag}
@@ -43,11 +43,11 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
           <h1 className="text-2xl md:text-4xl capitalize text-center md:text-left font-semibold">
             {post.title}
           </h1>
-          <div className="flex flex-col md:flex-row-reverse justify-end mt-2 items-center md:items-start">
+          <div className="flex flex-col md:flex-row mt-2 items-center">
+            <img src={profileImg} alt="profile" className="w-16" />
             <h3 className="text-base text-gray-700 uppercase font-semibold mt-2 md:ml-4">
               {post.user.name}
             </h3>
-            <img src={profileImg} alt="profile" className="w-16" />
           </div>
         </div>
 
@@ -55,11 +55,11 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
           <div className="">
             <img
               src="https://picsum.photos/seed/picsum/1280/720"
-              className="max-w-full block mx-auto"
+              className="max-w-full block mx-auto rounded"
               alt="post-background"
             />
           </div>
-          <div className="mt-2 mx-2 py-4">
+          <div className="mt-2 py-4 px-2">
             <p className="text-xl md:text-2xl leading-loose tracking-wide">
               {post.body}
             </p>
@@ -99,7 +99,11 @@ function PostContainer(props) {
   }
 
   if (status === 'error') {
-    return <div className="mt-16">There is a problem with the server. Try reload the page</div>;
+    return (
+      <div className="mt-16">
+        There is a problem with the server. Try reload the page
+      </div>
+    );
   }
 
   return (

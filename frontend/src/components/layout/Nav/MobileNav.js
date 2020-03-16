@@ -36,16 +36,39 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
           Explore
         </MobileNavLink>
         {auth.data.user ? (
-          <MobileNavLink
-            onClick={() => {
-              setNavOpen(false);
-              auth.logout();
-            }}
-            to="/login"
-            tabIndex={tabIndex}
-          >
-            Logout
-          </MobileNavLink>
+          <>
+            <MobileNavLink
+              onClick={() => setNavOpen(false)}
+              to="/profile"
+              tabIndex={tabIndex}
+            >
+              Profile
+            </MobileNavLink>
+            <MobileNavLink
+              onClick={() => setNavOpen(false)}
+              to="/dashboard"
+              tabIndex={tabIndex}
+            >
+              Dashboard
+            </MobileNavLink>
+            <MobileNavLink
+              onClick={() => setNavOpen(false)}
+              to="/settings"
+              tabIndex={tabIndex}
+            >
+              Settings
+            </MobileNavLink>
+            <MobileNavLink
+              onClick={() => {
+                setNavOpen(false);
+                auth.logout();
+              }}
+              to="/login"
+              tabIndex={tabIndex}
+            >
+              Logout
+            </MobileNavLink>
+          </>
         ) : (
           <MobileNavLink
             onClick={() => setNavOpen(false)}
