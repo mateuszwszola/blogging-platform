@@ -6,6 +6,7 @@ import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/AddBlogPostValidationRules';
 import { addBlogPost } from '../../../../api/post';
 import Loading from '../../../Loading';
+import Alert from '../../../Alert';
 
 function AddBlogPost({
   blog,
@@ -15,10 +16,15 @@ function AddBlogPost({
   handleSubmit,
   handleChange,
   errors,
+  showAlert,
+  closeAlert,
   ...props
 }) {
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
+      {showAlert && (
+        <Alert type="success" message="Added a post" onClose={closeAlert} />
+      )}
       <h1 className="text-3xl text-center leading-loose">
         Add Blog Post To
         <span className="uppercase text-green-600 hover:text-green-700 pl-4">
@@ -58,9 +64,9 @@ function AddBlogPost({
         />
         <div className="py-2">
           {tags.split(',').length > 1 &&
-            tags.split(',').map(tag => (
+            tags.split(',').map((tag, index) => (
               <span
-                key={tag}
+                key={`${tag}-${index}`}
                 className="bg-blue-500 p-2 mt-1 text-blue-100 rounded mr-1"
               >
                 {tag}
@@ -100,7 +106,9 @@ AddBlogPost.propTypes = {
   body: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  showAlert: PropTypes.bool.isRequired,
+  closeAlert: PropTypes.func.isRequired
 };
 
 function AddBlogPostContainer({ blog, status, ...props }) {
@@ -120,12 +128,20 @@ function AddBlogPostContainer({ blog, status, ...props }) {
     handleAddBlogPost,
     validate
   );
+  const [showAlert, setShowAlert] = React.useState(false);
+
+  const closeAlert = () => {
+    setShowAlert(false);
+  };
 
   function handleAddBlogPost() {
     if (blog === null) return;
     const data = { title, body, tags: tags.split(',') };
     addBlogPost(blog._id, data)
-      .then(handleReset)
+      .then(() => {
+        handleReset();
+        setShowAlert(true);
+      })
       .catch(err => {
         if (err.errors) {
           setErrors(err.errors);
@@ -152,6 +168,8 @@ function AddBlogPostContainer({ blog, status, ...props }) {
       handleChange={handleChange}
       handleSubmit={handleSubmit}
       errors={errors}
+      showAlert={showAlert}
+      closeAlert={closeAlert}
     />
   );
 }

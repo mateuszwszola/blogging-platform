@@ -3,15 +3,19 @@ import PropTypes from 'prop-types';
 import styles from './Alert.module.css';
 import { InfoIcon, LikeIcon } from '../../icons';
 
-function Alert({ type, message }) {
+function Alert({ type, message, onClose }) {
   const [showAlert, setShowAlert] = useState(true);
 
   const close = () => {
-    setShowAlert(false);
+    if (onClose) {
+      onClose();
+    } else {
+      setShowAlert(false);
+    }
   };
 
   useEffect(() => {
-    const timeout = setTimeout(close, 2000);
+    const timeout = setTimeout(close, 1000);
     return () => clearTimeout(timeout);
   }, []);
 

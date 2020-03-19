@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon } from '../../icons';
 
-function ForgotPassword(props) {
+function ForgotPassword({ handleSubmit, ...props }) {
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
       <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full">
@@ -15,7 +16,7 @@ function ForgotPassword(props) {
             <path d="M18 2a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4c0-1.1.9-2 2-2h16zm-4.37 9.1L20 16v-2l-5.12-3.9L20 6V4l-10 8L0 4v2l5.12 4.1L0 14v2l6.37-4.9L10 14l3.63-2.9z" />
           </svg>
         </div>
-        <form className="flex flex-col w-full mt-2">
+        <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
           <label className="my-2 sm:my-3 relative">
             <input
               className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
@@ -48,4 +49,16 @@ function ForgotPassword(props) {
   );
 }
 
-export default ForgotPassword;
+ForgotPassword.propTypes = {
+  handleSubmit: PropTypes.func.isRequired
+};
+
+function ForgotPasswordContainer(props) {
+  const handleSubmit = event => {
+    event.preventDefault();
+    console.log('the form has been submitted');
+  };
+  return <ForgotPassword handleSubmit={handleSubmit} />;
+}
+
+export default ForgotPasswordContainer;
