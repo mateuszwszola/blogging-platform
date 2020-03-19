@@ -11,3 +11,5 @@ export { GithubIcon } from './GithubIcon';
 export { CalendarIcon } from './CalendarIcon';
 export { StarIcon } from './StarIcon';
 export { StarFullIcon } from './StarIcon';
+export { LikeIcon } from './LikeIcon';
+export { InfoIcon } from './InfoIcon';

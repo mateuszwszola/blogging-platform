@@ -1,0 +1,64 @@
+.container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+}
+
+.alert {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  min-width: 300px;
+  border-radius: 5px;
+  background-color: white;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+}
+
+.content {
+  position: relative;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.message {
+  font-size: 1.5rem;
+  color: #444;
+}
+
+.button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 2.5rem;
+  height: 2.5rem;
+  opacity: 0.3;
+  transition: opacity 0.2s;
+}
+
+.button:hover {
+  opacity: 1;
+}
+
+.button::before,
+.button::after {
+  content: ' ';
+  position: absolute;
+  top: 0;
+  width: 3px;
+  height: 2.5rem;
+  background-color: #444;
+  border-radius: 2px;
+}
+
+.button::before {
+  transform: rotate(-45deg);
+}
+
+.button::after {
+  transform: rotate(45deg);
+}
