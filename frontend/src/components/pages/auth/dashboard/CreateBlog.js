@@ -4,10 +4,12 @@ import { InputGroup, InputSubmit } from '../../../layout/Input';
 import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/CreateBlogValidationRules';
 import { createBlog } from '../../../../api/blog';
+import Alert from '../../../Alert';
 
 function CreateBlog({ handleChange, handleSubmit, name, description, errors }) {
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
+      <Alert message="Blog created" type="success" />
       <h1 className="text-3xl text-center leading-loose">Create A Blog</h1>
       <form onSubmit={handleSubmit}>
         <InputGroup

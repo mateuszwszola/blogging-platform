@@ -5,6 +5,7 @@ import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
 import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/AddBlogPostValidationRules';
 import { addBlogPost } from '../../../../api/post';
+import Loading from '../../../Loading';
 
 function AddBlogPost({
   blog,
@@ -139,7 +140,7 @@ function AddBlogPostContainer({ blog, status, ...props }) {
   }
 
   if (status === 'loading' || !blog) {
-    return <div className="mt-16">Loading...</div>;
+    return <Loading />;
   }
 
   return (

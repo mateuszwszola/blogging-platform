@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Posts from '../../Posts';
 import { useUserPosts } from '../../../hooks/usePost';
+import Loading from '../../Loading';
 
 function Homepage({ posts, loading, ...props }) {
   return (
@@ -9,7 +10,7 @@ function Homepage({ posts, loading, ...props }) {
       <h1 className="text-3xl text-center leading-loose my-4">
         Your Blog posts
       </h1>
-      {loading ? <div>Loading...</div> : <Posts posts={posts} />}
+      {loading ? <Loading /> : <Posts posts={posts} />}
     </div>
   );
 }
@@ -23,7 +24,11 @@ function HomepageContainer(props) {
   const [posts, status] = useUserPosts();
 
   if (status === 'error') {
-    return <div className="mt-16">There is a problem with the server. Try reload the page</div>;
+    return (
+      <div className="mt-16">
+        There is a problem with the server. Try reload the page
+      </div>
+    );
   }
 
   return <Homepage posts={posts} loading={status === 'loading'} />;

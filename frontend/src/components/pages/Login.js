@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon, LockOpenIcon, KeyIcon } from '../../icons';
@@ -6,6 +6,7 @@ import { useForm } from '../../hooks';
 import { useAuth } from '../../context/AuthContext';
 import validate from '../../utils/LoginFormValidationRules';
 import { InputGroup, InputSubmit } from '../layout/Input';
+import Loading from '../Loading';
 
 function Login({
   email,
@@ -13,11 +14,22 @@ function Login({
   handleChange,
   handleSubmit,
   errors,
+  status,
   ...props
 }) {
+  const loading = status === 'loading';
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
-      <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full">
+      {loading && (
+        <div className="z-20 absolute top-0 bottom-0 left-0 right-0">
+          <Loading />
+        </div>
+      )}
+      <div
+        className={`${
+          loading ? 'opacity-50' : 'opacity-100'
+        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full`}
+      >
         <div className="text-red-500">
           <LockOpenIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
@@ -95,7 +107,8 @@ Login.propTypes = {
   password: PropTypes.string.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired
 };
 
 function LoginContainer() {
@@ -114,9 +127,11 @@ function LoginContainer() {
     validate
   );
   const auth = useAuth();
+  const [status, setStatus] = useState('idle');
 
   async function login() {
     const data = { email, password };
+    setStatus('loading');
     try {
       await auth.login(data);
     } catch (err) {
@@ -128,6 +143,7 @@ function LoginContainer() {
             err.message ||
             'There is a problem with the server. Try again later.'
         });
+        setStatus('error');
       }
     }
   }
@@ -139,6 +155,7 @@ function LoginContainer() {
       email={email}
       password={password}
       errors={errors}
+      status={status}
     />
   );
 }

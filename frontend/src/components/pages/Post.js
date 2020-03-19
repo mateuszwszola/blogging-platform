@@ -6,6 +6,7 @@ import { useUser } from '../../context/UserContext';
 import profileImg from '../../img/undraw_profile.svg';
 import { usePostBySlug } from '../../hooks/usePost';
 import { deletePost } from '../../api/post';
+import Loading from '../Loading';
 
 function Post({ post, isOwner, handleDeletePost, ...props }) {
   return (
@@ -95,7 +96,7 @@ function PostContainer(props) {
   }
 
   if (status === 'loading') {
-    return <div className="mt-16">Loading...</div>;
+    return <Loading />;
   }
 
   if (status === 'error') {

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import profileImg from '../../img/undraw_profile.svg';
 import { useAllBlogs } from '../../hooks/useBlog';
+import Loading from '../Loading';
 
 function Explore({ blogs, status, ...props }) {
   return (
@@ -11,7 +12,7 @@ function Explore({ blogs, status, ...props }) {
 
       <div className="px-4 py-2 mt-6 w-full">
         {status === 'loading' ? (
-          <div>Loading...</div>
+          <Loading />
         ) : (
           <div className="flex flex-wrap justify-center">
             {blogs.map(blog => (

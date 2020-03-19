@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import styles from './Alert.module.css';
 import { InfoIcon, LikeIcon } from '../../icons';
@@ -9,6 +9,11 @@ function Alert({ type, message }) {
   const close = () => {
     setShowAlert(false);
   };
+
+  useEffect(() => {
+    const timeout = setTimeout(close, 2000);
+    return () => clearTimeout(timeout);
+  }, []);
 
   if (showAlert) {
     return (

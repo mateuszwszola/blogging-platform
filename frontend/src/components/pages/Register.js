@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from '../../icons';
@@ -6,6 +6,7 @@ import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../context/AuthContext';
 import validate from '../../utils/RegisterFormValidationRules';
 import { InputGroup, InputSubmit } from '../layout/Input';
+import Loading from '../Loading';
 
 function Register({
   name,
@@ -15,11 +16,22 @@ function Register({
   handleSubmit,
   handleChange,
   errors,
+  status,
   ...props
 }) {
+  const loading = status === 'loading';
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
-      <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full">
+      {loading && (
+        <div className="z-20 absolute top-0 bottom-0 left-0 right-0">
+          <Loading />
+        </div>
+      )}
+      <div
+        className={`${
+          loading ? 'opacity-50' : 'opacity-100'
+        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full`}
+      >
         <div className="text-red-500">
           <LockClosedIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
@@ -111,7 +123,8 @@ Register.propTypes = {
   email: PropTypes.string.isRequired,
   password: PropTypes.string.isRequired,
   password2: PropTypes.string.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  status: PropTypes.string.isRequired
 };
 
 function RegisterContainer() {
@@ -133,9 +146,11 @@ function RegisterContainer() {
   );
 
   const auth = useAuth();
+  const [status, setStatus] = useState('idle');
 
   async function register() {
     const data = { name, email, password };
+    setStatus('loading');
     try {
       await auth.register(data);
     } catch (err) {
@@ -147,6 +162,7 @@ function RegisterContainer() {
             err.message ||
             'There is a problem with the server. Try again later.'
         });
+        setStatus('error');
       }
     }
   }
@@ -160,6 +176,7 @@ function RegisterContainer() {
       password={password}
       password2={password2}
       errors={errors}
+      status={status}
     />
   );
 }
