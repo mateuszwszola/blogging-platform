@@ -18,17 +18,17 @@ function Register({
   ...props
 }) {
   return (
-    <main className="w-full h-screen bg-gray-900 font-sans">
-      <div className="h-full flex flex-col justify-center items-center px-4 max-w-sm mx-auto">
+    <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
+      <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full">
         <div className="text-red-500">
-          <LockClosedIcon className="w-40 h-40 fill-current" />
+          <LockClosedIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
 
         {errors.message && (
           <p className="text-red-500 text-sm">{errors.message}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
+        <form onSubmit={handleSubmit} className="flex flex-col w-full sm:mt-2">
           <InputGroup
             isError={
               !!(
@@ -90,7 +90,7 @@ function Register({
             icon={KeyIcon}
           />
 
-          <div className="w-11/12 mx-auto mt-3 sm:mt-4">
+          <div className="w-11/12 mx-auto mt-2 sm:mt-4">
             <InputSubmit value="Sign Up" />
           </div>
 
@@ -102,7 +102,7 @@ function Register({
           </div>
         </form>
       </div>
-    </main>
+    </div>
   );
 }
 
@@ -143,7 +143,9 @@ function RegisterContainer() {
         setErrors(err.errors);
       } else {
         setErrors({
-          message: err.message || 'There is a problem with the server. Try again later.'
+          message:
+            err.message ||
+            'There is a problem with the server. Try again later.'
         });
       }
     }

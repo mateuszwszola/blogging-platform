@@ -16,17 +16,17 @@ function Login({
   ...props
 }) {
   return (
-    <main className="w-full h-screen bg-gray-900 font-sans">
-      <div className="h-full flex flex-col justify-center items-center px-4 max-w-sm mx-auto">
+    <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
+      <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full">
         <div className="text-red-500">
-          <LockOpenIcon className="w-40 h-40 fill-current" />
+          <LockOpenIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
 
         {errors.message && (
           <p className="text-red-500 text-sm">{errors.message}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
+        <form onSubmit={handleSubmit} className="flex flex-col w-full sm:mt-2">
           <InputGroup
             isError={
               !!(
@@ -86,7 +86,7 @@ function Login({
           </div>
         </form>
       </div>
-    </main>
+    </div>
   );
 }
 

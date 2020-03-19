@@ -27,12 +27,12 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
               <Moment format="YYYY/MM/DD">{post.createdAt}</Moment>
             </p>
             {post.tags && post.tags.length > 0 && (
-              <div className="py-2 md:py-0">
+              <div className="py-2 md:py-0 text-center">
                 <span className="hidden md:inline-block mx-2">/</span>
                 {post.tags.map(tag => (
                   <span
                     key={tag}
-                    className="text-blue-700 uppercase text-sm md:text-base font-semibold mr-2"
+                    className="text-blue-700 uppercase text-sm md:text-base font-semibold"
                   >
                     #{tag}
                   </span>
@@ -60,7 +60,7 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
             />
           </div>
           <div className="mt-2 py-4 px-2">
-            <p className="text-xl md:text-2xl leading-loose tracking-wide">
+            <p className="text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
               {post.body}
             </p>
           </div>
