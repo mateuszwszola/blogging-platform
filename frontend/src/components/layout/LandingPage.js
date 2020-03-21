@@ -16,7 +16,7 @@ const LandingPage = () => (
     >
       <div className="h-full flex flex-col justify-center items-center px-2">
         <div className="my-3 text-center select-none">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl tracking-wide">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl">
             Blogging Platform
           </h1>
           <p className="text-base sm:text-lg md:text-2xl text-gray-400 py-1 font-light">

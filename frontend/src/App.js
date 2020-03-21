@@ -1,5 +1,6 @@
 import React from 'react';
 import { useUser } from './context/UserContext';
+import Loading from './components/Loading';
 
 const loadAuthenticatedApp = () => import('./AuthenticatedApp');
 const AuthenticatedApp = React.lazy(() => import('./AuthenticatedApp'));
@@ -12,7 +13,7 @@ function App() {
     loadAuthenticatedApp();
   }, []);
   return (
-    <React.Suspense fallback={<div>Loading...</div>}>
+    <React.Suspense fallback={<Loading />}>
       {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
     </React.Suspense>
   );

@@ -9,13 +9,10 @@ import {
   Settings
 } from './components/pages/auth';
 import { Blog, Post } from './components/pages';
-import { Header } from './components/layout/Header';
-import { Footer } from './components/layout/Footer';
 
 function AuthenticatedApp() {
   return (
     <Router>
-      <Header />
       <PageContent>
         <Switch>
           <Route exact path="/">
@@ -43,7 +40,6 @@ function AuthenticatedApp() {
             <NotFound />
           </Route>
         </Switch>
-        <Footer />
       </PageContent>
     </Router>
   );

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from '../../icons';
 import { useForm } from '../../hooks/useForm';
 import { useAuth } from '../../context/AuthContext';
@@ -147,12 +147,14 @@ function RegisterContainer() {
 
   const auth = useAuth();
   const [status, setStatus] = useState('idle');
+  const history = useHistory();
 
   async function register() {
     const data = { name, email, password };
     setStatus('loading');
     try {
       await auth.register(data);
+      history.push('/dashboard');
     } catch (err) {
       if (err.errors) {
         setErrors(err.errors);

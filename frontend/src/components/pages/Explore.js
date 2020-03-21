@@ -7,7 +7,7 @@ import Loading from '../Loading';
 
 function Explore({ blogs, status, ...props }) {
   return (
-    <div className="md:pt-16 pb-16 max-w-screen-xl mx-auto mt-6 w-full">
+    <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-xl mx-auto w-full">
       <h1 className="text-3xl text-center leading-loose">Explore Blogs</h1>
 
       <div className="px-4 py-2 mt-6 w-full">

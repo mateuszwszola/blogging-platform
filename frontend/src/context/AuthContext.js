@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAsync } from 'react-async';
 import * as auth from '../api/auth';
+import Loading from '../components/Loading';
+import Alert from '../components/Alert';
 
 const AuthContext = React.createContext();
 
@@ -34,15 +36,11 @@ function AuthProvider(props) {
 
   if (!firstAttemptFinished) {
     if (isPending) {
-      return <div>Loading...</div>;
+      return <Loading />;
     }
     if (isRejected) {
-      return (
-        <div>
-          <p>There was a problem. Try refreshing the page</p>
-          <p>{error.message}</p>
-        </div>
-      );
+      console.error(error.message);
+      return <Alert type="error" message="You Were Logged Out" />;
     }
   }
 

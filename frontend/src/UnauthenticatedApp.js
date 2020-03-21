@@ -11,13 +11,10 @@ import {
   Blog,
   Post
 } from './components/pages';
-import { Header } from './components/layout/Header';
-import { Footer } from './components/layout/Footer';
 
 function UnauthenticatedApp() {
   return (
     <Router>
-      <Header />
       <PageContent>
         <Switch>
           <Route exact path="/">
@@ -34,15 +31,12 @@ function UnauthenticatedApp() {
           </Route>
           <Route path="/explore">
             <Explore />
-            <Footer />
           </Route>
           <Route path="/posts/:postSlug">
             <Post />
-            <Footer />
           </Route>
           <Route path="/blogs/:blogSlug">
             <Blog />
-            <Footer />
           </Route>
           <Route>
             <NotFound />
