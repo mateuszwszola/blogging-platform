@@ -16,11 +16,13 @@ const InputGroup = ({
   return (
     <div className="my-2 sm:my-3">
       <label className="relative">
-        {label && (
-          <span className="text-sm uppercase text-gray-800 font-semibold">
-            {label}
-          </span>
-        )}
+        <span
+          className={`text-sm uppercase text-gray-800 font-semibold${
+            !label ? ' visually-hidden' : ''
+          }`}
+        >
+          {label || name}
+        </span>
         <InputField
           isError={isError}
           value={value}

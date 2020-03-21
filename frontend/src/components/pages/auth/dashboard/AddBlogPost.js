@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
@@ -128,7 +128,7 @@ function AddBlogPostContainer({ blog, status, ...props }) {
     handleAddBlogPost,
     validate
   );
-  const [showAlert, setShowAlert] = React.useState(false);
+  const [showAlert, setShowAlert] = useState(false);
 
   const closeAlert = () => {
     setShowAlert(false);

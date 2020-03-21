@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import styles from './Alert.module.css';
 import { InfoIcon, LikeIcon } from '../../icons';
 
-function Alert({ type, message, onClose }) {
+function Alert({ type, message, onClose, timeout = 1500 }) {
   const [showAlert, setShowAlert] = useState(true);
 
   const close = () => {
@@ -15,8 +15,8 @@ function Alert({ type, message, onClose }) {
   };
 
   useEffect(() => {
-    const timeout = setTimeout(close, 1000);
-    return () => clearTimeout(timeout);
+    const timeoutID = setTimeout(close, timeout);
+    return () => clearTimeout(timeoutID);
   }, []);
 
   if (showAlert) {

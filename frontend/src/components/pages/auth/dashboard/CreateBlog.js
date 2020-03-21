@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, InputSubmit } from '../../../layout/Input';
 import { useForm } from '../../../../hooks';
@@ -6,10 +6,20 @@ import validate from '../../../../utils/CreateBlogValidationRules';
 import { createBlog } from '../../../../api/blog';
 import Alert from '../../../Alert';
 
-function CreateBlog({ handleChange, handleSubmit, name, description, errors }) {
+function CreateBlog({
+  handleChange,
+  handleSubmit,
+  name,
+  description,
+  errors,
+  displayMessage,
+  onCloseMessage
+}) {
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
-      <Alert message="Blog created" type="success" />
+      {displayMessage && (
+        <Alert message="Blog created" type="success" onClose={onCloseMessage} />
+      )}
       <h1 className="text-3xl text-center leading-loose">Create A Blog</h1>
       <form onSubmit={handleSubmit}>
         <InputGroup
@@ -56,7 +66,9 @@ CreateBlog.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  displayMessage: PropTypes.bool.isRequired,
+  onCloseMessage: PropTypes.func.isRequired
 };
 
 function CreateBlogContainer({ reloadBlogs }) {
@@ -76,12 +88,16 @@ function CreateBlogContainer({ reloadBlogs }) {
     validate
   );
 
+  const [displayMessage, setDisplayMessage] = useState(false);
+  const onCloseMessage = () => setDisplayMessage(false);
+
   function handleCreateBlog() {
     const data = { name, description };
     createBlog(data)
       .then(res => {
         reloadBlogs();
         handleReset();
+        setDisplayMessage(true);
       })
       .catch(err => {
         if (err.errors) {
@@ -103,6 +119,8 @@ function CreateBlogContainer({ reloadBlogs }) {
       name={name}
       description={description}
       errors={errors}
+      displayMessage={displayMessage}
+      onCloseMessage={onCloseMessage}
     />
   );
 }
