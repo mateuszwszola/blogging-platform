@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
@@ -6,7 +6,7 @@ import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/AddBlogPostValidationRules';
 import { addBlogPost } from '../../../../api/post';
 import Loading from '../../../Loading';
-import Alert from '../../../Alert';
+import { useAlert } from '../../../../context/AlertContext';
 
 function AddBlogPost({
   blog,
@@ -22,9 +22,6 @@ function AddBlogPost({
 }) {
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
-      {showAlert && (
-        <Alert type="success" message="Added a post" onClose={closeAlert} />
-      )}
       <h1 className="text-3xl text-center leading-loose">
         Add Blog Post To
         <span className="uppercase text-green-600 hover:text-green-700 pl-4">
@@ -106,9 +103,7 @@ AddBlogPost.propTypes = {
   body: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
-  showAlert: PropTypes.bool.isRequired,
-  closeAlert: PropTypes.func.isRequired
+  errors: PropTypes.object.isRequired
 };
 
 function AddBlogPostContainer({ blog, status, ...props }) {
@@ -128,11 +123,8 @@ function AddBlogPostContainer({ blog, status, ...props }) {
     handleAddBlogPost,
     validate
   );
-  const [showAlert, setShowAlert] = useState(false);
 
-  const closeAlert = () => {
-    setShowAlert(false);
-  };
+  const { setAlert } = useAlert();
 
   function handleAddBlogPost() {
     if (blog === null) return;
@@ -140,7 +132,7 @@ function AddBlogPostContainer({ blog, status, ...props }) {
     addBlogPost(blog._id, data)
       .then(() => {
         handleReset();
-        setShowAlert(true);
+        setAlert('success', 'Blog Post Added');
       })
       .catch(err => {
         if (err.errors) {
@@ -168,8 +160,6 @@ function AddBlogPostContainer({ blog, status, ...props }) {
       handleChange={handleChange}
       handleSubmit={handleSubmit}
       errors={errors}
-      showAlert={showAlert}
-      closeAlert={closeAlert}
     />
   );
 }
