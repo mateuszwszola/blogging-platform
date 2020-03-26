@@ -5,12 +5,28 @@ import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/CreateBlogValidationRules';
 import { createBlog } from '../../../../api/blog';
 import { useAlert } from '../../../../context/AlertContext';
+import Loading from '../../../Loading';
 
-function CreateBlog({ handleChange, handleSubmit, name, description, errors }) {
+function CreateBlog({
+  handleChange,
+  handleSubmit,
+  name,
+  description,
+  errors,
+  loading
+}) {
   return (
-    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
+    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
+      {loading && (
+        <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
+          <Loading />
+        </div>
+      )}
       <h1 className="text-3xl text-center leading-loose">Create A Blog</h1>
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+      >
         <InputGroup
           isError={
             !!(
@@ -55,7 +71,8 @@ CreateBlog.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
 function CreateBlogContainer({ reloadBlogs }) {
@@ -74,18 +91,22 @@ function CreateBlogContainer({ reloadBlogs }) {
     handleCreateBlog,
     validate
   );
+  const [status, setStatus] = React.useState('idle');
 
   const { setAlert } = useAlert();
 
   function handleCreateBlog() {
     const data = { name, description };
+    setStatus('creating');
     createBlog(data)
       .then(res => {
         handleReset();
+        setStatus('created');
         setAlert('success', 'Blog Created');
         reloadBlogs();
       })
       .catch(err => {
+        setStatus('error');
         if (err.errors) {
           setErrors(err.errors);
         } else {
@@ -105,6 +126,7 @@ function CreateBlogContainer({ reloadBlogs }) {
       name={name}
       description={description}
       errors={errors}
+      loading={status === 'creating'}
     />
   );
 }

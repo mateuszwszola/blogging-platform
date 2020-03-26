@@ -12,7 +12,9 @@ function Blog({ blog, ...props }) {
   return (
     <div className="md:pt-16 pb-16 max-w-screen-xl mx-auto mt-6">
       <div className="py-4">
-        <h1 className="text-3xl text-center leading-loose my-2">{blog.name}</h1>
+        <h1 className="text-3xl xl:text-4xl text-center leading-loose my-2">
+          {blog.name}
+        </h1>
         {blog.description && (
           <p className="text-center text-lg text-gray-700 uppercase">
             {blog.description}

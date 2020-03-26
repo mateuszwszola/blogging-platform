@@ -35,6 +35,7 @@ const DesktopNav = () => {
         <div>
           <button
             onClick={toggleIsOpen}
+            aria-label="Toggle profile menu"
             className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-outline"
           >
             <img

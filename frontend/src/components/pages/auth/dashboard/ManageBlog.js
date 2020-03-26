@@ -1,29 +1,31 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { useParams , useHistory } from 'react-router-dom';
+import React from 'react';
+import PropTypes from 'prop-types';
+import { useParams, useHistory } from 'react-router-dom';
 import AddBlogPost from './AddBlogPost';
 import { useBlogBySlugName } from '../../../../hooks/useBlog';
 import { deleteBlog } from '../../../../api/blog';
+import Loading from '../../../Loading';
 
-function ManageBlog({ blog, status, handleDeleteBlog, ...props }) {
+function ManageBlog({ blog, handleDeleteBlog, ...props }) {
   return (
     <>
       <div className="w-full flex justify-end">
-        <button onClick={handleDeleteBlog} className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600">Delete Blog</button>
+        <button
+          onClick={handleDeleteBlog}
+          className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600"
+        >
+          Delete Blog
+        </button>
       </div>
-      <AddBlogPost 
-        blog={blog}
-        status={status}
-      />
+      <AddBlogPost blog={blog} />
     </>
-  )
+  );
 }
 
 ManageBlog.propTypes = {
   blog: PropTypes.object,
-  status: PropTypes.string.isRequired,
-  handleDeleteBlog: PropTypes.func.isRequired,
-}
+  handleDeleteBlog: PropTypes.func.isRequired
+};
 
 function ManageBlogContainer({ reloadBlogs }) {
   const { blogSlug } = useParams();
@@ -39,20 +41,19 @@ function ManageBlogContainer({ reloadBlogs }) {
         })
         .catch(err => {
           console.error(err);
-        })
+        });
     }
   }
-  
-  return <ManageBlog 
-    handleDeleteBlog={handleDeleteBlog}
-    blog={blog}
-    status={status}
-   />
+
+  if (status === 'loading' || !blog) {
+    return <Loading />;
+  }
+
+  return <ManageBlog handleDeleteBlog={handleDeleteBlog} blog={blog} />;
 }
 
 ManageBlogContainer.propTypes = {
-  reloadBlogs: PropTypes.func.isRequired,
-}
+  reloadBlogs: PropTypes.func.isRequired
+};
 
-export default ManageBlogContainer
-
+export default ManageBlogContainer;

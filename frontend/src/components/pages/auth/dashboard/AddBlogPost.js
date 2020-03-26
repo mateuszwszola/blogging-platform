@@ -5,8 +5,8 @@ import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
 import { useForm } from '../../../../hooks';
 import validate from '../../../../utils/AddBlogPostValidationRules';
 import { addBlogPost } from '../../../../api/post';
-import Loading from '../../../Loading';
 import { useAlert } from '../../../../context/AlertContext';
+import Loading from '../../../Loading';
 
 function AddBlogPost({
   blog,
@@ -16,12 +16,16 @@ function AddBlogPost({
   handleSubmit,
   handleChange,
   errors,
-  showAlert,
-  closeAlert,
+  loading,
   ...props
 }) {
   return (
-    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6">
+    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
+      {loading && (
+        <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
+          <Loading />
+        </div>
+      )}
       <h1 className="text-3xl text-center leading-loose">
         Add Blog Post To
         <span className="uppercase text-green-600 hover:text-green-700 pl-4">
@@ -103,10 +107,11 @@ AddBlogPost.propTypes = {
   body: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired
+  errors: PropTypes.object.isRequired,
+  loading: PropTypes.bool.isRequired
 };
 
-function AddBlogPostContainer({ blog, status, ...props }) {
+function AddBlogPostContainer({ blog, ...props }) {
   const {
     handleChange,
     handleSubmit,
@@ -125,16 +130,20 @@ function AddBlogPostContainer({ blog, status, ...props }) {
   );
 
   const { setAlert } = useAlert();
+  const [status, setStatus] = React.useState('idle');
 
   function handleAddBlogPost() {
     if (blog === null) return;
     const data = { title, body, tags: tags.split(',') };
+    setStatus('adding');
     addBlogPost(blog._id, data)
       .then(() => {
         handleReset();
+        setStatus('added');
         setAlert('success', 'Blog Post Added');
       })
       .catch(err => {
+        setStatus('error');
         if (err.errors) {
           setErrors(err.errors);
         } else {
@@ -147,10 +156,6 @@ function AddBlogPostContainer({ blog, status, ...props }) {
       });
   }
 
-  if (status === 'loading' || !blog) {
-    return <Loading />;
-  }
-
   return (
     <AddBlogPost
       blog={blog}
@@ -160,13 +165,13 @@ function AddBlogPostContainer({ blog, status, ...props }) {
       handleChange={handleChange}
       handleSubmit={handleSubmit}
       errors={errors}
+      loading={status === 'adding'}
     />
   );
 }
 
 AddBlogPostContainer.propTypes = {
-  blog: PropTypes.object,
-  status: PropTypes.string.isRequired
+  blog: PropTypes.object
 };
 
 export default AddBlogPostContainer;

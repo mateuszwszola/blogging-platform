@@ -21,14 +21,14 @@ function Login({
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
       {loading && (
-        <div className="z-20 absolute top-0 bottom-0 left-0 right-0">
+        <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
           <Loading />
         </div>
       )}
       <div
         className={`${
           loading ? 'opacity-50' : 'opacity-100'
-        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full`}
+        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full z-20`}
       >
         <div className="text-red-500">
           <LockOpenIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
