@@ -1,26 +1,18 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import MobileNavLink from './MobileNavLink';
-import { useAuth } from '../../../context/AuthContext';
+import { useUser } from '../../../context/UserContext';
 
 const MobileNav = ({ navOpen, setNavOpen }) => {
   const isHidden = navOpen ? true : false;
   const tabIndex = isHidden ? 0 : 1;
-  const auth = useAuth();
-  const history = useHistory();
+  const user = useUser();
 
   const navClassnames = clsx(
     'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full text-gray-400 transform transition-all duration-300 ease-in-out md:max-w-sm z-40',
     navOpen ? 'translate-x-0' : '-translate-x-full'
   );
-
-  const handleLogout = async () => {
-    setNavOpen(false);
-    await auth.logout();
-    history.push('/');
-  };
 
   return (
     <nav
@@ -43,15 +35,8 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
         >
           Explore
         </MobileNavLink>
-        {auth.data.user ? (
+        {user ? (
           <>
-            <MobileNavLink
-              onClick={() => setNavOpen(false)}
-              to="/profile"
-              tabIndex={tabIndex}
-            >
-              Profile
-            </MobileNavLink>
             <MobileNavLink
               onClick={() => setNavOpen(false)}
               to="/dashboard"
@@ -61,17 +46,10 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
             </MobileNavLink>
             <MobileNavLink
               onClick={() => setNavOpen(false)}
-              to="/settings"
+              to="/profile"
               tabIndex={tabIndex}
             >
-              Settings
-            </MobileNavLink>
-            <MobileNavLink
-              onClick={handleLogout}
-              to="/login"
-              tabIndex={tabIndex}
-            >
-              Logout
+              Profile
             </MobileNavLink>
           </>
         ) : (
