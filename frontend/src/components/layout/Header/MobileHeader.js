@@ -9,7 +9,7 @@ const MobileHeader = props => {
 
   return (
     <header>
-      <div className="fixed left-0 m-4 z-20">
+      <div className="fixed left-0 m-4 z-50">
         <button
           className="p-2 focus:outline-none"
           onClick={() => setNavOpen(!navOpen)}

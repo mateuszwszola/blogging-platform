@@ -12,7 +12,7 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
   const history = useHistory();
 
   const navClassnames = clsx(
-    'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full text-gray-400 transform transition-all duration-300 ease-in-out md:max-w-sm z-10',
+    'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full text-gray-400 transform transition-all duration-300 ease-in-out md:max-w-sm z-40',
     navOpen ? 'translate-x-0' : '-translate-x-full'
   );
 
@@ -28,7 +28,7 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
       className={navClassnames}
       style={{ backgroundColor: 'rgba(45, 55, 72, 0.95)' }}
     >
-      <div className="w-full flex flex-col items-center justify-around h-full py-64">
+      <div className="w-full flex flex-col items-center justify-around h-full">
         <MobileNavLink
           onClick={() => setNavOpen(false)}
           to="/"

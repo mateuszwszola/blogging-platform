@@ -61,7 +61,7 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
             />
           </div>
           <div className="mt-2 py-4 px-2">
-            <p className="text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
+            <p className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
               {post.body}
             </p>
           </div>

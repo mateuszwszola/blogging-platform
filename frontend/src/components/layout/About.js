@@ -10,10 +10,15 @@ const About = () => (
       <div className="flex flex-col items-center md:flex-row md:justify-between py-12 md:py-16">
         <img className="max-w-sm w-4/5" src={bloggingImg} alt="blogging" />
         <div className="text-center mt-4 md:mt-0 leading-loose md:mx-6 md:max-w-lg md:text-lg">
-          Blogging about what you just learned, your ideas and things you are
-          interested in it's a good way to improve yourself. Blogging Platform
-          is a place to help you create space where you can share your
-          creativity
+          <p>
+            Writing about what you just learned, your ideas and things you are
+            interested in - is a good way to improve yourself, and spread the
+            knowledge.
+          </p>
+          <p>
+            Blogging Platform is a place to help you create a space where you
+            can be creative
+          </p>
         </div>
       </div>
       <div className="flex flex-col items-center md:flex-row-reverse md:justify-between py-12 md:py-16">

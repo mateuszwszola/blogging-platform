@@ -30,9 +30,9 @@ function Register({
       <div
         className={`${
           loading ? 'opacity-50' : 'opacity-100'
-        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full z-20`}
+        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full`}
       >
-        <div className="text-red-500">
+        <div className="text-red-500 z-20">
           <LockClosedIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
 

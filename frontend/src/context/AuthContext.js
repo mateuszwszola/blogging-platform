@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useAsync } from 'react-async';
 import * as auth from '../api/auth';
 import Loading from '../components/Loading';
-import { useAlert } from './AlertContext';
 
 const AuthContext = React.createContext();
 
@@ -28,8 +27,6 @@ function AuthProvider(props) {
     promiseFn: getUserData
   });
 
-  const { setAlert } = useAlert();
-
   React.useLayoutEffect(() => {
     if (isSeattled) {
       setFirstAttemptFinished(true);
@@ -42,7 +39,7 @@ function AuthProvider(props) {
     }
     if (isRejected) {
       console.error(error.message);
-      setAlert('error', 'You were logged out');
+      return <div>You were logged out. Try refresh the page</div>;
     }
   }
 
