@@ -20,17 +20,13 @@ function Login({
   const loading = status === 'loading';
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
-      {loading && (
-        <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
-          <Loading />
-        </div>
-      )}
-      <div
-        className={`${
-          loading ? 'opacity-50' : 'opacity-100'
-        } flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full`}
-      >
-        <div className="text-red-500 z-20">
+      <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full relative">
+        {loading && (
+          <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
+            <Loading />
+          </div>
+        )}
+        <div className={`${loading ? 'opacity-50 ' : ''}text-red-500 z-20`}>
           <LockOpenIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
 
@@ -38,7 +34,12 @@ function Login({
           <p className="text-red-500 text-sm">{errors.message}</p>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col w-full sm:mt-2">
+        <form
+          onSubmit={handleSubmit}
+          className={`${
+            loading ? 'opacity-50 ' : ''
+          }flex flex-col w-full sm:mt-2"`}
+        >
           <InputGroup
             isError={
               !!(
