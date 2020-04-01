@@ -11,40 +11,48 @@ const requiredString = {
 const specifiedStringLength = (field, minlength, maxlength) => {
   const obj = {};
   if (minlength) {
-    obj.minlength = [minlength, `${field} must have min ${minlength} characters`];
+    obj.minlength = [
+      minlength,
+      `${field} must have min ${minlength} characters`,
+    ];
   }
   if (maxlength) {
-    obj.maxlength = [maxlength, `${field} must have max ${maxlength} characters`];
+    obj.maxlength = [
+      maxlength,
+      `${field} must have max ${maxlength} characters`,
+    ];
   }
   return obj;
 };
 
-const UserSchema = new mongoose.Schema({
-  name: {
-    ...requiredString,
-    ...specifiedStringLength('name', 2, 20),
-    trim: true,
-  },
-  email: {
-    ...requiredString,
-    unique: true,
-    lowercase: true,
-    validate: (value) => {
-      if (!validator.isEmail(value)) {
-        throw new Error('Invalid Email Address');
-      }
+const UserSchema = new mongoose.Schema(
+  {
+    name: {
+      ...requiredString,
+      ...specifiedStringLength('name', 2, 20),
+      trim: true,
+    },
+    email: {
+      ...requiredString,
+      unique: true,
+      lowercase: true,
+      validate: (value) => {
+        if (!validator.isEmail(value)) {
+          throw new Error('Invalid Email Address');
+        }
+      },
+    },
+    password: {
+      ...requiredString,
+      ...specifiedStringLength('password', 7),
+    },
+    bio: {
+      type: String,
+      ...specifiedStringLength('bio', 2, 60),
     },
   },
-  password: {
-    ...requiredString,
-    ...specifiedStringLength('password', 7),
-  },
-  bio: {
-    type: String,
-    ...specifiedStringLength('bio', 2, 60),
-  },
-},
-{ timestamps: true });
+  { timestamps: true }
+);
 
 UserSchema.pre('save', async function (next) {
   const user = this;

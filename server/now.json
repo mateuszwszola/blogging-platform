@@ -20,7 +20,7 @@
     "NODE_ENV": "production",
     "PORT": "3001",
     "DB_URL": "@blogging-platform-db",
-    "CORS_ORIGIN": "https://blogging-platform.netlify.com",
+    "CORS_ORIGIN": "https://blogging-platform.netlify.app",
     "JWT_KEY": "@blogging-platform-jwt-key"
   }
 }
