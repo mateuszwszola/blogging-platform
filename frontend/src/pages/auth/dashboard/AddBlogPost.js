@@ -1,12 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { InputGroup, InputSubmit, TextareaGroup } from '../../../layout/Input';
-import { useForm } from '../../../../hooks';
-import validate from '../../../../utils/AddBlogPostValidationRules';
-import { addBlogPost } from '../../../../api/post';
-import { useAlert } from '../../../../context/AlertContext';
-import Loading from '../../../Loading';
+import {
+  InputGroup,
+  InputSubmit,
+  TextareaGroup,
+} from '../../../components/layout/Input';
+import { useForm } from '../../../hooks';
+import validate from '../../../utils/AddBlogPostValidationRules';
+import { addBlogPost } from '../../../api/post';
+import { useAlert } from '../../../context/AlertContext';
+import Loading from '../../../components/Loading';
 
 function AddBlogPost({
   blog,
@@ -108,7 +112,7 @@ AddBlogPost.propTypes = {
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
 };
 
 function AddBlogPostContainer({ blog, ...props }) {
@@ -118,12 +122,12 @@ function AddBlogPostContainer({ blog, ...props }) {
     handleReset,
     values: { title, tags, body },
     errors,
-    setErrors
+    setErrors,
   } = useForm(
     {
       title: '',
       tags: '',
-      body: ''
+      body: '',
     },
     handleAddBlogPost,
     validate
@@ -142,7 +146,7 @@ function AddBlogPostContainer({ blog, ...props }) {
         setStatus('added');
         setAlert('success', 'Blog Post Added');
       })
-      .catch(err => {
+      .catch((err) => {
         setStatus('error');
         if (err.errors) {
           setErrors(err.errors);
@@ -150,7 +154,7 @@ function AddBlogPostContainer({ blog, ...props }) {
           setErrors({
             message:
               err.message ||
-              'There is a problem with the server. Try again later.'
+              'There is a problem with the server. Try again later.',
           });
         }
       });
@@ -171,7 +175,7 @@ function AddBlogPostContainer({ blog, ...props }) {
 }
 
 AddBlogPostContainer.propTypes = {
-  blog: PropTypes.object
+  blog: PropTypes.object,
 };
 
 export default AddBlogPostContainer;

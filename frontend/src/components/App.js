@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { useUser } from './context/UserContext';
-import Loading from './components/Loading';
+import { useUser } from '../context/UserContext';
+import Loading from './Loading';
 
 const loadAuthenticatedApp = () => import('./AuthenticatedApp');
 const AuthenticatedApp = React.lazy(() => import('./AuthenticatedApp'));

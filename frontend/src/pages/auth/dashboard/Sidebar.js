@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, NavLink, useRouteMatch } from 'react-router-dom';
-import Loading from '../../../Loading';
+import Loading from '../../../components/Loading';
 
 function Sidebar({ blogs, loading, ...props }) {
   let { url } = useRouteMatch();
@@ -21,7 +21,7 @@ function Sidebar({ blogs, loading, ...props }) {
           <Loading />
         ) : (
           <ul className="h-full mt-8 flex flex-row flex-wrap justify-around md:flex-col md:justify-center items-center list-none">
-            {blogs.map(blog => (
+            {blogs.map((blog) => (
               <li
                 key={blog.slug}
                 className="block w-2/5 md:w-4/5 max-w-xs mx-auto"
@@ -44,7 +44,7 @@ function Sidebar({ blogs, loading, ...props }) {
 
 Sidebar.propTypes = {
   blogs: PropTypes.array,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

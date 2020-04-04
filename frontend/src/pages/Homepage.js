@@ -1,6 +1,6 @@
 import React from 'react';
-import LandingPage from '../layout/LandingPage';
-import About from '../layout/About';
+import LandingPage from '../components/layout/LandingPage';
+import About from '../components/layout/About';
 
 function Homepage() {
   return (

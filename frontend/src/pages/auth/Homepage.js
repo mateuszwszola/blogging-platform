@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Posts from '../../Posts';
-import { useUserPosts } from '../../../hooks/usePost';
-import Loading from '../../Loading';
+import { useUserPosts } from '../../hooks/usePost';
+import Posts from '../../components/Posts';
+import Loading from '../../components/Loading';
 
 function Homepage({ posts, loading, ...props }) {
   return (
@@ -17,7 +17,7 @@ function Homepage({ posts, loading, ...props }) {
 
 Homepage.propTypes = {
   posts: PropTypes.array,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
 };
 
 function HomepageContainer(props) {

@@ -4,7 +4,7 @@ import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ManageBlog from './ManageBlog';
 import CreateBlog from './CreateBlog';
-import { useUserBlogs } from '../../../../hooks/useBlog';
+import { useUserBlogs } from '../../../hooks/useBlog';
 
 function Dashboard({ status, reloadBlogs, blogs, ...props }) {
   let { path } = useRouteMatch();
@@ -37,7 +37,7 @@ function Dashboard({ status, reloadBlogs, blogs, ...props }) {
 Dashboard.propTypes = {
   status: PropTypes.string.isRequired,
   blogs: PropTypes.array,
-  reloadBlogs: PropTypes.func.isRequired
+  reloadBlogs: PropTypes.func.isRequired,
 };
 
 function DashboardContainer(props) {

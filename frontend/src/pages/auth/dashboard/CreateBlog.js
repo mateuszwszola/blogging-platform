@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { InputGroup, InputSubmit } from '../../../layout/Input';
-import { useForm } from '../../../../hooks';
-import validate from '../../../../utils/CreateBlogValidationRules';
-import { createBlog } from '../../../../api/blog';
-import { useAlert } from '../../../../context/AlertContext';
-import Loading from '../../../Loading';
+import { InputGroup, InputSubmit } from '../../../components/layout/Input';
+import { useForm } from '../../../hooks';
+import validate from '../../../utils/CreateBlogValidationRules';
+import { createBlog } from '../../../api/blog';
+import { useAlert } from '../../../context/AlertContext';
+import Loading from '../../../components/Loading';
 
 function CreateBlog({
   handleChange,
@@ -13,7 +13,7 @@ function CreateBlog({
   name,
   description,
   errors,
-  loading
+  loading,
 }) {
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
@@ -72,7 +72,7 @@ CreateBlog.propTypes = {
   name: PropTypes.string.isRequired,
   description: PropTypes.string.isRequired,
   errors: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired
+  loading: PropTypes.bool.isRequired,
 };
 
 function CreateBlogContainer({ reloadBlogs }) {
@@ -82,11 +82,11 @@ function CreateBlogContainer({ reloadBlogs }) {
     handleReset,
     values: { name, description },
     errors,
-    setErrors
+    setErrors,
   } = useForm(
     {
       name: '',
-      description: ''
+      description: '',
     },
     handleCreateBlog,
     validate
@@ -99,13 +99,13 @@ function CreateBlogContainer({ reloadBlogs }) {
     const data = { name, description };
     setStatus('creating');
     createBlog(data)
-      .then(res => {
+      .then((res) => {
         handleReset();
         setStatus('created');
         setAlert('success', 'Blog Created');
         reloadBlogs();
       })
-      .catch(err => {
+      .catch((err) => {
         setStatus('error');
         if (err.errors) {
           setErrors(err.errors);
@@ -113,7 +113,7 @@ function CreateBlogContainer({ reloadBlogs }) {
           setErrors({
             message:
               err.message ||
-              'There is a problem with the server. Try again later'
+              'There is a problem with the server. Try again later',
           });
         }
       });
@@ -132,7 +132,7 @@ function CreateBlogContainer({ reloadBlogs }) {
 }
 
 CreateBlogContainer.propTypes = {
-  reloadBlogs: PropTypes.func.isRequired
+  reloadBlogs: PropTypes.func.isRequired,
 };
 
 export default CreateBlogContainer;

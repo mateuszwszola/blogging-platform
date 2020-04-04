@@ -1,11 +1,11 @@
 import React from 'react';
+import clsx from 'clsx';
 import { useLocation } from 'react-router-dom';
 import { DesktopNav } from '../Nav';
 import { useUser } from '../../../context/UserContext';
 import { useScrolledAfterVHeight } from '../../../hooks';
-import clsx from 'clsx';
 
-const DesktopHeader = props => {
+const DesktopHeader = (props) => {
   const { pathname } = useLocation();
   const user = useUser();
   const headerOffset = 75;

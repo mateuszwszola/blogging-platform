@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import profileImg from '../../img/undraw_profile.svg';
-import { useAllBlogs } from '../../hooks/useBlog';
-import Loading from '../Loading';
+import profileImg from '../img/undraw_profile.svg';
+import { useAllBlogs } from '../hooks/useBlog';
+import Loading from '../components/Loading';
 
 function Explore({ blogs, status, ...props }) {
   return (
@@ -15,7 +15,7 @@ function Explore({ blogs, status, ...props }) {
           <Loading />
         ) : (
           <div className="flex flex-wrap justify-center">
-            {blogs.map(blog => (
+            {blogs.map((blog) => (
               <div
                 key={blog._id}
                 className="w-full max-w-xs m-2 bg-gray-200 shadow py-4 px-2 rounded flex flex-col justify-between"
@@ -55,7 +55,7 @@ function Explore({ blogs, status, ...props }) {
 
 Explore.propTypes = {
   blogs: PropTypes.array,
-  status: PropTypes.string.isRequired
+  status: PropTypes.string.isRequired,
 };
 
 function ExploreContainer() {

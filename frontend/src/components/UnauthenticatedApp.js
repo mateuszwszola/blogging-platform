@@ -1,6 +1,6 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import PageContent from './components/layout/PageContent';
+import PageContent from './layout/PageContent';
 import {
   Homepage,
   Login,
@@ -10,7 +10,7 @@ import {
   Explore,
   Blog,
   Post,
-} from './components/pages';
+} from '../pages';
 
 function UnauthenticatedApp() {
   return (

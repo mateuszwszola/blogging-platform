@@ -29,7 +29,7 @@ function useBlogBySlugName(slug) {
         });
     }
 
-    if (status === 'loading' && slug) {
+    if (slug) {
       getBlog();
     }
 

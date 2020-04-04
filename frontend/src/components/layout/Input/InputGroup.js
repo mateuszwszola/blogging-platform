@@ -18,7 +18,7 @@ const InputGroup = ({
       <label className="relative">
         <span
           className={`text-sm uppercase text-gray-800 font-semibold${
-            !label ? ' visually-hidden' : ''
+            !label ? ' sr-only' : ''
           }`}
         >
           {label || name}

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useHistory, Link } from 'react-router-dom';
-import { useAuth } from '../../../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 
 function Profile({ user, handleLogout }) {
   return (
@@ -29,7 +29,7 @@ function Profile({ user, handleLogout }) {
 
 Profile.propTypes = {
   user: PropTypes.object.isRequired,
-  handleLogout: PropTypes.func.isRequired
+  handleLogout: PropTypes.func.isRequired,
 };
 
 function ProfileContainer(props) {
