@@ -25,7 +25,7 @@ const InputField = ({
 );
 
 InputField.defaultProps = {
-  type: 'text'
+  type: 'text',
 };
 
 InputField.propTypes = {
@@ -35,7 +35,7 @@ InputField.propTypes = {
   type: PropTypes.string,
   name: PropTypes.string,
   placeholder: PropTypes.string,
-  classnames: PropTypes.string
+  classnames: PropTypes.string,
 };
 
 export default InputField;

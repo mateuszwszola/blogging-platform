@@ -5,6 +5,7 @@ import { useBlogBySlugName } from '../../hooks/useBlog';
 import { useBlogPosts } from '../../hooks/usePost';
 import Posts from '../Posts';
 import Loading from '../Loading';
+import DisplayError from '../DisplayError';
 
 function Blog({ blog, ...props }) {
   const [posts, status] = useBlogPosts(blog._id);
@@ -27,7 +28,7 @@ function Blog({ blog, ...props }) {
 }
 
 Blog.propTypes = {
-  blog: PropTypes.object.isRequired
+  blog: PropTypes.object.isRequired,
 };
 
 function BlogContainer(props) {
@@ -39,11 +40,7 @@ function BlogContainer(props) {
   }
 
   if (status === 'error') {
-    return (
-      <div className="mt-16">
-        There is a problem with the server. Try reload the page
-      </div>
-    );
+    return <DisplayError />;
   }
 
   return <Blog blog={blog} />;

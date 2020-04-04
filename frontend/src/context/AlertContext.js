@@ -11,7 +11,7 @@ function reducer(state, action) {
     case SET_ALERT:
       return [action.payload, ...state];
     case REMOVE_ALERT:
-      return state.filter(alert => alert.id !== action.payload);
+      return state.filter((alert) => alert.id !== action.payload);
     default:
       return state;
   }
@@ -22,20 +22,30 @@ const AlertContext = React.createContext();
 function AlertProvider(props) {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const setAlert = (alertType, msg, alertTime = 2000) => {
+  const setAlert = (alertType, msg, alertTime = 2000, callback) => {
     const id = uuidv4();
+    const payload = { id, alertType, msg };
+    if (callback) {
+      payload.callback = callback;
+    }
+
     dispatch({
       type: SET_ALERT,
-      payload: { id, alertType, msg }
+      payload,
     });
 
-    setTimeout(() => dispatch({ type: REMOVE_ALERT, payload: id }), alertTime);
+    if (alertType !== 'prompt') {
+      setTimeout(
+        () => dispatch({ type: REMOVE_ALERT, payload: id }),
+        alertTime
+      );
+    }
   };
 
-  const removeAlert = id => {
+  const removeAlert = (id) => {
     dispatch({
       type: REMOVE_ALERT,
-      payload: id
+      payload: id,
     });
   };
 

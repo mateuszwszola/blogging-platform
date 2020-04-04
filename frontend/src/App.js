@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useUser } from './context/UserContext';
 import Loading from './components/Loading';
 
@@ -9,7 +9,7 @@ const UnauthenticatedApp = React.lazy(() => import('./UnauthenticatedApp'));
 function App() {
   const user = useUser();
 
-  React.useEffect(() => {
+  useEffect(() => {
     loadAuthenticatedApp();
   }, []);
   return (

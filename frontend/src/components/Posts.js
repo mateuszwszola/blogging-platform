@@ -52,7 +52,7 @@ function Posts({ posts, ...props }) {
 }
 
 Posts.propTypes = {
-  posts: PropTypes.array.isRequired
+  posts: PropTypes.array.isRequired,
 };
 
 export default Posts;

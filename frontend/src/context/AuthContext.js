@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { useAsync } from 'react-async';
 import * as auth from '../api/auth';
 import Loading from '../components/Loading';
@@ -7,7 +7,6 @@ const AuthContext = React.createContext();
 
 async function getUserData() {
   const user = await auth.getUser();
-
   if (!user) {
     return Promise.resolve({ user: null });
   }
@@ -22,12 +21,12 @@ function AuthProvider(props) {
     isRejected,
     isPending,
     isSeattled,
-    reload
+    reload,
   } = useAsync({
-    promiseFn: getUserData
+    promiseFn: getUserData,
   });
 
-  React.useLayoutEffect(() => {
+  useLayoutEffect(() => {
     if (isSeattled) {
       setFirstAttemptFinished(true);
     }
@@ -43,35 +42,31 @@ function AuthProvider(props) {
     }
   }
 
-  const login = async formData => {
+  const login = async (formData) => {
     // auth.login(formData).then(reload);
     try {
       await auth.login(formData);
       reload();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return Promise.reject(err);
     }
   };
 
-  const register = async formData => {
+  const register = async (formData) => {
     // auth.register(formData).then(reload);
     try {
       await auth.register(formData);
       reload();
     } catch (err) {
-      console.log(err);
+      console.error(err);
       return Promise.reject(err);
     }
   };
 
-  const logout = async () => {
-    try {
-      await auth.logout();
-      reload();
-    } catch (err) {
-      console.log(err);
-    }
+  const logout = () => {
+    auth.logout();
+    reload();
   };
 
   return (

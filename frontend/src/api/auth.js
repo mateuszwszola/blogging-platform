@@ -1,4 +1,4 @@
-import api from './api';
+import client from './client';
 
 const localStorageKey = '__token__';
 
@@ -13,30 +13,32 @@ async function getUser() {
     return Promise.resolve(null);
   }
 
-  return api('users/me').catch(err => {
+  return client('users/me').catch((err) => {
     logout();
     return Promise.reject(err);
   });
 }
 
 async function login({ email, password }) {
-  const res = await api('users/login', 'POST', { body: { email, password } });
-  return handleDataResponse(res);
-}
-
-async function register({ name, email, username, password }) {
-  const res = await api('users', 'POST', {
-    body: {
-      name,
-      email,
-      username,
-      password
-    }
+  const res = await client('users/login', {
+    body: { email, password },
   });
   return handleDataResponse(res);
 }
 
-async function logout() {
+async function register({ name, email, username, password }) {
+  const res = await client('users', {
+    body: {
+      name,
+      email,
+      username,
+      password,
+    },
+  });
+  return handleDataResponse(res);
+}
+
+function logout() {
   window.localStorage.removeItem(localStorageKey);
 }
 

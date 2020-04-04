@@ -32,7 +32,7 @@ const InputGroup = ({
           classnames={`${classnames} ${Icon ? 'pl-10' : ''}`}
         />
         {Icon && (
-          <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
+          <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-500">
             <Icon className="w-4 h-4 fill-current" />
           </div>
         )}
@@ -44,7 +44,7 @@ const InputGroup = ({
 
 InputGroup.defaultProps = {
   isError: false,
-  errors: {}
+  errors: {},
 };
 
 InputGroup.propTypes = {
@@ -55,7 +55,7 @@ InputGroup.propTypes = {
   name: PropTypes.string.isRequired,
   icon: PropTypes.elementType,
   classnames: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
 };
 
 export default InputGroup;

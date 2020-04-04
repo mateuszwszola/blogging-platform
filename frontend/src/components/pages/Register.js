@@ -125,7 +125,7 @@ Register.propTypes = {
   password: PropTypes.string.isRequired,
   password2: PropTypes.string.isRequired,
   errors: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired
+  status: PropTypes.string.isRequired,
 };
 
 function RegisterContainer() {
@@ -134,13 +134,13 @@ function RegisterContainer() {
     handleSubmit,
     values: { name, email, password, password2 },
     errors,
-    setErrors
+    setErrors,
   } = useForm(
     {
       name: '',
       email: '',
       password: '',
-      password2: ''
+      password2: '',
     },
     register,
     validate
@@ -157,15 +157,15 @@ function RegisterContainer() {
       await auth.register(data);
       history.push('/dashboard');
     } catch (err) {
+      setStatus('error');
       if (err.errors) {
         setErrors(err.errors);
       } else {
         setErrors({
           message:
             err.message ||
-            'There is a problem with the server. Try again later.'
+            'There is a problem with the server. Try again later.',
         });
-        setStatus('error');
       }
     }
   }

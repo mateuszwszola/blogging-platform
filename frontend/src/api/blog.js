@@ -1,23 +1,23 @@
-import api from './api';
+import client from './client';
 
 function getBlogBySlugName(slug) {
-  return api(`blogs/slug/${slug}`);
+  return client(`blogs/slug/${slug}`);
 }
 
 function getAllBlogs() {
-  return api('blogs/all');
+  return client('blogs/all');
 }
 
 function getUserBlogs() {
-  return api('blogs');
+  return client('blogs');
 }
 
 function createBlog(data) {
-  return api('blogs', 'POST', { body: data });
+  return client('blogs', { body: data });
 }
 
 function deleteBlog(blogId) {
-  return api(`blogs/${blogId}`, 'DELETE')
+  return client(`blogs/${blogId}`, { method: 'DELETE' });
 }
 
 export { getBlogBySlugName, getAllBlogs, getUserBlogs, createBlog, deleteBlog };

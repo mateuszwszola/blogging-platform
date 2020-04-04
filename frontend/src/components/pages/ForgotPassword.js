@@ -24,7 +24,7 @@ function ForgotPassword({ handleSubmit, ...props }) {
               type="email"
               placeholder="e-mail address"
             />
-            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-400">
+            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-500">
               <EnvelopeIcon className="w-4 h-4 fill-current" />
             </div>
           </label>
@@ -50,11 +50,11 @@ function ForgotPassword({ handleSubmit, ...props }) {
 }
 
 ForgotPassword.propTypes = {
-  handleSubmit: PropTypes.func.isRequired
+  handleSubmit: PropTypes.func.isRequired,
 };
 
 function ForgotPasswordContainer(props) {
-  const handleSubmit = event => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     console.log('the form has been submitted');
   };

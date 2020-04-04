@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import PageContent from './components/layout/PageContent';
 import {
   Homepage,
@@ -9,41 +9,39 @@ import {
   NotFound,
   Explore,
   Blog,
-  Post
+  Post,
 } from './components/pages';
 
 function UnauthenticatedApp() {
   return (
-    <Router>
-      <PageContent>
-        <Switch>
-          <Route exact path="/">
-            <Homepage />
-          </Route>
-          <Route path="/login">
-            <Login />
-          </Route>
-          <Route path="/register">
-            <Register />
-          </Route>
-          <Route path="/forgot-password">
-            <ForgotPassword />
-          </Route>
-          <Route path="/explore">
-            <Explore />
-          </Route>
-          <Route path="/posts/:postSlug">
-            <Post />
-          </Route>
-          <Route path="/blogs/:blogSlug">
-            <Blog />
-          </Route>
-          <Route>
-            <NotFound />
-          </Route>
-        </Switch>
-      </PageContent>
-    </Router>
+    <PageContent>
+      <Switch>
+        <Route exact path="/">
+          <Homepage />
+        </Route>
+        <Route path="/login">
+          <Login />
+        </Route>
+        <Route path="/register">
+          <Register />
+        </Route>
+        <Route path="/forgot-password">
+          <ForgotPassword />
+        </Route>
+        <Route path="/explore">
+          <Explore />
+        </Route>
+        <Route path="/posts/:postSlug">
+          <Post />
+        </Route>
+        <Route path="/blogs/:blogSlug">
+          <Blog />
+        </Route>
+        <Route>
+          <NotFound />
+        </Route>
+      </Switch>
+    </PageContent>
   );
 }
 

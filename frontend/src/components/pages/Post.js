@@ -7,18 +7,46 @@ import profileImg from '../../img/undraw_profile.svg';
 import { usePostBySlug } from '../../hooks/usePost';
 import { deletePost } from '../../api/post';
 import Loading from '../Loading';
+import { useAlert } from '../../context/AlertContext';
 
 function Post({ post, isOwner, handleDeletePost, ...props }) {
+  const [isEditting, setIsEditting] = React.useState(false);
+
   return (
     <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-md w-full mx-auto">
       {isOwner && (
-        <div className="w-full flex justify-end">
-          <button
-            onClick={handleDeletePost}
-            className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600"
-          >
-            Delete Post
-          </button>
+        <div className="w-full flex justify-center md:justify-end">
+          {isEditting ? (
+            <>
+              <button
+                onClick={() => setIsEditting(false)}
+                className="bg-green-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-green-100 m-2 hover:bg-green-600"
+              >
+                Save Changes
+              </button>
+              <button
+                onClick={() => setIsEditting(false)}
+                className="bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
+              >
+                Cancel Editting
+              </button>
+            </>
+          ) : (
+            <>
+              <button
+                onClick={() => setIsEditting(true)}
+                className="bg-orange-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-orange-100 m-2 hover:bg-orange-600"
+              >
+                Edit Post
+              </button>
+              <button
+                onClick={handleDeletePost}
+                className="bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
+              >
+                Delete Post
+              </button>
+            </>
+          )}
         </div>
       )}
       <div className="px-2 py-4">
@@ -80,19 +108,29 @@ Post.propTypes = {
 function PostContainer(props) {
   const { postSlug } = useParams();
   const user = useUser();
+  const { setAlert } = useAlert();
   let history = useHistory();
   const [post, status] = usePostBySlug(postSlug);
 
   function handleDeletePost() {
-    if (post && user && user._id === post.user._id) {
-      deletePost(post._id)
-        .then(res => {
-          history.push('/');
-        })
-        .catch(err => {
-          console.error(err);
-        });
+    if (!(post && user && user._id === post.user._id)) return;
+
+    function onDelete() {
+      setAlert('success', 'Post Deleted');
+      history.push('/');
     }
+
+    function onError(err) {
+      console.error(err);
+      setAlert(
+        'error',
+        'There was a problem with the server. Cannot delete a post'
+      );
+    }
+
+    deletePost(post._id)
+      .then(onDelete)
+      .catch(onError);
   }
 
   if (status === 'loading') {

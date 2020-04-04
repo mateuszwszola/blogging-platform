@@ -8,27 +8,32 @@ function useBlogBySlugName(slug) {
   function reloadBlog() {
     setStatus('loading');
   }
-  
+
   useEffect(() => {
     let canceled = false;
 
     function getBlog() {
-      blogAPI.getBlogBySlugName(slug)
-        .then(res => {
-          setBlog(res.blog);
-          setStatus('loaded');
+      blogAPI
+        .getBlogBySlugName(slug)
+        .then((res) => {
+          if (!canceled) {
+            setBlog(res.blog);
+            setStatus('loaded');
+          }
         })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        })
+        .catch((err) => {
+          if (!canceled) {
+            console.error(err);
+            setStatus('error');
+          }
+        });
     }
 
-    if (!canceled && slug) {
+    if (status === 'loading' && slug) {
       getBlog();
     }
 
-    return () => canceled = true;
+    return () => (canceled = true);
   }, [status, slug]);
 
   return [blog, status, reloadBlog];
@@ -41,27 +46,32 @@ function useAllBlogs() {
   function reloadBlogs() {
     setStatus('loading');
   }
-  
-  useEffect(() => {
-    function getBlogs() {
-      blogAPI.getAllBlogs()
-        .then(res => {
-          setBlogs(res.blogs);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        })
-    }
 
+  useEffect(() => {
     let canceled = false;
 
-    if (!canceled && status === 'loading') {
+    function getBlogs() {
+      blogAPI
+        .getAllBlogs()
+        .then((res) => {
+          if (!canceled) {
+            setBlogs(res.blogs);
+            setStatus('loaded');
+          }
+        })
+        .catch((err) => {
+          if (!canceled) {
+            console.error(err);
+            setStatus('error');
+          }
+        });
+    }
+
+    if (status === 'loading') {
       getBlogs();
     }
 
-    return () => canceled = true;
+    return () => (canceled = true);
   }, [status]);
 
   return [blogs, status, reloadBlogs];
@@ -74,27 +84,32 @@ function useUserBlogs() {
   function reloadBlogs() {
     setStatus('loading');
   }
-  
-  useEffect(() => {
-    function getBlogs() {
-      blogAPI.getUserBlogs()
-        .then(res => {
-          setBlogs(res.blogs);
-          setStatus('loaded');
-        })
-        .catch(err => {
-          console.error(err);
-          setStatus('error');
-        })
-    }
 
+  useEffect(() => {
     let canceled = false;
 
-    if (!canceled && status === 'loading') {
+    function getBlogs() {
+      blogAPI
+        .getUserBlogs()
+        .then((res) => {
+          if (!canceled) {
+            setBlogs(res.blogs);
+            setStatus('loaded');
+          }
+        })
+        .catch((err) => {
+          if (!canceled) {
+            console.error(err);
+            setStatus('error');
+          }
+        });
+    }
+
+    if (status === 'loading') {
       getBlogs();
     }
 
-    return () => canceled = true;
+    return () => (canceled = true);
   }, [status]);
 
   return [blogs, status, reloadBlogs];

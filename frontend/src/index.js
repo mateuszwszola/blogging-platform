@@ -1,14 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import './styles.css';
 import App from './App';
 import AppProviders from './context/AppProviders';
+import ErrorBoundary from './components/ErrorBoundary';
 // import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <AppProviders>
-    <App />
-  </AppProviders>,
+  <Router>
+    <ErrorBoundary>
+      <AppProviders>
+        <App />
+      </AppProviders>
+    </ErrorBoundary>
+  </Router>,
   document.getElementById('root')
 );
 

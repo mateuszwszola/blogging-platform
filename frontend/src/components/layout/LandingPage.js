@@ -6,7 +6,7 @@ import landingBg from '../../img/landing-bg.jpg';
 const LandingPage = () => (
   <div
     style={{
-      backgroundImage: `url(${landingBg})` // Photo by Glenn Carstens-Peters on Unsplash
+      backgroundImage: `url(${landingBg})`, // Photo by Glenn Carstens-Peters on Unsplash
     }}
     className="bg-cover bg-center h-screen relative"
   >

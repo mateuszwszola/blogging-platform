@@ -109,7 +109,7 @@ Login.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired
+  status: PropTypes.string.isRequired,
 };
 
 function LoginContainer() {
@@ -118,11 +118,11 @@ function LoginContainer() {
     handleSubmit,
     values: { email, password },
     errors,
-    setErrors
+    setErrors,
   } = useForm(
     {
       email: '',
-      password: ''
+      password: '',
     },
     login,
     validate
@@ -138,15 +138,15 @@ function LoginContainer() {
       await auth.login(data);
       history.push('/dashboard');
     } catch (err) {
+      setStatus('error');
       if (err.errors) {
         setErrors(err.errors);
       } else {
         setErrors({
           message:
             err.message ||
-            'There is a problem with the server. Try again later.'
+            'There is a problem with the server. Try again later.',
         });
-        setStatus('error');
       }
     }
   }
