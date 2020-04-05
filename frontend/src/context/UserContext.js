@@ -5,7 +5,7 @@ const UserContext = React.createContext();
 
 function UserProvider(props) {
   const {
-    data: { user }
+    data: { user },
   } = useAuth();
 
   return <UserContext.Provider value={user} {...props} />;

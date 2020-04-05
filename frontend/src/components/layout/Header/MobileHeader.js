@@ -2,7 +2,7 @@ import React from 'react';
 import { MobileNav } from '../Nav';
 import { MenuIcon, CloseIcon } from '../../../icons';
 
-const MobileHeader = props => {
+const MobileHeader = (props) => {
   const [navOpen, setNavOpen] = React.useState(false);
 
   const isExpanded = navOpen ? true : false;

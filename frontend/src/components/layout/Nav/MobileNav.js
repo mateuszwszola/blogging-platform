@@ -68,7 +68,7 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
 
 MobileNav.propTypes = {
   navOpen: PropTypes.bool.isRequired,
-  setNavOpen: PropTypes.func.isRequired
+  setNavOpen: PropTypes.func.isRequired,
 };
 
 export default MobileNav;

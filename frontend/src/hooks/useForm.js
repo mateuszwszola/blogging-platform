@@ -22,9 +22,9 @@ export function useForm(initialValues = {}, callback, validate) {
 
   function handleChange(event) {
     event.persist();
-    setValues(values => ({
+    setValues((values) => ({
       ...values,
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     }));
   }
 
@@ -38,6 +38,6 @@ export function useForm(initialValues = {}, callback, validate) {
     handleReset,
     values,
     errors,
-    setErrors
+    setErrors,
   };
 }

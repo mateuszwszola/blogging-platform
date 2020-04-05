@@ -17,7 +17,7 @@ const InputSubmit = ({ value, classnames, ...props }) => {
 };
 
 InputSubmit.propTypes = {
-  value: PropTypes.string.isRequired
+  value: PropTypes.string.isRequired,
 };
 
 export default InputSubmit;

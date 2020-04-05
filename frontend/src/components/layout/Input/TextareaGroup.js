@@ -40,7 +40,7 @@ const TextareaGroup = ({
 
 TextareaGroup.defaultProps = {
   isError: false,
-  errors: {}
+  errors: {},
 };
 
 TextareaGroup.propTypes = {
@@ -50,7 +50,7 @@ TextareaGroup.propTypes = {
   handleChange: PropTypes.func.isRequired,
   name: PropTypes.string.isRequired,
   classnames: PropTypes.string,
-  label: PropTypes.string
+  label: PropTypes.string,
 };
 
 export default TextareaGroup;

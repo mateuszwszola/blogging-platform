@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LockClosedIcon = props => {
+export const LockClosedIcon = (props) => {
   return (
     <svg
       {...props}

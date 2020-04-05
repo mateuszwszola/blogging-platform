@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const InfoIcon = props => {
+export const InfoIcon = (props) => {
   return (
     <svg
       {...props}

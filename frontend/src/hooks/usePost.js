@@ -11,15 +11,16 @@ function useBlogPosts(blogId) {
 
   useEffect(() => {
     function getPosts() {
-      postAPI.getBlogPosts(blogId)
-        .then(res => {
+      postAPI
+        .getBlogPosts(blogId)
+        .then((res) => {
           setPosts(res.posts);
           setStatus('loaded');
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           setStatus('error');
-        })
+        });
     }
     let canceled = false;
 
@@ -43,15 +44,16 @@ function usePostBySlug(slug) {
 
   useEffect(() => {
     function getPost() {
-      postAPI.getPostBySlug(slug)
-        .then(res => {
+      postAPI
+        .getPostBySlug(slug)
+        .then((res) => {
           setPost(res.post);
           setStatus('loaded');
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           setStatus('error');
-        })
+        });
     }
     let canceled = false;
 
@@ -75,15 +77,16 @@ function useUserPosts() {
 
   useEffect(() => {
     function getPosts() {
-      postAPI.getUserPosts()
-        .then(res => {
+      postAPI
+        .getUserPosts()
+        .then((res) => {
           setPosts(res.posts);
           setStatus('loaded');
         })
-        .catch(err => {
+        .catch((err) => {
           console.error(err);
           setStatus('error');
-        })
+        });
     }
     let canceled = false;
 

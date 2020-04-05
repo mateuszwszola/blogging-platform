@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const LikeIcon = props => {
+export const LikeIcon = (props) => {
   return (
     <svg
       {...props}

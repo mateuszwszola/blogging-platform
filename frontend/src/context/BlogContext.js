@@ -9,6 +9,6 @@ function reducer(state, action) {
 
 function BlogProvider(props) {
   const [state, dispatch] = useReducer(reducer, {
-    blogs: null
+    blogs: null,
   });
 }

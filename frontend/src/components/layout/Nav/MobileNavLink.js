@@ -9,7 +9,7 @@ const MobileNavLink = ({ tabIndex, children, ...props }) => (
 );
 
 MobileNavLink.propTypes = {
-  tabIndex: PropTypes.number.isRequired
+  tabIndex: PropTypes.number.isRequired,
 };
 
 export default MobileNavLink;
