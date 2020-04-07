@@ -8,6 +8,7 @@ import { deletePost } from '../api/post';
 import Loading from '../components/Loading';
 import DisplayError from '../components/DisplayError';
 import DisplayPost from '../components/layout/DisplayPost';
+// import Editor from '../components/Editor';
 
 const PostControllers = React.lazy(() =>
   import('../components/layout/PostControllers')
@@ -26,6 +27,7 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
           handleDeletePost={handleDeletePost}
         />
       ) : null}
+      {/* <Editor /> */}
       {isEditting && isOwner ? (
         <EditPost post={post} />
       ) : (

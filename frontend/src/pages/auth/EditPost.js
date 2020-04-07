@@ -32,7 +32,7 @@ function EditPost({
 
 EditPost.propTypes = {
   title: PropTypes.string.isRequired,
-  tags: PropTypes.string.isRequired,
+  tags: PropTypes.array,
   body: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
