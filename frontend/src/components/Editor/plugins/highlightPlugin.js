@@ -1,10 +1,16 @@
 import { RichUtils } from 'draft-js';
 
-export default () => {
+const defaultStyles = {
+  background: 'yellow',
+  padding: '0.3em',
+};
+
+export default (style = {}) => {
   return {
     customStyleMap: {
       HIGHLIGHT: {
-        background: '#fffe0d',
+        ...defaultStyles,
+        ...style,
       },
     },
     keyBindingFn: (e) => {
