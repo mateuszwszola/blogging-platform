@@ -1,19 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import Moment from 'react-moment';
 import profileImg from 'img/undraw_profile.svg';
-import { convertFromRaw, EditorState, Editor } from 'draft-js';
+import EditorContentPreview from '../Editor/EditorContentPreview';
+import DisplayDate from './DisplayDate';
 
 function DisplayPost({ post }) {
-  const contentState = convertFromRaw(JSON.parse(post.body).content);
-  const editorState = EditorState.createWithContent(contentState);
-
   return (
     <div className="px-2 py-4">
       <div>
         <div className="flex flex-col md:flex-row items-center">
           <p className="text-sm sm:text-base text-gray-600 font-semibold tracking-wide">
-            <Moment format="YYYY/MM/DD">{post.createdAt}</Moment>
+            <DisplayDate date={post.createdAt} />
           </p>
           {post.tags && post.tags.length > 0 && (
             <div className="py-2 md:py-0 text-center">
@@ -50,7 +47,7 @@ function DisplayPost({ post }) {
         </div>
         <div className="mt-2 py-4 px-2">
           <div className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
-            <Editor editorState={editorState} readOnly={true} />
+            <EditorContentPreview body={post.body} />
           </div>
         </div>
       </div>

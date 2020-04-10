@@ -87,12 +87,12 @@ function AddBlogPostContainer({ blog, ...props }) {
       tags: tags.split(','),
     };
 
-    setStatus('adding');
+    setStatus('pending');
     addBlogPost(blog._id, data)
       .then(() => {
         handleReset();
         resetEditorState();
-        setStatus('added');
+        setStatus('loaded');
         setAlert('success', 'Blog Post Added');
       })
       .catch((err) => {
@@ -119,7 +119,7 @@ function AddBlogPostContainer({ blog, ...props }) {
       handleChange={handleChange}
       handleSubmit={handleSubmit}
       errors={errors}
-      loading={status === 'adding'}
+      loading={status === 'pending'}
     />
   );
 }

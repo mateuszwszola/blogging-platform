@@ -5,7 +5,7 @@ import Moment from 'react-moment';
 import clsx from 'clsx';
 import { CalendarIcon, StarFullIcon } from 'icons';
 
-function Posts({ posts, ...props }) {
+function Posts({ posts }) {
   return (
     <div
       className={clsx(
@@ -37,7 +37,7 @@ function Posts({ posts, ...props }) {
             <p className="ml-2 text-gray-700 font-light text-xl">
               #{post.blog.name}
             </p>
-            <p className="my-2">{post.body.slice(0, 75) + '...'}</p>
+            {post.description && <p className="my-2">{post.description}</p>}
             <div className="flex items-center my-2">
               <StarFullIcon className="w-6 h-6 fill-current text-green-900 cursor-pointer" />
               <span className="text-gray-600 ml-2 select-none">
