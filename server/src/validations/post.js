@@ -9,12 +9,5 @@ exports.validatePost = [
     .escape()
     .isLength({ min: 1, max: 60 })
     .withMessage('The title must be between 1 and 60 chars'),
-  body('body', 'body is required')
-    .exists()
-    .trim()
-    .not()
-    .isEmpty()
-    .escape()
-    .isLength({ min: 1, max: 2000 })
-    .withMessage('The body must be between 1 and 2000 chars')
+  body('body', 'body is required').exists().trim().not().isEmpty(),
 ];

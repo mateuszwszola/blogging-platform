@@ -9,7 +9,7 @@ exports.createPost = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { title, body, tags } = req.body;
+  const { title, body, tags, bgImg, imgAttribution } = req.body;
   const { blogId } = req.params;
 
   try {
@@ -29,6 +29,8 @@ exports.createPost = async (req, res, next) => {
       title,
       body,
       tags,
+      bgImg,
+      imgAttribution,
     });
     await post.save();
 
@@ -45,7 +47,7 @@ exports.updatePost = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { title, body } = req.body;
+  const { title, body, tags, bgImg, imgAttribution } = req.body;
   const { postId } = req.params;
 
   try {
@@ -61,8 +63,8 @@ exports.updatePost = async (req, res, next) => {
 
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
-      { title, body },
-      { new: true },
+      { title, body, tags, bgImg, imgAttribution },
+      { new: true }
     );
 
     res.json({ post: updatedPost });

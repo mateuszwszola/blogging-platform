@@ -3,7 +3,7 @@ const slugify = require('slugify');
 
 const requiredString = {
   type: String,
-  required: [true, "can't be blank"]
+  required: [true, "can't be blank"],
 };
 
 const specifiedStringLength = (field, minlength, maxlength) => {
@@ -11,13 +11,13 @@ const specifiedStringLength = (field, minlength, maxlength) => {
   if (minlength) {
     obj.minlength = [
       minlength,
-      `${field} must have min ${minlength} characters`
+      `${field} must have min ${minlength} characters`,
     ];
   }
   if (maxlength) {
     obj.maxlength = [
       maxlength,
-      `${field} must have max ${maxlength} characters`
+      `${field} must have max ${maxlength} characters`,
     ];
   }
   return obj;
@@ -27,41 +27,49 @@ const PostSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.ObjectId,
-      ref: 'User'
+      ref: 'User',
     },
     blog: {
       type: mongoose.ObjectId,
-      ref: 'Blog'
+      ref: 'Blog',
     },
     title: {
       ...requiredString,
-      maxlength: 60
+      maxlength: 60,
     },
     slug: {
       ...requiredString,
       unique: true,
-      lowercase: true
+      lowercase: true,
     },
     body: {
       ...requiredString,
-      ...specifiedStringLength('body', 1, 2000)
+    },
+    description: {
+      type: String,
+    },
+    bgImg: {
+      type: String,
+    },
+    imgAttribution: {
+      type: String,
     },
     comments: [
       {
         type: mongoose.ObjectId,
-        ref: 'Comment'
-      }
+        ref: 'Comment',
+      },
     ],
     tags: [
       {
-        type: String
-      }
-    ]
+        type: String,
+      },
+    ],
   },
   { timestamps: true }
 );
 
-PostSchema.pre('validate', function(next) {
+PostSchema.pre('validate', function (next) {
   if (!this.slug) {
     this.slugify();
   }
@@ -69,14 +77,14 @@ PostSchema.pre('validate', function(next) {
   next();
 });
 
-PostSchema.methods.slugify = function() {
+PostSchema.methods.slugify = function () {
   this.slug = `${slugify(this.title)}-${(
     (Math.random() * Math.pow(36, 6)) |
     0
   ).toString(36)}`;
 };
 
-PostSchema.methods.addComment = function(commentId) {
+PostSchema.methods.addComment = function (commentId) {
   this.comments.push(commentId);
   this.save();
 };
