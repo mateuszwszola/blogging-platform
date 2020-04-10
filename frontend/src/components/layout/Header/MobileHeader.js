@@ -1,6 +1,6 @@
 import React from 'react';
+import { MenuIcon, CloseIcon } from 'icons';
 import { MobileNav } from '../Nav';
-import { MenuIcon, CloseIcon } from '../../../icons';
 
 const MobileHeader = (props) => {
   const [navOpen, setNavOpen] = React.useState(false);

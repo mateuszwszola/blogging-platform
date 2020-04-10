@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { useBlogBySlugName } from '../hooks/useBlog';
-import { useBlogPosts } from '../hooks/usePost';
-import Posts from '../components/Posts';
-import Loading from '../components/Loading';
-import DisplayError from '../components/DisplayError';
+import { useBlogBySlugName } from 'hooks/useBlog';
+import { useBlogPosts } from 'hooks/usePost';
+import Posts from 'components/Posts';
+import Loading from 'components/Loading';
+import DisplayError from 'components/DisplayError';
 
 function Blog({ blog, ...props }) {
   const [posts, status] = useBlogPosts(blog._id);

@@ -1,11 +1,11 @@
 import React, { useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 import { EditorState, convertToRaw, convertFromRaw, RichUtils } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
 import EditorControls from './EditorControls';
 import Loading from '../Loading';
-import useEditorState from '../../hooks/useEditorState';
+// import useEditorState from '../../hooks/useEditorState';
 import initializePlugins from './plugins/initializePlugins';
 
 import 'draft-js/dist/Draft.css';
@@ -23,31 +23,31 @@ function ExtendedEditor({ editorState, updateEditorState }) {
     editor.current.focus();
   };
 
-  useEffect(() => {
-    const content = window.localStorage.getItem('content');
-    if (content) {
-      updateEditorState(
-        EditorState.createWithContent(convertFromRaw(JSON.parse(content)))
-      );
-    } else {
-      updateEditorState(EditorState.createEmpty());
-    }
+  // useEffect(() => {
+  //   const content = window.localStorage.getItem('content');
+  //   if (content) {
+  //     updateEditorState(
+  //       EditorState.createWithContent(convertFromRaw(JSON.parse(content)))
+  //     );
+  //   } else {
+  //     updateEditorState(EditorState.createEmpty());
+  //   }
 
-    return () => {
-      window.localStorage.removeItem('content');
-    };
-  }, []);
+  //   return () => {
+  //     window.localStorage.removeItem('content');
+  //   };
+  // }, []);
 
-  const saveContentToLocalStorage = debounce((content) => {
-    window.localStorage.setItem(
-      'content',
-      JSON.stringify(convertToRaw(content))
-    );
-  }, 1000);
+  // const saveContentToLocalStorage = debounce((content) => {
+  //   window.localStorage.setItem(
+  //     'content',
+  //     JSON.stringify(convertToRaw(content))
+  //   );
+  // }, 1000);
 
   const onChange = (editorState) => {
-    const contentState = editorState.getCurrentContent();
-    saveContentToLocalStorage(contentState);
+    // const contentState = editorState.getCurrentContent();
+    // saveContentToLocalStorage(contentState);
     updateEditorState(editorState);
   };
 
@@ -111,15 +111,4 @@ ExtendedEditor.propTypes = {
   updateEditorState: PropTypes.func.isRequired,
 };
 
-function ExtendedEditorContainer({ ...props }) {
-  const { editorState, updateEditorState } = useEditorState();
-
-  return (
-    <ExtendedEditor
-      editorState={editorState}
-      updateEditorState={updateEditorState}
-    />
-  );
-}
-
-export default ExtendedEditorContainer;
+export default ExtendedEditor;

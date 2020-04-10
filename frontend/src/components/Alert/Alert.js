@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Alert.module.css';
-import { InfoIcon, LikeIcon } from '../../icons';
-import { useAlert } from '../../context/AlertContext';
+import { InfoIcon, LikeIcon } from 'icons';
+import { useAlert } from 'context/AlertContext';
 
 function Alert(props) {
   const { alerts, removeAlert } = useAlert();

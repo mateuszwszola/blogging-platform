@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import * as postAPI from '../api/post';
+import * as postAPI from 'api/post';
 
 function useBlogPosts(blogId) {
   const [status, setStatus] = useState('loading');

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, NavLink, useRouteMatch } from 'react-router-dom';
-import Loading from '../../../components/Loading';
+import Loading from 'components/Loading';
 
 function Sidebar({ blogs, loading, ...props }) {
   let { url } = useRouteMatch();

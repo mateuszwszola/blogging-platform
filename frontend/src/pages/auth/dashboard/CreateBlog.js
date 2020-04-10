@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { InputGroup, InputSubmit } from '../../../components/layout/Input';
-import { useForm } from '../../../hooks';
-import validate from '../../../utils/CreateBlogValidationRules';
-import { createBlog } from '../../../api/blog';
-import { useAlert } from '../../../context/AlertContext';
-import Loading from '../../../components/Loading';
+import { useForm } from 'hooks';
+import validate from 'utils/CreateBlogValidationRules';
+import { createBlog } from 'api/blog';
+import { useAlert } from 'context/AlertContext';
+import Loading from 'components/Loading';
+import { InputGroup, InputSubmit } from 'components/layout/Input';
 
 function CreateBlog({
   handleChange,

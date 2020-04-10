@@ -1,35 +1,27 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import PageContent from './layout/PageContent';
-import {
-  Homepage,
-  Login,
-  Register,
-  ForgotPassword,
-  NotFound,
-  Explore,
-  Blog,
-  Post,
-} from '../pages';
+import PageContent from 'components/layout/PageContent';
+import { Blog, Post, NotFound, Explore } from 'pages';
+import { Homepage, Profile, Dashboard, Settings } from 'pages/auth';
 
-function UnauthenticatedApp() {
+function AuthenticatedApp() {
   return (
     <PageContent>
       <Switch>
         <Route exact path="/">
           <Homepage />
         </Route>
-        <Route path="/login">
-          <Login />
-        </Route>
-        <Route path="/register">
-          <Register />
-        </Route>
-        <Route path="/forgot-password">
-          <ForgotPassword />
-        </Route>
         <Route path="/explore">
           <Explore />
+        </Route>
+        <Route path="/profile">
+          <Profile />
+        </Route>
+        <Route path="/dashboard">
+          <Dashboard />
+        </Route>
+        <Route path="/settings">
+          <Settings />
         </Route>
         <Route path="/posts/:postSlug">
           <Post />
@@ -45,4 +37,4 @@ function UnauthenticatedApp() {
   );
 }
 
-export default UnauthenticatedApp;
+export default AuthenticatedApp;

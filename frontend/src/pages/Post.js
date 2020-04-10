@@ -1,23 +1,23 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useHistory } from 'react-router-dom';
-import { useUser } from '../context/UserContext';
-import { useAlert } from '../context/AlertContext';
-import { usePostBySlug } from '../hooks/usePost';
-import { deletePost } from '../api/post';
-import Loading from '../components/Loading';
-import DisplayError from '../components/DisplayError';
-import DisplayPost from '../components/layout/DisplayPost';
-// import Editor from '../components/Editor';
+import { useUser } from 'context/UserContext';
+import { useAlert } from 'context/AlertContext';
+import { usePostBySlug } from 'hooks/usePost';
+import { deletePost } from 'api/post';
+import Loading from 'components/Loading';
+import DisplayError from 'components/DisplayError';
+import DisplayPost from 'components/layout/DisplayPost';
 
 const PostControllers = React.lazy(() =>
-  import('../components/layout/PostControllers')
+  import('components/layout/PostControllers')
 );
+
 const EditPost = React.lazy(() => import('./auth/EditPost'));
 
 function Post({ post, isOwner, handleDeletePost, ...props }) {
   const [isEditting, setIsEditting] = useState(false);
-
+  console.log(post);
   return (
     <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-md w-full mx-auto">
       {isOwner ? (
@@ -27,7 +27,7 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
           handleDeletePost={handleDeletePost}
         />
       ) : null}
-      {/* <Editor /> */}
+
       {isEditting && isOwner ? (
         <EditPost post={post} />
       ) : (

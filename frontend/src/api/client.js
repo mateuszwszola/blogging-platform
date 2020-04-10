@@ -1,7 +1,7 @@
 const API_BASE_URL =
   window.location.hostname === 'localhost'
-    ? 'http://localhost:3001/api'
-    : process.env.REACT_APP_API_URL;
+    ? process.env.REACT_APP_API_URL_DEV
+    : process.env.REACT_APP_API_URL_PROD;
 
 const localStorageKey = '__token__';
 

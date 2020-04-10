@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import * as blogAPI from '../api/blog';
+import * as blogAPI from 'api/blog';
 
 function useBlogBySlugName(slug) {
   const [status, setStatus] = useState('loading');

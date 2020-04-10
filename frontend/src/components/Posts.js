@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import clsx from 'clsx';
-import { CalendarIcon, StarFullIcon } from '../icons';
+import { CalendarIcon, StarFullIcon } from 'icons';
 
 function Posts({ posts, ...props }) {
   return (

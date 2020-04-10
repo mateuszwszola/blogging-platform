@@ -1,9 +1,9 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
+import { useAuth } from 'context/AuthContext';
+import { useOnClickOutside, useToggle } from 'hooks';
+import profileImg from 'img/undraw_profile.svg';
 import NavLink from './NavLink';
-import { useAuth } from '../../../context/AuthContext';
-import { useOnClickOutside, useToggle } from '../../../hooks';
-import profileImg from '../../../img/undraw_profile.svg';
 
 const DesktopNav = () => {
   const auth = useAuth();

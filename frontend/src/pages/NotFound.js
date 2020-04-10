@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import notFoundImg from '../img/undraw_page_not_found.svg';
+import notFoundImg from 'img/undraw_page_not_found.svg';
 
 function NotFound() {
   return (

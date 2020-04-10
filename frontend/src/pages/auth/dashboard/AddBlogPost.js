@@ -1,17 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { useForm } from '../../../hooks';
-import validate from '../../../utils/AddBlogPostValidationRules';
-import { addBlogPost } from '../../../api/post';
-import { useAlert } from '../../../context/AlertContext';
-import BlogPostForm from '../../../components/layout/BlogPostForm';
+import { convertToRaw } from 'draft-js';
+import { useForm } from 'hooks';
+import validate from 'utils/AddBlogPostValidationRules';
+import { addBlogPost } from 'api/post';
+import { useAlert } from 'context/AlertContext';
+import BlogPostForm from 'components/layout/BlogPostForm';
+import useEditorState from 'hooks/useEditorState';
 
 function AddBlogPost({
   blog,
-  body,
   title,
   tags,
+  editorState,
+  updateEditorState,
   handleSubmit,
   handleChange,
   errors,
@@ -26,9 +29,11 @@ function AddBlogPost({
           <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
         </span>
       </h1>
+
       <BlogPostForm
+        editorState={editorState}
+        updateEditorState={updateEditorState}
         title={title}
-        body={body}
         tags={tags}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
@@ -43,7 +48,8 @@ AddBlogPost.propTypes = {
   blog: PropTypes.object.isRequired,
   tags: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  body: PropTypes.string.isRequired,
+  editorState: PropTypes.object.isRequired,
+  updateEditorState: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
@@ -55,14 +61,13 @@ function AddBlogPostContainer({ blog, ...props }) {
     handleChange,
     handleSubmit,
     handleReset,
-    values: { title, tags, body },
+    values: { title, tags },
     errors,
     setErrors,
   } = useForm(
     {
       title: '',
       tags: '',
-      body: '',
     },
     handleAddBlogPost,
     validate
@@ -70,14 +75,23 @@ function AddBlogPostContainer({ blog, ...props }) {
 
   const { setAlert } = useAlert();
   const [status, setStatus] = React.useState('idle');
+  const { editorState, updateEditorState, resetEditorState } = useEditorState();
 
   function handleAddBlogPost() {
     if (blog === null) return;
-    const data = { title, body, tags: tags.split(',') };
+    const data = {
+      title,
+      body: JSON.stringify({
+        content: convertToRaw(editorState.getCurrentContent()),
+      }),
+      tags: tags.split(','),
+    };
+
     setStatus('adding');
     addBlogPost(blog._id, data)
       .then(() => {
         handleReset();
+        resetEditorState();
         setStatus('added');
         setAlert('success', 'Blog Post Added');
       })
@@ -100,7 +114,8 @@ function AddBlogPostContainer({ blog, ...props }) {
       blog={blog}
       tags={tags}
       title={title}
-      body={body}
+      editorState={editorState}
+      updateEditorState={updateEditorState}
       handleChange={handleChange}
       handleSubmit={handleSubmit}
       errors={errors}

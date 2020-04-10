@@ -1,7 +1,7 @@
 import React, { useState, useLayoutEffect } from 'react';
 import { useAsync } from 'react-async';
-import * as auth from '../api/auth';
-import Loading from '../components/Loading';
+import * as auth from 'api/auth';
+import Loading from 'components/Loading';
 
 const AuthContext = React.createContext();
 

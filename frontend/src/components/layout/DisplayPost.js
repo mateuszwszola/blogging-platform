@@ -1,9 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
-import profileImg from '../../img/undraw_profile.svg';
+import profileImg from 'img/undraw_profile.svg';
+import { convertFromRaw, EditorState, Editor } from 'draft-js';
 
 function DisplayPost({ post }) {
+  const contentState = convertFromRaw(JSON.parse(post.body).content);
+  const editorState = EditorState.createWithContent(contentState);
+
   return (
     <div className="px-2 py-4">
       <div>
@@ -45,9 +49,9 @@ function DisplayPost({ post }) {
           />
         </div>
         <div className="mt-2 py-4 px-2">
-          <p className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
-            {post.body}
-          </p>
+          <div className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
+            <Editor editorState={editorState} readOnly={true} />
+          </div>
         </div>
       </div>
     </div>

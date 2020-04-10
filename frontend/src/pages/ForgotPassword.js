@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { EnvelopeIcon } from '../icons';
+import { EnvelopeIcon } from 'icons';
 
 function ForgotPassword({ handleSubmit, ...props }) {
   return (

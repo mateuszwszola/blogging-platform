@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowDownIcon } from '../../icons';
-import landingBg from '../../img/landing-bg.jpg';
+import { ArrowDownIcon } from 'icons';
+import landingBg from 'img/landing-bg.jpg';
 
 const LandingPage = () => (
   <div

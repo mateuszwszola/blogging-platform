@@ -1,11 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useHistory, Link } from 'react-router-dom';
+import { useBlogBySlugName } from 'hooks/useBlog';
+import { deleteBlog } from 'api/blog';
+import Loading from 'components/Loading';
+import { useAlert } from 'context/AlertContext';
 import AddBlogPost from './AddBlogPost';
-import { useBlogBySlugName } from '../../../hooks/useBlog';
-import { deleteBlog } from '../../../api/blog';
-import Loading from '../../../components/Loading';
-import { useAlert } from '../../../context/AlertContext';
 
 function ManageBlog({ blog, handleDeleteBlog, ...props }) {
   return (

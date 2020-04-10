@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { useUserPosts } from '../../hooks/usePost';
-import Posts from '../../components/Posts';
-import Loading from '../../components/Loading';
+import { useUserPosts } from 'hooks/usePost';
+import Posts from 'components/Posts';
+import Loading from 'components/Loading';
 
 function Homepage({ posts, loading, ...props }) {
   return (

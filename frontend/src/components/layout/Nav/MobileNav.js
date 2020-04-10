@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
+import { useUser } from 'context/UserContext';
 import MobileNavLink from './MobileNavLink';
-import { useUser } from '../../../context/UserContext';
 
 const MobileNav = ({ navOpen, setNavOpen }) => {
   const isHidden = navOpen ? true : false;

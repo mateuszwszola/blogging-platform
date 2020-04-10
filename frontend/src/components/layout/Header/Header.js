@@ -1,5 +1,5 @@
 import React from 'react';
-import { useWindowWidth } from '../../../hooks';
+import { useWindowWidth } from 'hooks';
 import MobileHeader from './MobileHeader';
 import DesktopHeader from './DesktopHeader';
 

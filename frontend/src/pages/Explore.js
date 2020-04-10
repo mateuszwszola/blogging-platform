@@ -1,9 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import profileImg from '../img/undraw_profile.svg';
-import { useAllBlogs } from '../hooks/useBlog';
-import Loading from '../components/Loading';
+import profileImg from 'img/undraw_profile.svg';
+import { useAllBlogs } from 'hooks/useBlog';
+import Loading from 'components/Loading';
 
 function Explore({ blogs, status, ...props }) {
   return (

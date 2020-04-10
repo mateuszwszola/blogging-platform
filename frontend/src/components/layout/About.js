@@ -1,7 +1,7 @@
 import React from 'react';
-import bloggingImg from '../../img/undraw_blogging.svg';
-import devFocusImg from '../../img/undraw_dev_focus.svg';
-import teamSpiritImg from '../../img/undraw_team_spirit.svg';
+import bloggingImg from 'img/undraw_blogging.svg';
+import devFocusImg from 'img/undraw_dev_focus.svg';
+import teamSpiritImg from 'img/undraw_team_spirit.svg';
 
 const About = () => (
   <main className="bg-gray-100">

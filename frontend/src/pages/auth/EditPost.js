@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from '../../hooks';
-import BlogPostForm from '../../components/layout/BlogPostForm';
-import validate from '../../utils/AddBlogPostValidationRules';
+import { useForm } from 'hooks';
+import BlogPostForm from 'components/layout/BlogPostForm';
+import validate from 'utils/AddBlogPostValidationRules';
 
 function EditPost({
   title,
