@@ -1,80 +1,88 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { useForm } from 'hooks';
+import { convertToRaw } from 'draft-js';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import validate from 'utils/AddBlogPostValidationRules';
+import useEditorState from 'hooks/useEditorState';
+import { updatePost } from 'api/post';
 
-function EditPost({
-  title,
-  tags,
-  body,
-  handleChange,
-  handleSubmit,
-  errors,
-  status,
-}) {
-  const loading = status === 'pending';
+function EditPost({ post, cancelEditting }) {
+  const {
+    handleChange,
+    handleSubmit,
+    handleReset,
+    values: { title, tags, bgImg, imgAttribution },
+    errors,
+    setErrors,
+  } = useForm(
+    {
+      title: post.title,
+      tags: post.tags.join(',') || '',
+      bgImg: post.bgImg || '',
+      imgAttribution: post.imgAttribution || '',
+    },
+    handleUpdateBlogPost,
+    validate
+  );
+  const [status, setStatus] = useState('idle');
+  const { editorState, updateEditorState } = useEditorState(post.body);
+  const editorStatePlainText = editorState.getCurrentContent().getPlainText();
+
+  function handleUpdateBlogPost() {
+    if (!editorStatePlainText.trim()) {
+      return setErrors({ body: 'body is required' });
+    }
+    const data = {
+      title,
+      body: JSON.stringify({
+        content: convertToRaw(editorState.getCurrentContent()),
+      }),
+      tags: tags.split(',').filter((t) => t.trim()),
+      bgImg,
+      imgAttribution,
+    };
+
+    setStatus('pending');
+    updatePost(post._id, data)
+      .then(cancelEditting)
+      .catch((err) => {
+        setStatus('error');
+        if (err.errors) {
+          setErrors(err.errors);
+        } else {
+          setErrors({
+            message:
+              err.message ||
+              'There is a problem with the server. Try again later.',
+          });
+        }
+      });
+  }
+
   return (
     <div>
       <h1 className="text-center text-2xl">Edit Post</h1>
       <BlogPostForm
         title={title}
-        body={body}
         tags={tags}
+        bgImg={bgImg}
+        imgAttribution={imgAttribution}
+        editorState={editorState}
+        updateEditorState={updateEditorState}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}
-        loading={loading}
+        loading={status === 'pending'}
+        update={true}
       />
     </div>
   );
 }
 
 EditPost.propTypes = {
-  title: PropTypes.string.isRequired,
-  tags: PropTypes.array,
-  body: PropTypes.string.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
-};
-
-function EditPostContainer({ post }) {
-  console.log(post);
-  const {
-    handleChange,
-    handleSubmit,
-    handleReset,
-    values: { title, tags, body },
-    errors,
-    setErrors,
-  } = useForm(
-    {
-      title: post.title,
-      body: post.body,
-      tags: post.tags || [],
-    },
-    () => console.log('save changes'),
-    validate
-  );
-  const [status, setStatus] = useState('idle');
-
-  return (
-    <EditPost
-      title={title}
-      tags={tags}
-      body={body}
-      handleChange={handleChange}
-      handleSubmit={handleSubmit}
-      errors={errors}
-      status={status}
-    />
-  );
-}
-
-EditPostContainer.propTypes = {
   post: PropTypes.object.isRequired,
+  cancelEditting: PropTypes.func.isRequired,
 };
 
-export default EditPostContainer;
+export default EditPost;

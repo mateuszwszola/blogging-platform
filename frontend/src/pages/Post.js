@@ -17,7 +17,11 @@ const EditPost = React.lazy(() => import('./auth/EditPost'));
 
 function Post({ post, isOwner, handleDeletePost, ...props }) {
   const [isEditting, setIsEditting] = useState(false);
-  console.log(post);
+
+  const cancelEditting = () => {
+    setIsEditting(false);
+  };
+
   return (
     <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-md w-full mx-auto">
       {isOwner ? (
@@ -29,7 +33,7 @@ function Post({ post, isOwner, handleDeletePost, ...props }) {
       ) : null}
 
       {isEditting && isOwner ? (
-        <EditPost post={post} />
+        <EditPost post={post} cancelEditting={cancelEditting} />
       ) : (
         <DisplayPost post={post} />
       )}

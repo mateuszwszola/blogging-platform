@@ -23,10 +23,10 @@ function init(initialState) {
     If content (raw editorState - result from DB call or persisted localStorage content)
     is provided, create state with that content
   */
-  if (initialState.content) {
+  if (initialState) {
     return {
       editorState: EditorState.createWithContent(
-        convertFromRaw(JSON.parse(initialState.content))
+        convertFromRaw(JSON.parse(initialState).content)
       ),
     };
   } else {
@@ -36,7 +36,7 @@ function init(initialState) {
   }
 }
 
-function useEditorState(initialState = defaultState) {
+function useEditorState(initialState) {
   const [state, dispatch] = useReducer(reducer, initialState, init);
 
   const updateEditorState = (editorState) => {

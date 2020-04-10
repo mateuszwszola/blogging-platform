@@ -1,11 +1,9 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-// import debounce from 'lodash/debounce';
-import { EditorState, convertToRaw, convertFromRaw, RichUtils } from 'draft-js';
+import { RichUtils } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
 import EditorControls from './EditorControls';
 import Loading from '../Loading';
-// import useEditorState from '../../hooks/useEditorState';
 import initializePlugins from './plugins/initializePlugins';
 
 import 'draft-js/dist/Draft.css';
@@ -16,7 +14,7 @@ import styles from './Editor.module.css';
 
 const { plugins, EmojiSuggestions, EmojiSelect } = initializePlugins();
 
-function ExtendedEditor({ editorState, updateEditorState }) {
+function ExtendedEditor({ editorState, updateEditorState, isError }) {
   const editor = useRef(null);
 
   const focus = () => {
@@ -92,7 +90,10 @@ function ExtendedEditor({ editorState, updateEditorState }) {
         onUnderlineClick={onUnderlineClick}
         onToggleCode={onToggleCode}
       />
-      <div className={styles.editor} onClick={focus}>
+      <div
+        className={`${styles.editor} ${isError && styles.error}`}
+        onClick={focus}
+      >
         <Editor
           ref={editor}
           editorState={editorState}

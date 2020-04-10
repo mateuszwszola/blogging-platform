@@ -7,13 +7,18 @@ import Editor from '../Editor';
 function BlogPostForm({
   title,
   tags,
+  bgImg,
+  imgAttribution,
   handleSubmit,
   handleChange,
   editorState,
   updateEditorState,
   errors,
   loading,
+  update,
 }) {
+  const filteredTagsArr = tags.split(',').filter((t) => t.trim());
+
   return (
     <div className="relative">
       {loading && (
@@ -34,6 +39,27 @@ function BlogPostForm({
         classnames="border border-gray-400"
         label="Post Title"
       />
+
+      <InputGroup
+        name="bgImg"
+        value={bgImg}
+        handleChange={handleChange}
+        placeholder="https://"
+        classnames="border border-gray-400"
+        label="Background Image"
+        type="url"
+        pattern="https://.*"
+      />
+
+      <InputGroup
+        name="imgAttribution"
+        value={imgAttribution}
+        handleChange={handleChange}
+        placeholder="Photo By ... On ..."
+        classnames="border border-gray-400"
+        label="Image Attribution"
+      />
+
       <InputGroup
         isError={
           !!(Object.keys(errors).length > 0 && (errors.tags || errors.message))
@@ -46,39 +72,57 @@ function BlogPostForm({
         handleChange={handleChange}
         label="Tags (what the post is about?)"
       />
-      <div className="py-2">
-        {typeof tags === 'string' &&
-          tags.split(',').length > 1 &&
-          tags.split(',').map((tag, index) => (
+      <div className="mt-1">
+        {filteredTagsArr.length > 0 &&
+          filteredTagsArr.map((tag, index) => (
             <span
               key={`${tag}-${index}`}
-              className="bg-blue-500 p-2 mt-1 text-blue-100 rounded mr-1"
+              className="inline-block bg-blue-500 px-2 py-1 text-blue-100 rounded mr-1"
             >
               {tag}
             </span>
           ))}
       </div>
 
-      <Editor editorState={editorState} updateEditorState={updateEditorState} />
+      <div className="mt-4">
+        <Editor
+          editorState={editorState}
+          updateEditorState={updateEditorState}
+          isError={
+            !!(
+              Object.keys(errors).length > 0 &&
+              (errors.body || errors.messasge)
+            )
+          }
+        />
+        {errors.body && <p className="text-red-500 text-sm">{errors.body}</p>}
+      </div>
 
       <InputSubmit
         onClick={handleSubmit}
-        value="Create Post"
+        value={update ? 'Update Post' : 'Create Post'}
         classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
       />
     </div>
   );
 }
 
+BlogPostForm.defaultProps = {
+  update: false,
+};
+
 BlogPostForm.propTypes = {
   title: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
+  bgImg: PropTypes.string.isRequired,
+  imgAttribution: PropTypes.string.isRequired,
   editorState: PropTypes.object.isRequired,
   updateEditorState: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired,
+  update: PropTypes.bool,
 };
 
 export default BlogPostForm;

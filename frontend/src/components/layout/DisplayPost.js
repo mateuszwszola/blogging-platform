@@ -15,10 +15,12 @@ function DisplayPost({ post }) {
           {post.tags && post.tags.length > 0 && (
             <div className="py-2 md:py-0 text-center">
               <span className="hidden md:inline-block mx-2">/</span>
-              {post.tags.map((tag) => (
+              {post.tags.map((tag, index) => (
                 <span
                   key={tag}
-                  className="text-blue-700 uppercase text-sm md:text-base font-semibold"
+                  className={`text-blue-700 uppercase text-sm md:text-base font-semibold${
+                    index > 0 ? ' ml-2' : ''
+                  }`}
                 >
                   #{tag}
                 </span>
@@ -40,10 +42,19 @@ function DisplayPost({ post }) {
       <div className="mt-3">
         <div className="">
           <img
-            src="https://picsum.photos/seed/picsum/1280/720"
+            src={
+              post.bgImg
+                ? post.bgImg
+                : 'https://picsum.photos/seed/picsum/1280/720'
+            }
             className="max-w-full block mx-auto rounded"
             alt="post-background"
           />
+          {post.imgAttribution && (
+            <p className="text-center text-blue-500 mt-2">
+              {post.imgAttribution}
+            </p>
+          )}
         </div>
         <div className="mt-2 py-4 px-2">
           <div className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">

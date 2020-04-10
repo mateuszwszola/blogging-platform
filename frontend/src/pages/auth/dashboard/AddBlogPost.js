@@ -9,82 +9,44 @@ import { useAlert } from 'context/AlertContext';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import useEditorState from 'hooks/useEditorState';
 
-function AddBlogPost({
-  blog,
-  title,
-  tags,
-  editorState,
-  updateEditorState,
-  handleSubmit,
-  handleChange,
-  errors,
-  loading,
-  ...props
-}) {
-  return (
-    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
-      <h1 className="text-3xl text-center leading-loose">
-        Add Blog Post To
-        <span className="uppercase text-green-600 hover:text-green-700 pl-4">
-          <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
-        </span>
-      </h1>
-
-      <BlogPostForm
-        editorState={editorState}
-        updateEditorState={updateEditorState}
-        title={title}
-        tags={tags}
-        handleSubmit={handleSubmit}
-        handleChange={handleChange}
-        errors={errors}
-        loading={loading}
-      />
-    </div>
-  );
-}
-
-AddBlogPost.propTypes = {
-  blog: PropTypes.object.isRequired,
-  tags: PropTypes.string.isRequired,
-  title: PropTypes.string.isRequired,
-  editorState: PropTypes.object.isRequired,
-  updateEditorState: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  errors: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired,
-};
-
-function AddBlogPostContainer({ blog, ...props }) {
+function AddBlogPost({ blog, ...props }) {
+  const [status, setStatus] = React.useState('idle');
   const {
     handleChange,
     handleSubmit,
     handleReset,
-    values: { title, tags },
+    values: { title, tags, bgImg, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
       title: '',
       tags: '',
+      bgImg: '',
+      imgAttribution: '',
     },
     handleAddBlogPost,
     validate
   );
 
-  const { setAlert } = useAlert();
-  const [status, setStatus] = React.useState('idle');
   const { editorState, updateEditorState, resetEditorState } = useEditorState();
+  const { setAlert } = useAlert();
+
+  const editorStatePlainText = editorState.getCurrentContent().getPlainText();
 
   function handleAddBlogPost() {
     if (blog === null) return;
+    if (!editorStatePlainText.trim()) {
+      return setErrors({ body: 'body is required' });
+    }
     const data = {
       title,
       body: JSON.stringify({
         content: convertToRaw(editorState.getCurrentContent()),
       }),
-      tags: tags.split(','),
+      tags: tags.split(',').filter((t) => t.trim()),
+      bgImg,
+      imgAttribution,
     };
 
     setStatus('pending');
@@ -110,22 +72,32 @@ function AddBlogPostContainer({ blog, ...props }) {
   }
 
   return (
-    <AddBlogPost
-      blog={blog}
-      tags={tags}
-      title={title}
-      editorState={editorState}
-      updateEditorState={updateEditorState}
-      handleChange={handleChange}
-      handleSubmit={handleSubmit}
-      errors={errors}
-      loading={status === 'pending'}
-    />
+    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
+      <h1 className="text-3xl text-center leading-loose">
+        Add Blog Post To
+        <span className="uppercase text-green-600 hover:text-green-700 pl-4">
+          <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
+        </span>
+      </h1>
+
+      <BlogPostForm
+        editorState={editorState}
+        updateEditorState={updateEditorState}
+        title={title}
+        tags={tags}
+        bgImg={bgImg}
+        imgAttribution={imgAttribution}
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        errors={errors}
+        loading={status === 'pending'}
+      />
+    </div>
   );
 }
 
-AddBlogPostContainer.propTypes = {
+AddBlogPost.propTypes = {
   blog: PropTypes.object,
 };
 
-export default AddBlogPostContainer;
+export default AddBlogPost;

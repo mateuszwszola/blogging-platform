@@ -19,7 +19,11 @@ function Posts({ posts }) {
           className={clsx(index < posts.length - 2 && 'mb-20')}
         >
           <img
-            src="https://picsum.photos/seed/picsum/600/300"
+            src={
+              post.bgImg
+                ? post.bgImg
+                : 'https://picsum.photos/seed/picsum/600/300'
+            }
             alt=""
             className="max-w-full rounded mx-auto"
           />

@@ -7,6 +7,10 @@
   margin-bottom: 2em;
 }
 
+.error {
+  border: 1px solid #f56565;
+}
+
 .editor :global(.public-DraftEditor-content) {
   min-height: 140px;
 }
