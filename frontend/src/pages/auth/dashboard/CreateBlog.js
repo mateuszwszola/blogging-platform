@@ -7,14 +7,52 @@ import { useAlert } from 'context/AlertContext';
 import Loading from 'components/Loading';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 
-function CreateBlog({
-  handleChange,
-  handleSubmit,
-  name,
-  description,
-  errors,
-  loading,
-}) {
+function CreateBlog({ addBlog }) {
+  const {
+    handleChange,
+    handleSubmit,
+    handleReset,
+    values: { name, description },
+    errors,
+    setErrors,
+  } = useForm(
+    {
+      name: '',
+      description: '',
+    },
+    handleCreateBlog,
+    validate
+  );
+  const [status, setStatus] = React.useState('idle');
+
+  const { setAlert } = useAlert();
+
+  function handleCreateBlog() {
+    const data = { name, description };
+    setStatus('pending');
+    createBlog(data)
+      .then((res) => {
+        handleReset();
+        setStatus('created');
+        setAlert('success', 'Blog Created');
+        addBlog(res.blog);
+      })
+      .catch((err) => {
+        setStatus('error');
+        if (err.errors) {
+          setErrors(err.errors);
+        } else {
+          setErrors({
+            message:
+              err.message ||
+              'There is a problem with the server. Try again later',
+          });
+        }
+      });
+  }
+
+  const loading = status === 'pending';
+
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
       {loading && (
@@ -67,72 +105,7 @@ function CreateBlog({
 }
 
 CreateBlog.propTypes = {
-  handleChange: PropTypes.func.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  name: PropTypes.string.isRequired,
-  description: PropTypes.string.isRequired,
-  errors: PropTypes.object.isRequired,
-  loading: PropTypes.bool.isRequired,
+  addBlog: PropTypes.func.isRequired,
 };
 
-function CreateBlogContainer({ reloadBlogs }) {
-  const {
-    handleChange,
-    handleSubmit,
-    handleReset,
-    values: { name, description },
-    errors,
-    setErrors,
-  } = useForm(
-    {
-      name: '',
-      description: '',
-    },
-    handleCreateBlog,
-    validate
-  );
-  const [status, setStatus] = React.useState('idle');
-
-  const { setAlert } = useAlert();
-
-  function handleCreateBlog() {
-    const data = { name, description };
-    setStatus('creating');
-    createBlog(data)
-      .then((res) => {
-        handleReset();
-        setStatus('created');
-        setAlert('success', 'Blog Created');
-        reloadBlogs();
-      })
-      .catch((err) => {
-        setStatus('error');
-        if (err.errors) {
-          setErrors(err.errors);
-        } else {
-          setErrors({
-            message:
-              err.message ||
-              'There is a problem with the server. Try again later',
-          });
-        }
-      });
-  }
-
-  return (
-    <CreateBlog
-      handleChange={handleChange}
-      handleSubmit={handleSubmit}
-      name={name}
-      description={description}
-      errors={errors}
-      loading={status === 'creating'}
-    />
-  );
-}
-
-CreateBlogContainer.propTypes = {
-  reloadBlogs: PropTypes.func.isRequired,
-};
-
-export default CreateBlogContainer;
+export default CreateBlog;

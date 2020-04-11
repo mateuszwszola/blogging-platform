@@ -1,13 +1,18 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ManageBlog from './ManageBlog';
 import CreateBlog from './CreateBlog';
 import { useUserBlogs } from 'hooks/useBlog';
+import DisplayError from 'components/DisplayError';
 
-function Dashboard({ status, reloadBlogs, blogs, ...props }) {
+function Dashboard(props) {
+  const { blogs, status, addBlog, removeBlog } = useUserBlogs();
   let { path } = useRouteMatch();
+
+  if (status === 'error') {
+    return <DisplayError />;
+  }
 
   return (
     <div className="flex flex-col md:flex-row flex-auto flex-shrink-0 md:pt-16">
@@ -23,10 +28,10 @@ function Dashboard({ status, reloadBlogs, blogs, ...props }) {
             </h3>
           </Route>
           <Route path={`${path}/create-blog`}>
-            <CreateBlog reloadBlogs={reloadBlogs} />
+            <CreateBlog addBlog={addBlog} />
           </Route>
           <Route path={`${path}/:blogSlug`}>
-            <ManageBlog reloadBlogs={reloadBlogs} />
+            <ManageBlog removeBlog={removeBlog} />
           </Route>
         </Switch>
       </div>
@@ -34,24 +39,4 @@ function Dashboard({ status, reloadBlogs, blogs, ...props }) {
   );
 }
 
-Dashboard.propTypes = {
-  status: PropTypes.string.isRequired,
-  blogs: PropTypes.array,
-  reloadBlogs: PropTypes.func.isRequired,
-};
-
-function DashboardContainer(props) {
-  const [blogs, status, reloadBlogs] = useUserBlogs();
-
-  if (status === 'error') {
-    return (
-      <div className="mt-16">
-        There is a problem with the server. Try reload the page
-      </div>
-    );
-  }
-
-  return <Dashboard status={status} reloadBlogs={reloadBlogs} blogs={blogs} />;
-}
-
-export default DashboardContainer;
+export default Dashboard;

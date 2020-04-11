@@ -2,17 +2,14 @@ import { useState, useEffect } from 'react';
 import * as blogAPI from 'api/blog';
 
 function useBlogBySlugName(slug) {
-  const [status, setStatus] = useState('loading');
+  const [status, setStatus] = useState('idle');
   const [blog, setBlog] = useState(null);
-
-  function reloadBlog() {
-    setStatus('loading');
-  }
 
   useEffect(() => {
     let canceled = false;
 
     function getBlog() {
+      setStatus('loading');
       blogAPI
         .getBlogBySlugName(slug)
         .then((res) => {
@@ -34,9 +31,9 @@ function useBlogBySlugName(slug) {
     }
 
     return () => (canceled = true);
-  }, [status, slug]);
+  }, [slug]);
 
-  return [blog, status, reloadBlog];
+  return [blog, status];
 }
 
 function useAllBlogs() {
@@ -85,6 +82,15 @@ function useUserBlogs() {
     setStatus('loading');
   }
 
+  function addBlog(newBlog) {
+    setBlogs([...blogs, newBlog]);
+  }
+
+  function removeBlog(blogId) {
+    const newBlogs = blogs.filter((blog) => blog._id !== blogId);
+    setBlogs(newBlogs);
+  }
+
   useEffect(() => {
     let canceled = false;
 
@@ -112,7 +118,7 @@ function useUserBlogs() {
     return () => (canceled = true);
   }, [status]);
 
-  return [blogs, status, reloadBlogs];
+  return { blogs, status, addBlog, removeBlog, reloadBlogs };
 }
 
 export { useBlogBySlugName, useAllBlogs, useUserBlogs };
