@@ -19,7 +19,7 @@ function Dashboard({ status, reloadBlogs, blogs, ...props }) {
         <Switch>
           <Route exact path={path}>
             <h3 className="text-center text-3xl leading-loose mt-6">
-              Please select a blog
+              Please select a blog, or create new one
             </h3>
           </Route>
           <Route path={`${path}/create-blog`}>

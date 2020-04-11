@@ -16,7 +16,7 @@ function Posts({ posts }) {
       {posts.map((post, index) => (
         <div
           key={post._id}
-          className={clsx(index < posts.length - 2 && 'mb-20')}
+          className={clsx(index < posts.length - 2 && 'mb-20', 'max-w-lg')}
         >
           <img
             src={

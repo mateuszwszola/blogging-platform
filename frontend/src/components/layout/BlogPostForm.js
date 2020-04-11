@@ -18,6 +18,9 @@ function BlogPostForm({
   update,
 }) {
   const filteredTagsArr = tags.split(',').filter((t) => t.trim());
+  const [showOptionalFields, setShowOptionalFields] = React.useState(false);
+
+  const toggleOptionalFields = () => setShowOptionalFields((show) => !show);
 
   return (
     <div className="relative">
@@ -40,50 +43,63 @@ function BlogPostForm({
         label="Post Title"
       />
 
-      <InputGroup
-        name="bgImg"
-        value={bgImg}
-        handleChange={handleChange}
-        placeholder="https://"
-        classnames="border border-gray-400"
-        label="Background Image"
-        type="url"
-        pattern="https://.*"
-      />
+      <button
+        className="py-1 px-2 text-sm uppercase rounded bg-blue-500 text-blue-100"
+        onClick={toggleOptionalFields}
+      >
+        {showOptionalFields ? 'Hide' : 'Show'} Optional Fields
+      </button>
 
-      <InputGroup
-        name="imgAttribution"
-        value={imgAttribution}
-        handleChange={handleChange}
-        placeholder="Photo By ... On ..."
-        classnames="border border-gray-400"
-        label="Image Attribution"
-      />
+      {showOptionalFields ? (
+        <>
+          <InputGroup
+            name="bgImg"
+            value={bgImg}
+            handleChange={handleChange}
+            placeholder="https://"
+            classnames="border border-gray-400"
+            label="Background Image"
+            type="url"
+            pattern="https://.*"
+          />
 
-      <InputGroup
-        isError={
-          !!(Object.keys(errors).length > 0 && (errors.tags || errors.message))
-        }
-        errors={errors}
-        name="tags"
-        placeholder="Give a post tags (separate them using comma)"
-        classnames="border border-gray-400"
-        value={tags}
-        handleChange={handleChange}
-        label="Tags (what the post is about?)"
-      />
-      <div className="mt-1">
-        {filteredTagsArr.length > 0 &&
-          filteredTagsArr.map((tag, index) => (
-            <span
-              key={`${tag}-${index}`}
-              className="inline-block bg-blue-500 px-2 py-1 text-blue-100 rounded mr-1"
-            >
-              {tag}
-            </span>
-          ))}
-      </div>
+          <InputGroup
+            name="imgAttribution"
+            value={imgAttribution}
+            handleChange={handleChange}
+            placeholder="Photo By ... On ..."
+            classnames="border border-gray-400"
+            label="Image Attribution"
+          />
 
+          <InputGroup
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.tags || errors.message)
+              )
+            }
+            errors={errors}
+            name="tags"
+            placeholder="Give a post tags (separate them using comma)"
+            classnames="border border-gray-400"
+            value={tags}
+            handleChange={handleChange}
+            label="Tags (what is the post about?)"
+          />
+          <div className="mt-1">
+            {filteredTagsArr.length > 0 &&
+              filteredTagsArr.map((tag, index) => (
+                <span
+                  key={`${tag}-${index}`}
+                  className="inline-block bg-blue-500 px-2 py-1 text-blue-100 rounded mr-1"
+                >
+                  {tag}
+                </span>
+              ))}
+          </div>
+        </>
+      ) : null}
       <div className="mt-4">
         <Editor
           editorState={editorState}

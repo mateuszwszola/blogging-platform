@@ -37,7 +37,7 @@ function AddBlogPost({ blog, ...props }) {
   function handleAddBlogPost() {
     if (blog === null) return;
     if (!editorStatePlainText.trim()) {
-      return setErrors({ body: 'body is required' });
+      return setErrors({ body: 'post content is required' });
     }
     const data = {
       title,

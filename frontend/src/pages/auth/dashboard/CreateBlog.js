@@ -36,7 +36,7 @@ function CreateBlog({
           }
           errors={errors}
           name="name"
-          placeholder="Name"
+          placeholder="Give it a name like 'Programming with John'"
           classnames="border border-gray-400"
           value={name}
           handleChange={handleChange}
@@ -51,7 +51,7 @@ function CreateBlog({
           }
           errors={errors}
           name="description"
-          placeholder="Describe your blog"
+          placeholder="What is your blog about?"
           classnames="border border-gray-400"
           value={description}
           handleChange={handleChange}

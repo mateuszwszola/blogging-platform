@@ -40,23 +40,22 @@ function DisplayPost({ post }) {
       </div>
 
       <div className="mt-3">
-        <div className="">
-          <img
-            src={
-              post.bgImg
-                ? post.bgImg
-                : 'https://picsum.photos/seed/picsum/1280/720'
-            }
-            className="max-w-full block mx-auto rounded"
-            alt="post-background"
-          />
-          {post.imgAttribution && (
-            <p className="text-center text-blue-500 mt-2">
-              {post.imgAttribution}
-            </p>
-          )}
-        </div>
-        <div className="mt-2 py-4 px-2">
+        {post.bgImg && (
+          <div className="">
+            <img
+              src={post.bgImg}
+              className="max-w-full block mx-auto rounded"
+              alt="post-background"
+            />
+            {post.imgAttribution && (
+              <p className="text-center text-blue-500 mt-2">
+                {post.imgAttribution}
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="mt-8 py-4 px-2 border-t border-solid border-gray-300">
           <div className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
             <EditorContentPreview body={post.body} />
           </div>

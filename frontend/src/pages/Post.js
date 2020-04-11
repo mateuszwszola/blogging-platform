@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import React from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
@@ -15,44 +14,18 @@ const PostControllers = React.lazy(() =>
 
 const EditPost = React.lazy(() => import('./auth/EditPost'));
 
-function Post({ post, isOwner, handleDeletePost, ...props }) {
-  const [isEditting, setIsEditting] = useState(false);
-
-  const cancelEditting = () => {
-    setIsEditting(false);
-  };
-
-  return (
-    <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-md w-full mx-auto">
-      {isOwner ? (
-        <PostControllers
-          isEditting={isEditting}
-          setIsEditting={setIsEditting}
-          handleDeletePost={handleDeletePost}
-        />
-      ) : null}
-
-      {isEditting && isOwner ? (
-        <EditPost post={post} cancelEditting={cancelEditting} />
-      ) : (
-        <DisplayPost post={post} />
-      )}
-    </div>
-  );
-}
-
-Post.propTypes = {
-  post: PropTypes.object.isRequired,
-  isOwner: PropTypes.bool.isRequired,
-  handleDeletePost: PropTypes.func.isRequired,
-};
-
-function PostContainer(props) {
+function Post(props) {
   const { postSlug } = useParams();
   const history = useHistory();
   const user = useUser();
   const { setAlert } = useAlert();
-  const [post, status] = usePostBySlug(postSlug);
+  const { post, status, setPost } = usePostBySlug(postSlug);
+  const [isEditting, setIsEditting] = React.useState(false);
+
+  function onUpdatePost(updatedPost) {
+    setPost(updatedPost);
+    setIsEditting(false);
+  }
 
   function handleDeletePost() {
     if (!(post && user && user._id === post.user._id)) return;
@@ -79,13 +52,34 @@ function PostContainer(props) {
     return <DisplayError />;
   }
 
+  let isOwner = false;
+  if (post && user) {
+    if (typeof post.user === 'string') {
+      if (post.user === user._id) {
+        isOwner = true;
+      }
+    } else if (post.user._id === user._id) {
+      isOwner = true;
+    }
+  }
+
   return (
-    <Post
-      post={post}
-      isOwner={!!(user && user._id === post.user._id)}
-      handleDeletePost={handleDeletePost}
-    />
+    <div className="mt-16 md:pt-16 pb-16 max-w-screen-md lg:max-w-screen-lg w-full mx-auto">
+      {isOwner ? (
+        <PostControllers
+          isEditting={isEditting}
+          setIsEditting={setIsEditting}
+          handleDeletePost={handleDeletePost}
+        />
+      ) : null}
+
+      {isEditting && isOwner ? (
+        <EditPost post={post} onUpdatePost={onUpdatePost} />
+      ) : (
+        <DisplayPost post={post} />
+      )}
+    </div>
   );
 }
 
-export default PostContainer;
+export default Post;

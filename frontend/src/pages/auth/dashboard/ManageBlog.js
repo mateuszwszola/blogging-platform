@@ -13,13 +13,13 @@ function ManageBlog({ blog, handleDeleteBlog, ...props }) {
       <div className="w-full flex justify-end">
         <Link
           to={`/blogs/${blog.slug}`}
-          className="bg-blue-500 rounded py-2 px-4 font-semibold text-blue-100 m-2 hover:bg-blue-600"
+          className="bg-blue-500 rounded py-1 px-2 font-semibold text-blue-100 m-2 hover:bg-blue-600"
         >
           Preview Blog
         </Link>
         <button
           onClick={handleDeleteBlog}
-          className="bg-red-500 rounded py-2 px-4 font-semibold text-red-100 m-2 hover:bg-red-600"
+          className="bg-red-500 rounded py-1 px-2 font-semibold text-red-100 m-2 hover:bg-red-600"
         >
           Delete Blog
         </button>

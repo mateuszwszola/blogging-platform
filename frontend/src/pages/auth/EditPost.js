@@ -7,11 +7,10 @@ import validate from 'utils/AddBlogPostValidationRules';
 import useEditorState from 'hooks/useEditorState';
 import { updatePost } from 'api/post';
 
-function EditPost({ post, cancelEditting }) {
+function EditPost({ post, onUpdatePost }) {
   const {
     handleChange,
     handleSubmit,
-    handleReset,
     values: { title, tags, bgImg, imgAttribution },
     errors,
     setErrors,
@@ -45,7 +44,9 @@ function EditPost({ post, cancelEditting }) {
 
     setStatus('pending');
     updatePost(post._id, data)
-      .then(cancelEditting)
+      .then((res) => {
+        onUpdatePost(res.post);
+      })
       .catch((err) => {
         setStatus('error');
         if (err.errors) {
@@ -61,7 +62,7 @@ function EditPost({ post, cancelEditting }) {
   }
 
   return (
-    <div>
+    <div className="px-2 py-4">
       <h1 className="text-center text-2xl">Edit Post</h1>
       <BlogPostForm
         title={title}
@@ -82,7 +83,7 @@ function EditPost({ post, cancelEditting }) {
 
 EditPost.propTypes = {
   post: PropTypes.object.isRequired,
-  cancelEditting: PropTypes.func.isRequired,
+  onUpdatePost: PropTypes.func.isRequired,
 };
 
 export default EditPost;

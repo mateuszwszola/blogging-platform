@@ -1,10 +1,6 @@
 import { useReducer } from 'react';
 import { EditorState, convertFromRaw } from 'draft-js';
 
-const defaultState = {
-  editorState: null,
-};
-
 const UPDATE_EDITOR_STATE = 'UPDATE_EDITOR_STATE';
 
 function reducer(state, { type, payload }) {

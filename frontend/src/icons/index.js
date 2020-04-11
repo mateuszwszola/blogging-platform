@@ -13,3 +13,7 @@ export { StarIcon } from './StarIcon';
 export { StarFullIcon } from './StarIcon';
 export { LikeIcon } from './LikeIcon';
 export { InfoIcon } from './InfoIcon';
+export { EditIcon } from './EditIcon';
+export { SettingsIcon } from './SettingsIcon';
+export { BinIcon } from './BinIcon';
+export { SaveIcon } from './SaveIcon';

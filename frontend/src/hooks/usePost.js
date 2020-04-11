@@ -38,10 +38,6 @@ function usePostBySlug(slug) {
   const [status, setStatus] = useState('loading');
   const [post, setPost] = useState(null);
 
-  function reloadPost() {
-    setStatus('loading');
-  }
-
   useEffect(() => {
     function getPost() {
       postAPI
@@ -57,14 +53,15 @@ function usePostBySlug(slug) {
     }
     let canceled = false;
 
-    if (!canceled && status === 'loading' && slug) {
+    if (!canceled && slug) {
+      setStatus('loading');
       getPost();
     }
 
     return () => (canceled = true);
-  }, [status, slug]);
+  }, [slug]);
 
-  return [post, status, reloadPost];
+  return { post, status, setPost };
 }
 
 function useUserPosts() {

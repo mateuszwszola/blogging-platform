@@ -76,7 +76,7 @@ function ExtendedEditor({ editorState, updateEditorState, isError }) {
 
   if (!editorState) {
     return (
-      <div className="relative">
+      <div className="relative h-64">
         <Loading />
       </div>
     );

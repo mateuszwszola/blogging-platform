@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { EditIcon, CloseIcon, BinIcon, SaveIcon } from 'icons';
 
 function PostControllers({ isEditting, setIsEditting, handleDeletePost }) {
   return (
@@ -10,28 +11,28 @@ function PostControllers({ isEditting, setIsEditting, handleDeletePost }) {
             onClick={() => setIsEditting(false)}
             className="bg-green-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-green-100 m-2 hover:bg-green-600"
           >
-            Save Changes
+            <SaveIcon className="w-6 h-6 fill-current" />
           </button>
           <button
             onClick={() => setIsEditting(false)}
             className="bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
           >
-            Cancel Editting
+            <CloseIcon className="w-6 h-6 fill-current" />
           </button>
         </>
       ) : (
         <>
           <button
             onClick={() => setIsEditting(true)}
-            className="bg-orange-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-orange-100 m-2 hover:bg-orange-600"
+            className="bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
           >
-            Edit Post
+            <EditIcon className="w-6 h-6 fill-current" />
           </button>
           <button
             onClick={handleDeletePost}
             className="bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
           >
-            Delete Post
+            <BinIcon className="w-6 h-6 fill-current" />
           </button>
         </>
       )}
