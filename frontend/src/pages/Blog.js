@@ -35,7 +35,7 @@ function BlogContainer(props) {
   const { blogSlug } = useParams();
   const [blog, status] = useBlogBySlugName(blogSlug);
 
-  if (status === 'loading') {
+  if (status === 'loading' || !blog) {
     return <Loading />;
   }
 
