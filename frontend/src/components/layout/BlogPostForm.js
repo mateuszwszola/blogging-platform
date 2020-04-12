@@ -101,6 +101,9 @@ function BlogPostForm({
         </>
       ) : null}
       <div className="mt-4">
+        <p className="py-2 text-sm uppercase text-gray-800 font-semibold">
+          Post content
+        </p>
         <Editor
           editorState={editorState}
           updateEditorState={updateEditorState}

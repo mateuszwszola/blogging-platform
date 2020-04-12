@@ -18,7 +18,7 @@ function DisplayPost({ post }) {
               {post.tags.map((tag, index) => (
                 <span
                   key={tag}
-                  className={`text-blue-700 uppercase text-sm md:text-base font-semibold${
+                  className={`inline-block text-blue-700 uppercase text-sm md:text-base font-semibold${
                     index > 0 ? ' ml-2' : ''
                   }`}
                 >
@@ -56,7 +56,7 @@ function DisplayPost({ post }) {
         )}
 
         <div className="mt-8 py-4 px-2 border-t border-solid border-gray-300">
-          <div className="text-gray-800 font-normal text-lg md:text-xl lg:text-2xl leading-loose tracking-wide">
+          <div className="text-gray-800 font-normal text-lg md:text-lg lg:text-xl leading-loose tracking-wide">
             <EditorContentPreview body={post.body} />
           </div>
         </div>

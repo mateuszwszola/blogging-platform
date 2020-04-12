@@ -14,10 +14,7 @@ function Posts({ posts }) {
       )}
     >
       {posts.map((post, index) => (
-        <div
-          key={post._id}
-          className={clsx(index < posts.length - 2 && 'mb-20', 'max-w-lg')}
-        >
+        <div key={post._id} className="block mx-auto max-w-screen-sm">
           <img
             src={
               post.bgImg

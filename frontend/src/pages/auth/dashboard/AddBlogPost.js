@@ -44,7 +44,10 @@ function AddBlogPost({ blog, ...props }) {
       body: JSON.stringify({
         content: convertToRaw(editorState.getCurrentContent()),
       }),
-      tags: tags.split(',').filter((t) => t.trim()),
+      tags: tags
+        .split(',')
+        .filter((t) => t.trim())
+        .join(','),
       bgImg,
       imgAttribution,
     };

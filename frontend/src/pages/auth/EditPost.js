@@ -37,7 +37,10 @@ function EditPost({ post, onUpdatePost }) {
       body: JSON.stringify({
         content: convertToRaw(editorState.getCurrentContent()),
       }),
-      tags: tags.split(',').filter((t) => t.trim()),
+      tags: tags
+        .split(',')
+        .filter((t) => t.trim())
+        .join(','),
       bgImg,
       imgAttribution,
     };
@@ -63,7 +66,12 @@ function EditPost({ post, onUpdatePost }) {
 
   return (
     <div className="px-2 py-4">
-      <h1 className="text-center text-2xl">Edit Post</h1>
+      <h1 className="text-center text-2xl md:text-3xl">Edit Post</h1>
+      {errors.message && (
+        <p className="text-red-500 text-sm">
+          Unable to edit a post. Check the fields or try again later
+        </p>
+      )}
       <BlogPostForm
         title={title}
         tags={tags}

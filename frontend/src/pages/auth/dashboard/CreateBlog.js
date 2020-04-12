@@ -12,23 +12,24 @@ function CreateBlog({ addBlog }) {
     handleChange,
     handleSubmit,
     handleReset,
-    values: { name, description },
+    values: { name, description, bgImg, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
       name: '',
       description: '',
+      bgImg: '',
+      imgAttribution: '',
     },
     handleCreateBlog,
     validate
   );
   const [status, setStatus] = React.useState('idle');
-
   const { setAlert } = useAlert();
 
   function handleCreateBlog() {
-    const data = { name, description };
+    const data = { name, description, bgImg, imgAttribution };
     setStatus('pending');
     createBlog(data)
       .then((res) => {
@@ -95,6 +96,27 @@ function CreateBlog({ addBlog }) {
           handleChange={handleChange}
           label="Blog Description"
         />
+
+        <InputGroup
+          name="bgImg"
+          value={bgImg}
+          handleChange={handleChange}
+          placeholder="https://"
+          classnames="border border-gray-400"
+          label="Background Image"
+          type="url"
+          pattern="https://.*"
+        />
+
+        <InputGroup
+          name="imgAttribution"
+          value={imgAttribution}
+          handleChange={handleChange}
+          placeholder="Photo By ... On ..."
+          classnames="border border-gray-400"
+          label="Image Attribution"
+        />
+
         <InputSubmit
           value="Create A Blog"
           classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
