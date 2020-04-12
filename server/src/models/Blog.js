@@ -9,33 +9,49 @@ const requiredString = {
 const specifiedStringLength = (field, minlength, maxlength) => {
   const obj = {};
   if (minlength) {
-    obj.minlength = [minlength, `${field} must have min ${minlength} characters`];
+    obj.minlength = [
+      minlength,
+      `${field} must have min ${minlength} characters`,
+    ];
   }
   if (maxlength) {
-    obj.maxlength = [maxlength, `${field} must have max ${maxlength} characters`];
+    obj.maxlength = [
+      maxlength,
+      `${field} must have max ${maxlength} characters`,
+    ];
   }
   return obj;
 };
 
-const BlogSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.ObjectId,
-    ref: 'User',
+const BlogSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.ObjectId,
+      ref: 'User',
+    },
+    name: {
+      ...requiredString,
+      ...specifiedStringLength('name', 2, 40),
+    },
+    slug: {
+      type: String,
+      lowercase: true,
+      unique: true,
+    },
+    description: {
+      ...requiredString,
+      ...specifiedStringLength('description', 2, 60),
+    },
+    bgImg: {
+      type: String,
+    },
+    imgAttribution: {
+      type: String,
+      ...specifiedStringLength('imgAttribution', 2, 60),
+    },
   },
-  name: {
-    ...requiredString,
-    ...specifiedStringLength('name', 4, 40),
-  },
-  slug: {
-    type: String,
-    lowercase: true,
-    unique: true,
-  },
-  description: {
-    type: String,
-    ...specifiedStringLength('description', 7, 60),
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 BlogSchema.pre('validate', function (next) {
   if (!this.slug) {
@@ -46,7 +62,10 @@ BlogSchema.pre('validate', function (next) {
 });
 
 BlogSchema.methods.slugify = function () {
-  this.slug = `${slugify(this.name)}-${(Math.random() * Math.pow(36, 6) | 0).toString(36)}`;
+  this.slug = `${slugify(this.name)}-${(
+    (Math.random() * Math.pow(36, 6)) |
+    0
+  ).toString(36)}`;
 };
 
 const Blog = mongoose.model('Blog', BlogSchema);

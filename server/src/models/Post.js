@@ -35,7 +35,7 @@ const PostSchema = new mongoose.Schema(
     },
     title: {
       ...requiredString,
-      maxlength: 60,
+      ...specifiedStringLength('title', 2, 60),
     },
     slug: {
       ...requiredString,
@@ -45,14 +45,12 @@ const PostSchema = new mongoose.Schema(
     body: {
       ...requiredString,
     },
-    description: {
-      type: String,
-    },
     bgImg: {
       type: String,
     },
     imgAttribution: {
       type: String,
+      ...specifiedStringLength('imgAttribution', 2, 60),
     },
     comments: [
       {

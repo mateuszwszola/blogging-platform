@@ -9,7 +9,7 @@ exports.createPost = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { title, body, tags, bgImg, imgAttribution } = req.body;
+  const { title, body } = req.body;
   const { blogId } = req.params;
 
   try {
@@ -23,14 +23,18 @@ exports.createPost = async (req, res, next) => {
       throw new Error('you are not allowed to create post in this blog');
     }
 
+    const postData = { title, body };
+    const optionalFields = ['tags', 'bgImg', 'imgAttribution'];
+    optionalFields.forEach((field) => {
+      if (field in req.body) {
+        postData[field] = req.body[field];
+      }
+    });
+
     const post = new Post({
       user: req.user.id,
       blog: blogId,
-      title,
-      body,
-      tags,
-      bgImg,
-      imgAttribution,
+      ...postData,
     });
     await post.save();
 
@@ -47,7 +51,7 @@ exports.updatePost = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { title, body, tags, bgImg, imgAttribution } = req.body;
+  const { title, body } = req.body;
   const { postId } = req.params;
 
   try {
@@ -61,9 +65,17 @@ exports.updatePost = async (req, res, next) => {
       throw new Error('you are not allowed to create post in this blog');
     }
 
+    const postData = { title, body };
+    const optionalFields = ['tags', 'bgImg', 'imgAttribution'];
+    optionalFields.forEach((field) => {
+      if (field in req.body) {
+        postData[field] = req.body[field];
+      }
+    });
+
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
-      { title, body, tags, bgImg, imgAttribution },
+      { title, body, ...postData },
       { new: true }
     );
 

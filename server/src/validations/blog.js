@@ -1,14 +1,39 @@
 const { body } = require('express-validator');
+const { isURL, isLength } = require('validator');
+const Filter = require('bad-words');
+const filter = new Filter();
 
 exports.validateBlog = [
   body('name', 'name is required')
-    .exists().trim()
+    .exists()
+    .trim()
     .not()
     .isEmpty()
-    .escape()
-    .isLength({ min: 4, max: 40 })
-    .withMessage('The name must be between 4 and 40 chars'),
-  body('description', 'The description must be between 7 and 60 chars')
-    .optional()
-    .isLength({ min: 7, max: 60 }),
+    .isLength({ min: 2, max: 40 })
+    .withMessage('The name must be between 2 and 40 chars')
+    .customSanitizer((name) => filter.clean(name)),
+  body('description', 'description is required')
+    .exists()
+    .trim()
+    .not()
+    .isEmpty()
+    .isLength({ min: 2, max: 60 })
+    .withMessage('The description must be between 2 and 60 chars')
+    .customSanitizer((desc) => filter.clean(desc)),
+  body('bgImg', 'invalid img URL')
+    .trim()
+    .custom((value) => {
+      if (value && !isURL(value)) {
+        return false;
+      }
+      return true;
+    }),
+  body('imgAttribution', 'The img attribution must be between 2 and 60 chars')
+    .trim()
+    .custom((value) => {
+      if (value && !isLength(value, { min: 2, max: 60 })) {
+        return false;
+      }
+      return true;
+    }),
 ];
