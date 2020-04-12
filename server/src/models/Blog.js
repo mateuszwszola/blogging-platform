@@ -40,7 +40,7 @@ const BlogSchema = new mongoose.Schema(
     },
     description: {
       ...requiredString,
-      ...specifiedStringLength('description', 2, 60),
+      ...specifiedStringLength('description', 2, 140),
     },
     bgImg: {
       type: String,

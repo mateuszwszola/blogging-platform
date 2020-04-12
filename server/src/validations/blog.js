@@ -17,8 +17,8 @@ exports.validateBlog = [
     .trim()
     .not()
     .isEmpty()
-    .isLength({ min: 2, max: 60 })
-    .withMessage('The description must be between 2 and 60 chars')
+    .isLength({ min: 2, max: 140 })
+    .withMessage('The description must be between 2 and 140 chars')
     .customSanitizer((desc) => filter.clean(desc)),
   body('bgImg', 'invalid img URL')
     .trim()
