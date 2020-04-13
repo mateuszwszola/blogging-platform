@@ -7,6 +7,29 @@
   margin-bottom: 2em;
 }
 
+.editor h1 {
+  font-size: 2.5rem;
+}
+
+.editor h2 {
+  font-size: 2rem;
+}
+
+.editor h3 {
+  font-size: 1.5rem;
+}
+
+.editor blockquote {
+  margin-left: 1rem;
+  padding-left: 0.5rem;
+  border-left: 2px solid lightgray;
+}
+
+.editor pre {
+  background-color: black;
+  color: white;
+}
+
 .error {
   border: 1px solid #f56565;
 }
@@ -17,4 +40,8 @@
 
 .options {
   margin-bottom: 20px;
+}
+
+.hide-placeholder .public-DraftEditorPlaceholder-inner {
+  display: none;
 }

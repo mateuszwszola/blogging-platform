@@ -5,6 +5,7 @@ import ManageBlog from './ManageBlog';
 import CreateBlog from './CreateBlog';
 import { useUserBlogs } from 'hooks/useBlog';
 import DisplayError from 'components/DisplayError';
+import Editor from 'components/Editor';
 
 function Dashboard(props) {
   const { blogs, status, addBlog, removeBlog } = useUserBlogs();
@@ -26,6 +27,7 @@ function Dashboard(props) {
             <h3 className="text-center text-3xl leading-loose mt-6">
               Please select a blog, or create new one
             </h3>
+            <Editor />
           </Route>
           <Route path={`${path}/create-blog`}>
             <CreateBlog addBlog={addBlog} />

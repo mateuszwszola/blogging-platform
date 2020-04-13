@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
 import { RichUtils } from 'draft-js';
 import Editor from 'draft-js-plugins-editor';
-import EditorControls from './EditorControls';
+// import EditorControls from './EditorControls';
 import Loading from '../Loading';
 import initializePlugins from './plugins/initializePlugins';
 
@@ -84,12 +84,12 @@ function ExtendedEditor({ editorState, updateEditorState, isError }) {
 
   return (
     <>
-      <EditorControls
+      {/* <EditorControls
         onBoldClick={onBoldClick}
         onItalicClick={onItalicClick}
         onUnderlineClick={onUnderlineClick}
         onToggleCode={onToggleCode}
-      />
+      /> */}
       <div
         className={`${styles.editor} ${isError && styles.error}`}
         onClick={focus}
@@ -109,6 +109,7 @@ function ExtendedEditor({ editorState, updateEditorState, isError }) {
 }
 
 ExtendedEditor.propTypes = {
+  editorState: PropTypes.object.isRequired,
   updateEditorState: PropTypes.func.isRequired,
 };
 
