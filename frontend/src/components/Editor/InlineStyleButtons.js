@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 
 const inlineStyleButtons = [
   {
@@ -22,38 +23,56 @@ const inlineStyleButtons = [
     value: 'Code',
     style: 'CODE',
   },
+  {
+    value: 'Highlight',
+    style: 'HIGHLIGHT',
+  },
 ];
 
-const InlineStyleButton = ({ value, handleMouseDown }) => (
-  <input
-    className="cursor-pointer m-2 py-1 px-2 bg-gray-500 text-gray-100 rounded"
-    type="button"
-    value={value}
-    onMouseDown={handleMouseDown}
-  />
-);
+const InlineStyleButton = ({ value, handleMouseDown, isActive }) => {
+  return (
+    <input
+      className={clsx(
+        'cursor-pointer m-2 py-1 px-4 rounded-lg text-gray-600 text-sm uppercase border-2 border-solid border-gray-400 transform',
+        isActive
+          ? 'font-bold bg-gray-400 scale-105 text-gray-700'
+          : 'bg-transparent font-medium'
+      )}
+      type="button"
+      value={value}
+      onMouseDown={handleMouseDown}
+    />
+  );
+};
 
 InlineStyleButton.propTypes = {
   value: PropTypes.string.isRequired,
   handleMouseDown: PropTypes.func.isRequired,
+  isActive: PropTypes.bool.isRequired,
 };
 
-function InlineStyleButtons({ toggleInlineStyle }) {
+function InlineStyleButtons({ toggleInlineStyle, currentInlineStyle }) {
   return (
     <div>
-      {inlineStyleButtons.map(({ value, style }) => (
-        <InlineStyleButton
-          key={style}
-          value={value}
-          handleMouseDown={toggleInlineStyle(style)}
-        />
-      ))}
+      <p className="font-semibold">Inline Styles</p>
+      {inlineStyleButtons.map(({ value, style }) => {
+        const isActive = currentInlineStyle.has(style);
+        return (
+          <InlineStyleButton
+            key={style}
+            value={value}
+            handleMouseDown={toggleInlineStyle(style)}
+            isActive={isActive}
+          />
+        );
+      })}
     </div>
   );
 }
 
 InlineStyleButtons.propTypes = {
   toggleInlineStyle: PropTypes.func.isRequired,
+  currentInlineStyle: PropTypes.object.isRequired,
 };
 
 export default InlineStyleButtons;

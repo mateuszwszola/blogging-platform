@@ -7,25 +7,35 @@
   margin-bottom: 2em;
 }
 
-.editor h1 {
+.editor :global(.public-DraftEditor-content) {
+  min-height: 140px;
+  max-height: 500px;
+  overflow: auto;
+}
+
+.hidePlaceholder :global(.public-DraftEditorPlaceholder-inner) {
+  display: none;
+}
+
+.h1 {
   font-size: 2.5rem;
 }
 
-.editor h2 {
+.h2 {
   font-size: 2rem;
 }
 
-.editor h3 {
+.h3 {
   font-size: 1.5rem;
 }
 
-.editor blockquote {
+.blockquote {
   margin-left: 1rem;
   padding-left: 0.5rem;
   border-left: 2px solid lightgray;
 }
 
-.editor pre {
+.pre {
   background-color: black;
   color: white;
 }
@@ -34,14 +44,6 @@
   border: 1px solid #f56565;
 }
 
-.editor :global(.public-DraftEditor-content) {
-  min-height: 140px;
-}
-
 .options {
   margin-bottom: 20px;
-}
-
-.hide-placeholder .public-DraftEditorPlaceholder-inner {
-  display: none;
 }

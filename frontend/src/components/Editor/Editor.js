@@ -1,10 +1,49 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Editor, EditorState, RichUtils, convertToRaw } from 'draft-js';
+import clsx from 'clsx';
+import {
+  Editor,
+  EditorState,
+  RichUtils,
+  convertToRaw,
+  Modifier,
+} from 'draft-js';
 import 'draft-js/dist/Draft.css';
 import styles from './Editor.module.css';
-import keyBindingFunction from './keyBindingFunction';
+import keyBindingFunction from './helpers/keyBindingFunction';
+import blockStyleFunctionCreator from './helpers/blockStyleFunction';
 import InlineStyleButtons from './InlineStyleButtons';
 import BlockTypeButtons from './BlockTypeButtons';
+import EmojiPicker from './EmojiPicker';
+
+const styleMap = {
+  HIGHLIGHT: {
+    backgroundColor: 'yellow',
+  },
+};
+
+const blockStyleFunction = blockStyleFunctionCreator(styles);
+
+function insertCharacter(characterToInsert, editorState) {
+  const currentContent = editorState.getCurrentContent();
+  const currentSelection = editorState.getSelection();
+
+  const newContent = Modifier.replaceText(
+    currentContent,
+    currentSelection,
+    characterToInsert
+  );
+
+  const newEditorState = EditorState.push(
+    editorState,
+    newContent,
+    'insert-characters'
+  );
+
+  return EditorState.forceSelection(
+    newEditorState,
+    newContent.getSelectionAfter()
+  );
+}
 
 function TextEditor() {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
@@ -34,6 +73,9 @@ function TextEditor() {
   const handleKeyCommand = (command, editorState) => {
     let newState = RichUtils.handleKeyCommand(editorState, command);
 
+    if (!newState && command === 'highlight') {
+      newState = RichUtils.toggleInlineStyle(editorState, 'HIGHLIGHT');
+    }
     if (!newState && command === 'strikethrough') {
       newState = RichUtils.toggleInlineStyle(editorState, 'STRIKETHROUGH');
     }
@@ -70,19 +112,37 @@ function TextEditor() {
     setEditorState(RichUtils.toggleBlockType(editorState, block));
   };
 
-  return (
-    <div>
-      <InlineStyleButtons toggleInlineStyle={toggleInlineStyle} />
+  const currentInlineStyle = editorState.getCurrentInlineStyle();
+  const currentBlockType = RichUtils.getCurrentBlockType(editorState);
 
-      <BlockTypeButtons toggleBlockType={toggleBlockType} />
+  const onEmojiClick = (e) => {
+    let emoji = e.currentTarget.getAttribute('data-emoji');
+    setEditorState(insertCharacter(emoji, editorState));
+  };
+
+  return (
+    <div className="">
+      <BlockTypeButtons
+        toggleBlockType={toggleBlockType}
+        currentBlockType={currentBlockType}
+      />
+
+      <InlineStyleButtons
+        toggleInlineStyle={toggleInlineStyle}
+        currentInlineStyle={currentInlineStyle}
+      />
+
+      <EmojiPicker onEmojiClick={onEmojiClick} />
 
       <div
         onClick={focusEditor}
-        className={`${styles.editor} ${
-          !showPlaceholder ? 'hide-placeholder' : ''
-        }`}
+        className={clsx(styles.editor, {
+          [styles.hidePlaceholder]: !showPlaceholder,
+        })}
       >
         <Editor
+          customStyleMap={styleMap}
+          blockStyleFn={blockStyleFunction}
           ref={editor}
           editorState={editorState}
           onChange={setEditorState}

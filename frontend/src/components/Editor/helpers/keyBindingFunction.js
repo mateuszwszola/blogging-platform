@@ -4,6 +4,13 @@ function keyBindingFunction(event) {
   if (
     KeyBindingUtil.hasCommandModifier(event) &&
     event.shiftKey &&
+    event.key === 'h'
+  ) {
+    return 'highlight';
+  }
+  if (
+    KeyBindingUtil.hasCommandModifier(event) &&
+    event.shiftKey &&
     event.key === 'x'
   ) {
     return 'strikethrough';
