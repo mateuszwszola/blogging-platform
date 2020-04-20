@@ -19,7 +19,7 @@ exports.createBlog = async (req, res, next) => {
     }
 
     const blogData = { name, description };
-    const optionalFields = ['bgImg', 'imgAttribution'];
+    const optionalFields = ['bgImgUrl', 'imgAttribution'];
     optionalFields.forEach((field) => {
       if (field in req.body) {
         blogData[field] = req.body[field];
@@ -57,7 +57,7 @@ exports.updateBlog = async (req, res, next) => {
     }
 
     const blogData = { name, description };
-    const optionalFields = ['bgImg', 'imgAttribution'];
+    const optionalFields = ['bgImgUrl', 'imgAttribution'];
     optionalFields.forEach((field) => {
       if (field in req.body) {
         blogData[field] = req.body[field];

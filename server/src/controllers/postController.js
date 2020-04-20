@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const Post = require('../models/Post');
 const Blog = require('../models/Blog');
+const Photo = require('../models/Photo');
 const errorFormatter = require('../validations/errorFormatter');
 
 exports.createPost = async (req, res, next) => {
@@ -24,7 +25,7 @@ exports.createPost = async (req, res, next) => {
     }
 
     const postData = { title, body };
-    const optionalFields = ['tags', 'bgImg', 'imgAttribution'];
+    const optionalFields = ['tags', 'bgImgUrl', 'imgAttribution'];
     optionalFields.forEach((field) => {
       if (field in req.body) {
         postData[field] = req.body[field];
@@ -36,6 +37,22 @@ exports.createPost = async (req, res, next) => {
       blog: blogId,
       ...postData,
     });
+
+    const file = req.file && req.file.buffer;
+    if (file) {
+      try {
+        const photo = new Photo({
+          photo: req.file.buffer,
+        });
+
+        await photo.save();
+
+        post.photo = photo.id;
+      } catch (error) {
+        return next(error);
+      }
+    }
+
     await post.save();
 
     res.json({ post });
@@ -66,7 +83,7 @@ exports.updatePost = async (req, res, next) => {
     }
 
     const postData = { title, body };
-    const optionalFields = ['tags', 'bgImg', 'imgAttribution'];
+    const optionalFields = ['tags', 'bgImgUrl', 'imgAttribution'];
     optionalFields.forEach((field) => {
       if (field in req.body) {
         postData[field] = req.body[field];

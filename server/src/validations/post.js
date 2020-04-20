@@ -13,7 +13,7 @@ exports.validatePost = [
     .withMessage('The title must be between 2 and 60 chars')
     .customSanitizer((title) => filter.clean(title)),
   body('body', 'body is required').exists().trim().not().isEmpty(),
-  body('bgImg', 'invalid img URL')
+  body('bgImgUrl', 'invalid img URL')
     .trim()
     .custom((value) => {
       if (value && !isURL(value)) {

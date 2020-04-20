@@ -45,12 +45,15 @@ const PostSchema = new mongoose.Schema(
     body: {
       ...requiredString,
     },
-    bgImg: {
+    bgImgUrl: {
       type: String,
+    },
+    photo: {
+      type: mongoose.ObjectId,
+      ref: 'Photo',
     },
     imgAttribution: {
       type: String,
-      ...specifiedStringLength('imgAttribution', 2, 60),
     },
     comments: [
       {

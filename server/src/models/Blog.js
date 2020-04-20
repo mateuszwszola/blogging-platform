@@ -42,12 +42,11 @@ const BlogSchema = new mongoose.Schema(
       ...requiredString,
       ...specifiedStringLength('description', 2, 140),
     },
-    bgImg: {
+    bgImgUrl: {
       type: String,
     },
     imgAttribution: {
       type: String,
-      ...specifiedStringLength('imgAttribution', 2, 60),
     },
   },
   { timestamps: true }

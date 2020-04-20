@@ -28,7 +28,7 @@ exports.getPhoto = async (req, res, next) => {
   try {
     const result = await Photo.findById(req.params.id);
     res.set('Content-Type', 'image/jpeg');
-    res.json({ photo: result.photo });
+    res.send(result.photo);
   } catch (err) {
     res.status(err.status || 400);
     next(err);

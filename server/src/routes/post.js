@@ -2,6 +2,7 @@ const router = require('express').Router();
 const auth = require('../middleware/auth');
 const postController = require('../controllers/postController');
 const postValidation = require('../validations/post');
+const photoUpload = require('../middleware/photoUpload');
 
 /*
   @route   POST api/posts/:blogId
@@ -11,6 +12,7 @@ const postValidation = require('../validations/post');
 router.post(
   '/:blogId',
   auth,
+  photoUpload.single('photo'),
   postValidation.validatePost,
   postController.createPost
 );
