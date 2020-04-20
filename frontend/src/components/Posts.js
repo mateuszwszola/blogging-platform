@@ -5,6 +5,8 @@ import Moment from 'react-moment';
 import clsx from 'clsx';
 import { CalendarIcon, StarFullIcon } from 'icons';
 
+import { API_BASE_URL } from 'api/client';
+
 function Posts({ posts }) {
   return (
     <div
@@ -17,8 +19,10 @@ function Posts({ posts }) {
         <div key={post._id} className="block mx-auto max-w-screen-sm">
           <img
             src={
-              post.bgImg
-                ? post.bgImg
+              post.photo
+                ? `${API_BASE_URL}/photos/${post.photo}`
+                : post.bgImgUrl
+                ? post.bgImgUrl
                 : 'https://picsum.photos/seed/picsum/600/300'
             }
             alt=""

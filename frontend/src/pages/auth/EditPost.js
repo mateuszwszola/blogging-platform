@@ -11,14 +11,14 @@ function EditPost({ post, onUpdatePost }) {
   const {
     handleChange,
     handleSubmit,
-    values: { title, tags, bgImg, imgAttribution },
+    values: { title, tags, bgImgUrl, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
       title: post.title,
       tags: post.tags.join(',') || '',
-      bgImg: post.bgImg || '',
+      bgImgUrl: post.bgImgUrl || '',
       imgAttribution: post.imgAttribution || '',
     },
     handleUpdateBlogPost,
@@ -41,7 +41,7 @@ function EditPost({ post, onUpdatePost }) {
         .split(',')
         .filter((t) => t.trim())
         .join(','),
-      bgImg,
+      bgImgUrl,
       imgAttribution,
     };
 
@@ -75,7 +75,7 @@ function EditPost({ post, onUpdatePost }) {
       <BlogPostForm
         title={title}
         tags={tags}
-        bgImg={bgImg}
+        bgImgUrl={bgImgUrl}
         imgAttribution={imgAttribution}
         editorState={editorState}
         updateEditorState={updateEditorState}

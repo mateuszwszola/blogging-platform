@@ -16,7 +16,7 @@ function Blog({ blog, ...props }) {
         className="w-full min-h-screen relative bg-cover bg-center"
         style={{
           backgroundImage: `url(${
-            blog.bgImg ? blog.bgImg : 'https://picsum.photos/1280/720'
+            blog.bgImgUrl ? blog.bgImgUrl : 'https://picsum.photos/1280/720'
           })`,
         }}
       >

@@ -120,7 +120,7 @@ function ExtendedEditor({ editorState, updateEditorState, isError }) {
   }
 
   return (
-    <>
+    <div>
       <BlockTypeButtons
         toggleBlockType={toggleBlockType}
         currentBlockType={currentBlockType}
@@ -157,7 +157,7 @@ function ExtendedEditor({ editorState, updateEditorState, isError }) {
         <EmojiSuggestions />
         <EmojiSelect />
       </div>
-    </>
+    </div>
   );
 }
 

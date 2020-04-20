@@ -121,7 +121,7 @@ function TextEditor() {
   };
 
   return (
-    <div className="">
+    <div>
       <BlockTypeButtons
         toggleBlockType={toggleBlockType}
         currentBlockType={currentBlockType}

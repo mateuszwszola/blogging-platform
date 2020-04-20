@@ -33,9 +33,9 @@ const InlineBlockButton = ({ value, handleMouseDown, isActive }) => {
   return (
     <input
       className={clsx(
-        'cursor-pointer m-2 py-1 px-4 text-gray-600 bg-transparent text-sm uppercase transform border-b-2 border-solid border-transparent',
+        'cursor-pointer m-2 py-1 px-4 rounded-lg text-gray-600 text-sm uppercase border-2 border-solid border-gray-400',
         isActive
-          ? 'font-bold text-gray-700 border-gray-700'
+          ? 'font-bold bg-gray-400 text-gray-700'
           : 'bg-transparent font-medium'
       )}
       type="button"

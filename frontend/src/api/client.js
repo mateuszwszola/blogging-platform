@@ -1,9 +1,9 @@
-const API_BASE_URL =
+export const API_BASE_URL =
   window.location.hostname === 'localhost'
     ? process.env.REACT_APP_API_URL_DEV
     : process.env.REACT_APP_API_URL_PROD;
 
-const localStorageKey = '__token__';
+export const localStorageKey = '__token__';
 
 async function client(endpoint, { body, ...customConfig } = {}) {
   const token = window.localStorage.getItem(localStorageKey);

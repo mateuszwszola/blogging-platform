@@ -1,26 +1,28 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, InputSubmit } from './Input';
 import Loading from '../Loading';
 import Editor from '../Editor';
+import ImgUploadInput from './Input/ImgUploadInput';
 
 function BlogPostForm({
   title,
   tags,
-  bgImg,
+  bgImgUrl,
   imgAttribution,
   handleSubmit,
   handleChange,
   editorState,
   updateEditorState,
+  handlePhotoChange,
   errors,
   loading,
   update,
 }) {
   const filteredTagsArr = tags.split(',').filter((t) => t.trim());
-  const [showOptionalFields, setShowOptionalFields] = React.useState(false);
+  const [uploadImg, setUploadImg] = useState(true);
 
-  const toggleOptionalFields = () => setShowOptionalFields((show) => !show);
+  const toggleSetUploadImg = () => setUploadImg((show) => !show);
 
   return (
     <div className="relative">
@@ -30,31 +32,37 @@ function BlogPostForm({
         </div>
       )}
 
-      <InputGroup
-        isError={
-          !!(Object.keys(errors).length > 0 && (errors.title || errors.message))
-        }
-        errors={errors}
-        name="title"
-        value={title}
-        handleChange={handleChange}
-        placeholder="Post Title"
-        classnames="border border-gray-400"
-        label="Post Title"
-      />
+      <form onSubmit={handleSubmit} method="POST" encType="multipart/form-data">
+        <InputGroup
+          isError={
+            !!(
+              Object.keys(errors).length > 0 &&
+              (errors.title || errors.message)
+            )
+          }
+          errors={errors}
+          name="title"
+          value={title}
+          handleChange={handleChange}
+          placeholder="Post Title"
+          classnames="border border-gray-400"
+          label="Post Title"
+        />
 
-      <button
-        className="py-1 px-2 text-sm uppercase rounded bg-blue-500 text-blue-100"
-        onClick={toggleOptionalFields}
-      >
-        {showOptionalFields ? 'Hide' : 'Show'} Optional Fields
-      </button>
+        <button
+          type="button"
+          className="py-1 px-2 my-2 text-sm uppercase bg-gray-500 rounded text-gray-100"
+          onClick={toggleSetUploadImg}
+        >
+          {uploadImg ? 'Or add img src instead' : 'Upload img'}
+        </button>
 
-      {showOptionalFields ? (
-        <>
+        {uploadImg ? (
+          <ImgUploadInput handleChange={handlePhotoChange} />
+        ) : (
           <InputGroup
-            name="bgImg"
-            value={bgImg}
+            name="bgImgUrl"
+            value={bgImgUrl}
             handleChange={handleChange}
             placeholder="https://"
             classnames="border border-gray-400"
@@ -62,66 +70,67 @@ function BlogPostForm({
             type="url"
             pattern="https://.*"
           />
+        )}
 
-          <InputGroup
-            name="imgAttribution"
-            value={imgAttribution}
-            handleChange={handleChange}
-            placeholder="Photo By ... On ..."
-            classnames="border border-gray-400"
-            label="Image Attribution"
-          />
+        <InputGroup
+          name="imgAttribution"
+          value={imgAttribution}
+          handleChange={handleChange}
+          placeholder="(optional) Photo By ..."
+          classnames="border border-gray-400"
+          label="Image Attribution"
+        />
 
-          <InputGroup
-            isError={
-              !!(
-                Object.keys(errors).length > 0 &&
-                (errors.tags || errors.message)
-              )
-            }
-            errors={errors}
-            name="tags"
-            placeholder="Give a post tags (separate them using comma)"
-            classnames="border border-gray-400"
-            value={tags}
-            handleChange={handleChange}
-            label="Tags (what is the post about?)"
-          />
-          <div className="mt-1">
-            {filteredTagsArr.length > 0 &&
-              filteredTagsArr.map((tag, index) => (
-                <span
-                  key={`${tag}-${index}`}
-                  className="inline-block bg-blue-500 px-2 py-1 text-blue-100 rounded mr-1"
-                >
-                  {tag}
-                </span>
-              ))}
-          </div>
-        </>
-      ) : null}
-      <div className="mt-4">
-        <p className="py-2 text-sm uppercase text-gray-800 font-semibold">
-          Post content
-        </p>
-        <Editor
-          editorState={editorState}
-          updateEditorState={updateEditorState}
+        <InputGroup
           isError={
             !!(
               Object.keys(errors).length > 0 &&
-              (errors.body || errors.messasge)
+              (errors.tags || errors.message)
             )
           }
+          errors={errors}
+          name="tags"
+          placeholder="Give a post tags (separate them using comma)"
+          classnames="border border-gray-400"
+          value={tags}
+          handleChange={handleChange}
+          label="Tags (what is the post about?)"
         />
-        {errors.body && <p className="text-red-500 text-sm">{errors.body}</p>}
-      </div>
+        <div className="mt-1">
+          {filteredTagsArr.length > 0 &&
+            filteredTagsArr.map((tag, index) => (
+              <span
+                key={`${tag}-${index}`}
+                className="inline-block bg-blue-500 px-2 py-1 text-blue-100 rounded mr-1"
+              >
+                {tag}
+              </span>
+            ))}
+        </div>
 
-      <InputSubmit
-        onClick={handleSubmit}
-        value={update ? 'Update Post' : 'Create Post'}
-        classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
-      />
+        <div className="mt-4">
+          <p className="py-2 text-sm uppercase text-gray-800 font-semibold">
+            Post content
+          </p>
+          <Editor
+            editorState={editorState}
+            updateEditorState={updateEditorState}
+            isError={
+              !!(
+                Object.keys(errors).length > 0 &&
+                (errors.body || errors.messasge)
+              )
+            }
+          />
+          {errors.body && <p className="text-red-500 text-sm">{errors.body}</p>}
+        </div>
+
+        <InputSubmit
+          onClick={handleSubmit}
+          value={update ? 'Update Post' : 'Create Post'}
+          classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
+        />
+      </form>
     </div>
   );
 }
@@ -133,10 +142,11 @@ BlogPostForm.defaultProps = {
 BlogPostForm.propTypes = {
   title: PropTypes.string.isRequired,
   tags: PropTypes.string.isRequired,
-  bgImg: PropTypes.string.isRequired,
+  bgImgUrl: PropTypes.string.isRequired,
   imgAttribution: PropTypes.string.isRequired,
   editorState: PropTypes.object.isRequired,
   updateEditorState: PropTypes.func.isRequired,
+  handlePhotoChange: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,

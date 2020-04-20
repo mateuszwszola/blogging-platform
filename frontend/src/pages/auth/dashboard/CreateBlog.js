@@ -12,14 +12,14 @@ function CreateBlog({ addBlog }) {
     handleChange,
     handleSubmit,
     handleReset,
-    values: { name, description, bgImg, imgAttribution },
+    values: { name, description, bgImgUrl, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
       name: '',
       description: '',
-      bgImg: '',
+      bgImgUrl: '',
       imgAttribution: '',
     },
     handleCreateBlog,
@@ -29,7 +29,7 @@ function CreateBlog({ addBlog }) {
   const { setAlert } = useAlert();
 
   function handleCreateBlog() {
-    const data = { name, description, bgImg, imgAttribution };
+    const data = { name, description, bgImgUrl, imgAttribution };
     setStatus('pending');
     createBlog(data)
       .then((res) => {
@@ -98,8 +98,8 @@ function CreateBlog({ addBlog }) {
         />
 
         <InputGroup
-          name="bgImg"
-          value={bgImg}
+          name="bgImgUrl"
+          value={bgImgUrl}
           handleChange={handleChange}
           placeholder="https://"
           classnames="border border-gray-400"

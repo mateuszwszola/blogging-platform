@@ -4,12 +4,12 @@
   cursor: text;
   padding: 16px;
   border-radius: 5px;
-  margin-bottom: 2em;
+  margin: 1rem 0;
 }
 
 .editor :global(.public-DraftEditor-content) {
   min-height: 140px;
-  max-height: 500px;
+  max-height: 600px;
   overflow: auto;
 }
 

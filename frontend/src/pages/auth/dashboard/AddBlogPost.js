@@ -1,35 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { convertToRaw } from 'draft-js';
 import { useForm } from 'hooks';
 import validate from 'utils/AddBlogPostValidationRules';
-import { addBlogPost } from 'api/post';
 import { useAlert } from 'context/AlertContext';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import useEditorState from 'hooks/useEditorState';
+import useImgUpload from 'hooks/useImgUpload';
+import axios from 'axios';
+import { API_BASE_URL } from 'api/client';
+import { getToken } from 'api/auth';
 
 function AddBlogPost({ blog, ...props }) {
-  const [status, setStatus] = React.useState('idle');
+  const [status, setStatus] = useState('idle');
   const {
     handleChange,
     handleSubmit,
     handleReset,
-    values: { title, tags, bgImg, imgAttribution },
+    values: { title, tags, bgImgUrl, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
       title: '',
       tags: '',
-      bgImg: '',
+      bgImgUrl: '',
       imgAttribution: '',
     },
     handleAddBlogPost,
     validate
   );
-
   const { editorState, updateEditorState, resetEditorState } = useEditorState();
+  const [photo, handlePhotoChange] = useImgUpload();
   const { setAlert } = useAlert();
 
   const editorStatePlainText = editorState.getCurrentContent().getPlainText();
@@ -39,6 +42,7 @@ function AddBlogPost({ blog, ...props }) {
     if (!editorStatePlainText.trim()) {
       return setErrors({ body: 'post content is required' });
     }
+
     const data = {
       title,
       body: JSON.stringify({
@@ -48,30 +52,68 @@ function AddBlogPost({ blog, ...props }) {
         .split(',')
         .filter((t) => t.trim())
         .join(','),
-      bgImg,
-      imgAttribution,
     };
 
+    if (photo || bgImgUrl) {
+      if (imgAttribution) {
+        data.imgAttribution = imgAttribution;
+      }
+      if (photo) {
+        data.photo = photo;
+      } else {
+        data.bgImgUrl = bgImgUrl;
+      }
+    }
+
+    const formData = new FormData();
+    for (const field in data) {
+      formData.append(field, data[field]);
+    }
+
     setStatus('pending');
-    addBlogPost(blog._id, data)
-      .then(() => {
+
+    const headers = {
+      'Content-Type': 'multipart/form-data',
+    };
+
+    const token = getToken();
+    if (token) {
+      headers['x-auth-token'] = token;
+    }
+
+    axios
+      .post(`${API_BASE_URL}/posts/${blog._id}`, formData, {
+        headers,
+      })
+      .then((res) => {
+        console.log(res.data);
         handleReset();
-        resetEditorState();
         setStatus('loaded');
         setAlert('success', 'Blog Post Added');
       })
       .catch((err) => {
-        setStatus('error');
-        if (err.errors) {
-          setErrors(err.errors);
-        } else {
-          setErrors({
-            message:
-              err.message ||
-              'There is a problem with the server. Try again later.',
-          });
-        }
+        console.error(err);
+        console.log(err.data);
       });
+    // addBlogPost(blog._id, data)
+    //   .then(() => {
+    //     handleReset();
+    //     resetEditorState();
+    //     setStatus('loaded');
+    //     setAlert('success', 'Blog Post Added');
+    //   })
+    //   .catch((err) => {
+    //     setStatus('error');
+    //     if (err.errors) {
+    //       setErrors(err.errors);
+    //     } else {
+    //       setErrors({
+    //         message:
+    //           err.message ||
+    //           'There is a problem with the server. Try again later.',
+    //       });
+    //     }
+    //   });
   }
 
   return (
@@ -88,8 +130,9 @@ function AddBlogPost({ blog, ...props }) {
         updateEditorState={updateEditorState}
         title={title}
         tags={tags}
-        bgImg={bgImg}
+        bgImgUrl={bgImgUrl}
         imgAttribution={imgAttribution}
+        handlePhotoChange={handlePhotoChange}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}

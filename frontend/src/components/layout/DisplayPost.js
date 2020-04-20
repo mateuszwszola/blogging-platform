@@ -4,6 +4,8 @@ import profileImg from 'img/undraw_profile.svg';
 import EditorContentPreview from '../Editor/EditorContentPreview';
 import DisplayDate from './DisplayDate';
 
+import { API_BASE_URL } from 'api/client';
+
 function DisplayPost({ post }) {
   return (
     <div className="px-2 py-4">
@@ -40,10 +42,16 @@ function DisplayPost({ post }) {
       </div>
 
       <div className="mt-3">
-        {post.bgImg && (
+        {(post.bgImgUrl || post.photo) && (
           <div className="">
             <img
-              src={post.bgImg}
+              src={
+                post.photo
+                  ? `${API_BASE_URL}/photos/${post.photo}`
+                  : post.bgImgUrl
+                  ? post.bgImgUrl
+                  : 'https://picsum.photos/seed/picsum/600/300'
+              }
               className="max-w-full block mx-auto rounded"
               alt="post-background"
             />
