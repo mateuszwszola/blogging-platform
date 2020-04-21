@@ -32,14 +32,15 @@ function BlogPostForm({
         </div>
       )}
 
+      {errors.message && (
+        <p className="text-red-500 text-sm text-center my-4">
+          {errors.message}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} method="POST" encType="multipart/form-data">
         <InputGroup
-          isError={
-            !!(
-              Object.keys(errors).length > 0 &&
-              (errors.title || errors.message)
-            )
-          }
+          isError={!!(Object.keys(errors).length > 0 && errors.title)}
           errors={errors}
           name="title"
           value={title}
@@ -48,14 +49,6 @@ function BlogPostForm({
           classnames="border border-gray-400"
           label="Post Title"
         />
-
-        <button
-          type="button"
-          className="py-1 px-2 my-2 text-sm uppercase bg-gray-500 rounded text-gray-100"
-          onClick={toggleSetUploadImg}
-        >
-          {uploadImg ? 'Or add img src instead' : 'Upload img'}
-        </button>
 
         {uploadImg ? (
           <ImgUploadInput handleChange={handlePhotoChange} />
@@ -72,6 +65,14 @@ function BlogPostForm({
           />
         )}
 
+        <button
+          type="button"
+          className="bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+          onClick={toggleSetUploadImg}
+        >
+          {uploadImg ? 'Add image URL' : 'Upload img'}
+        </button>
+
         <InputGroup
           name="imgAttribution"
           value={imgAttribution}
@@ -82,12 +83,7 @@ function BlogPostForm({
         />
 
         <InputGroup
-          isError={
-            !!(
-              Object.keys(errors).length > 0 &&
-              (errors.tags || errors.message)
-            )
-          }
+          isError={!!(Object.keys(errors).length > 0 && errors.tags)}
           errors={errors}
           name="tags"
           placeholder="Give a post tags (separate them using comma)"

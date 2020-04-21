@@ -1,3 +1,5 @@
+import { logout } from './auth';
+
 export const API_BASE_URL =
   window.location.hostname === 'localhost'
     ? process.env.REACT_APP_API_URL_DEV
@@ -5,14 +7,14 @@ export const API_BASE_URL =
 
 export const localStorageKey = '__token__';
 
-async function client(endpoint, { body, ...customConfig } = {}) {
+async function client(endpoint, { body, formData, ...customConfig } = {}) {
   const token = window.localStorage.getItem(localStorageKey);
-  const headers = { 'Content-Type': 'application/json' };
+  const headers = {};
   if (token) {
     headers['x-auth-token'] = token;
   }
   const config = {
-    method: body ? 'POST' : 'GET',
+    method: body || formData ? 'POST' : 'GET',
     ...customConfig,
     headers: {
       ...headers,
@@ -21,16 +23,36 @@ async function client(endpoint, { body, ...customConfig } = {}) {
   };
 
   if (body) {
+    config.headers['Content-Type'] = 'application/json';
     config.body = JSON.stringify(body);
   }
 
-  const res = await window.fetch(`${API_BASE_URL}/${endpoint}`, config);
-  const data = await res.json();
+  if (formData) {
+    /*
+    In the case of sending formData, omit setting content-type,
+    the browser will do it better, automatically
+    
+    https://stackoverflow.com/questions/35192841/fetch-post-with-multipart-form-data
 
-  if (!res.ok) {
-    return Promise.reject(data);
+    */
+    config.body = formData;
   }
-  return Promise.resolve(data);
+
+  return window
+    .fetch(`${API_BASE_URL}/${endpoint}`, config)
+    .then(async (res) => {
+      if (res.status === 401) {
+        logout();
+        window.location.assign('/login');
+        return;
+      }
+      const data = await res.json();
+
+      if (!res.ok) {
+        return Promise.reject(data);
+      }
+      return data;
+    });
 }
 
 export default client;

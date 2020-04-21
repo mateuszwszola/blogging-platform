@@ -5,9 +5,11 @@ import { convertToRaw } from 'draft-js';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import validate from 'utils/AddBlogPostValidationRules';
 import useEditorState from 'hooks/useEditorState';
-import { updatePost } from 'api/post';
+import useImgUpload from 'hooks/useImgUpload';
+import client from 'api/client';
 
 function EditPost({ post, onUpdatePost }) {
+  const [status, setStatus] = useState('idle');
   const {
     handleChange,
     handleSubmit,
@@ -24,13 +26,14 @@ function EditPost({ post, onUpdatePost }) {
     handleUpdateBlogPost,
     validate
   );
-  const [status, setStatus] = useState('idle');
   const { editorState, updateEditorState } = useEditorState(post.body);
   const editorStatePlainText = editorState.getCurrentContent().getPlainText();
 
+  const [photo, handlePhotoChange] = useImgUpload();
+
   function handleUpdateBlogPost() {
     if (!editorStatePlainText.trim()) {
-      return setErrors({ body: 'body is required' });
+      return setErrors({ body: 'post content is required' });
     }
     const data = {
       title,
@@ -41,12 +44,29 @@ function EditPost({ post, onUpdatePost }) {
         .split(',')
         .filter((t) => t.trim())
         .join(','),
-      bgImgUrl,
-      imgAttribution,
     };
 
+    if (photo || bgImgUrl) {
+      if (imgAttribution) {
+        data.imgAttribution = imgAttribution;
+      }
+      if (photo) {
+        data.photo = photo;
+        delete data.bgImgUrl;
+      } else {
+        data.bgImgUrl = bgImgUrl;
+        delete data.photo;
+      }
+    }
+
+    const formData = new FormData();
+    for (const field in data) {
+      formData.append(field, data[field]);
+    }
+
     setStatus('pending');
-    updatePost(post._id, data)
+
+    client(`posts/${post._id}`, { formData, method: 'PUT' })
       .then((res) => {
         onUpdatePost(res.post);
       })
@@ -67,16 +87,13 @@ function EditPost({ post, onUpdatePost }) {
   return (
     <div className="px-2 py-4">
       <h1 className="text-center text-2xl md:text-3xl">Edit Post</h1>
-      {errors.message && (
-        <p className="text-red-500 text-sm">
-          Unable to edit a post. Check the fields or try again later
-        </p>
-      )}
+
       <BlogPostForm
         title={title}
         tags={tags}
         bgImgUrl={bgImgUrl}
         imgAttribution={imgAttribution}
+        handlePhotoChange={handlePhotoChange}
         editorState={editorState}
         updateEditorState={updateEditorState}
         handleSubmit={handleSubmit}

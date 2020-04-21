@@ -1,9 +1,8 @@
-import client from './client';
-
-const localStorageKey = '__token__';
+import client, { localStorageKey } from './client';
 
 function handleDataResponse({ user, token }) {
   window.localStorage.setItem(localStorageKey, token);
+
   return user;
 }
 

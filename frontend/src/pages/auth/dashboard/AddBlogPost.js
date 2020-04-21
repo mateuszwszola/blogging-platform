@@ -8,9 +8,7 @@ import { useAlert } from 'context/AlertContext';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import useEditorState from 'hooks/useEditorState';
 import useImgUpload from 'hooks/useImgUpload';
-import axios from 'axios';
-import { API_BASE_URL } from 'api/client';
-import { getToken } from 'api/auth';
+import client from 'api/client';
 
 function AddBlogPost({ blog, ...props }) {
   const [status, setStatus] = useState('idle');
@@ -60,8 +58,10 @@ function AddBlogPost({ blog, ...props }) {
       }
       if (photo) {
         data.photo = photo;
+        delete data.bgImgUrl;
       } else {
         data.bgImgUrl = bgImgUrl;
+        delete data.photo;
       }
     }
 
@@ -72,48 +72,27 @@ function AddBlogPost({ blog, ...props }) {
 
     setStatus('pending');
 
-    const headers = {
-      'Content-Type': 'multipart/form-data',
-    };
-
-    const token = getToken();
-    if (token) {
-      headers['x-auth-token'] = token;
-    }
-
-    axios
-      .post(`${API_BASE_URL}/posts/${blog._id}`, formData, {
-        headers,
-      })
+    client(`posts/${blog._id}`, { formData })
       .then((res) => {
-        console.log(res.data);
         handleReset();
+        resetEditorState();
         setStatus('loaded');
         setAlert('success', 'Blog Post Added');
       })
       .catch((err) => {
-        console.error(err);
-        console.log(err.data);
+        console.log(err);
+        setStatus('error');
+
+        if (err.errors) {
+          setErrors(err.errors);
+        } else {
+          setErrors({
+            message:
+              err.message ||
+              'There is a problem with the server. Try again later.',
+          });
+        }
       });
-    // addBlogPost(blog._id, data)
-    //   .then(() => {
-    //     handleReset();
-    //     resetEditorState();
-    //     setStatus('loaded');
-    //     setAlert('success', 'Blog Post Added');
-    //   })
-    //   .catch((err) => {
-    //     setStatus('error');
-    //     if (err.errors) {
-    //       setErrors(err.errors);
-    //     } else {
-    //       setErrors({
-    //         message:
-    //           err.message ||
-    //           'There is a problem with the server. Try again later.',
-    //       });
-    //     }
-    //   });
   }
 
   return (

@@ -1,9 +1,14 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  useLayoutEffect,
+  useCallback,
+} from 'react';
 import { useAsync } from 'react-async';
 import * as auth from 'api/auth';
 import Loading from 'components/Loading';
 
-const AuthContext = React.createContext();
+const AuthContext = createContext();
 
 async function getUserData() {
   const user = await auth.getUser();
@@ -32,42 +37,45 @@ function AuthProvider(props) {
     }
   }, [isSeattled]);
 
+  const login = useCallback(
+    async (formData) => {
+      // auth.login(formData).then(reload);
+      try {
+        await auth.login(formData);
+        reload();
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    [reload]
+  );
+
+  const register = useCallback(
+    async (formData) => {
+      // auth.register(formData).then(reload);
+      try {
+        await auth.register(formData);
+        reload();
+      } catch (err) {
+        return Promise.reject(err);
+      }
+    },
+    [reload]
+  );
+
+  const logout = useCallback(() => {
+    auth.logout();
+    reload();
+  }, [reload]);
+
   if (!firstAttemptFinished) {
     if (isPending) {
       return <Loading />;
     }
     if (isRejected) {
       console.error(error.message);
-      return <div>You were logged out. Try refresh the page</div>;
     }
   }
-
-  const login = async (formData) => {
-    // auth.login(formData).then(reload);
-    try {
-      await auth.login(formData);
-      reload();
-    } catch (err) {
-      console.error(err);
-      return Promise.reject(err);
-    }
-  };
-
-  const register = async (formData) => {
-    // auth.register(formData).then(reload);
-    try {
-      await auth.register(formData);
-      reload();
-    } catch (err) {
-      console.error(err);
-      return Promise.reject(err);
-    }
-  };
-
-  const logout = () => {
-    auth.logout();
-    reload();
-  };
 
   return (
     <AuthContext.Provider
