@@ -39,7 +39,7 @@ exports.createPost = async (req, res, next) => {
     });
 
     const file = req.file && req.file.buffer;
-    if (file) {
+    if (file && !postData.bgImgUrl) {
       try {
         const photo = new Photo({
           photo: req.file.buffer,
@@ -89,6 +89,29 @@ exports.updatePost = async (req, res, next) => {
         postData[field] = req.body[field];
       }
     });
+
+    const file = req.file && req.file.buffer;
+    if (file && !postData.bgImgUrl) {
+      try {
+        const photo = new Photo({
+          photo: req.file.buffer,
+        });
+
+        await photo.save();
+
+        postData.photo = photo.id;
+      } catch (error) {
+        return next(error);
+      }
+    }
+
+    // if (postData.bgImgUrl && post.photo) {
+    //   try {
+    //     await Photo.findByIdAndDelete(post.photo._id);
+    //   } catch (error) {
+    //     next(error);
+    //   }
+    // }
 
     const updatedPost = await Post.findByIdAndUpdate(
       postId,

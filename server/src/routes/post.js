@@ -25,6 +25,7 @@ router.post(
 router.put(
   '/:postId',
   auth,
+  photoUpload.single('photo'),
   postValidation.validatePost,
   postController.updatePost
 );

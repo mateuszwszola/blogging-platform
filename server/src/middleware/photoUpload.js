@@ -6,9 +6,9 @@ const upload = multer({
   },
   fileFilter(req, file, cb) {
     if (!file.originalname.match(/\.(jpeg|jpg|png)$/)) {
-      cb(new Error('Only upload files with jpg or jpeg format.'));
+      cb(new Error('Only upload files with jpg, jpeg or png format.'));
     }
-    cb(undefined, true);
+    cb(null, true);
   },
 });
 
