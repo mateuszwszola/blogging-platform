@@ -1,39 +1,27 @@
 import { useState, useEffect } from 'react';
 import * as blogAPI from 'api/blog';
+import { blogReducer } from 'reducers/blogReducer';
+import useThunkReducer from './useThunkReducer';
+import { fetchBlogBySlug } from 'actions/blogActions';
+
+const initialBlogState = {
+  blog: {},
+  loading: true,
+  error: null,
+};
 
 function useBlogBySlugName(slug) {
-  const [status, setStatus] = useState('idle');
-  const [blog, setBlog] = useState(null);
+  const [state, dispatch] = useThunkReducer(blogReducer, initialBlogState);
 
   useEffect(() => {
-    let canceled = false;
+    if (!slug) return;
 
-    function getBlog() {
-      setStatus('loading');
-      blogAPI
-        .getBlogBySlugName(slug)
-        .then((res) => {
-          if (!canceled) {
-            setBlog(res.blog);
-            setStatus('loaded');
-          }
-        })
-        .catch((err) => {
-          if (!canceled) {
-            console.error(err);
-            setStatus('error');
-          }
-        });
-    }
+    dispatch(() => {
+      fetchBlogBySlug(dispatch, slug);
+    });
+  }, [dispatch, slug]);
 
-    if (slug) {
-      getBlog();
-    }
-
-    return () => (canceled = true);
-  }, [slug]);
-
-  return [blog, status];
+  return [state.blog, state.loading, state.error];
 }
 
 function useAllBlogs() {

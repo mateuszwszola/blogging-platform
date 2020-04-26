@@ -1,67 +1,52 @@
 import { useState, useEffect } from 'react';
 import * as postAPI from 'api/post';
+import useThunkReducer from './useThunkReducer';
+import { fetchBlogPosts, fetchPostBySlug } from 'actions/postActions';
+import { postsReducer, postReducer } from 'reducers/postReducer';
+import { UPDATE_POST } from 'actions/types';
+
+const initialPostsState = {
+  posts: [],
+  loading: true,
+  error: null,
+};
+
+const initialPostState = {
+  post: {},
+  loading: true,
+  error: null,
+};
 
 function useBlogPosts(blogId) {
-  const [status, setStatus] = useState('loading');
-  const [posts, setPosts] = useState(null);
-
-  function reloadPosts() {
-    setStatus('loading');
-  }
+  const [state, dispatch] = useThunkReducer(postsReducer, initialPostsState);
 
   useEffect(() => {
-    function getPosts() {
-      postAPI
-        .getBlogPosts(blogId)
-        .then((res) => {
-          setPosts(res.posts);
-          setStatus('loaded');
-        })
-        .catch((err) => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-    let canceled = false;
+    if (!blogId) return;
 
-    if (!canceled && status === 'loading' && blogId) {
-      getPosts();
-    }
+    dispatch(() => {
+      fetchBlogPosts(dispatch, blogId);
+    });
+  }, [dispatch, blogId]);
 
-    return () => (canceled = true);
-  }, [status, blogId]);
-
-  return [posts, status, reloadPosts];
+  return [state.posts, state.loading, state.error];
 }
 
 function usePostBySlug(slug) {
-  const [status, setStatus] = useState('loading');
-  const [post, setPost] = useState(null);
+  const [state, dispatch] = useThunkReducer(postReducer, initialPostState);
+
+  const updatePost = (updatedPost) => {
+    dispatch({ type: UPDATE_POST, payload: { post: updatedPost } });
+  };
 
   useEffect(() => {
-    function getPost() {
-      postAPI
-        .getPostBySlug(slug)
-        .then((res) => {
-          setPost(res.post);
-          setStatus('loaded');
-        })
-        .catch((err) => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-    let canceled = false;
+    if (!slug) return;
 
-    if (!canceled && slug) {
-      setStatus('loading');
-      getPost();
-    }
+    dispatch(() => {
+      fetchPostBySlug(dispatch, slug);
+    });
+  }, [dispatch, slug]);
 
-    return () => (canceled = true);
-  }, [slug]);
-
-  return { post, status, setPost };
+  return [state.post, state.loading, state.error, updatePost];
 }
 
 function useUserPosts() {

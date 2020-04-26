@@ -3,15 +3,16 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { useBlogBySlugName } from 'hooks/useBlog';
 import { useBlogPosts } from 'hooks/usePost';
+
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 
-function Blog({ blog, ...props }) {
-  const [posts, status] = useBlogPosts(blog._id);
+function Blog({ blog }) {
+  const [posts, loading, error] = useBlogPosts(blog._id);
 
   return (
-    <div>
+    <>
       <div
         className="w-full min-h-screen relative bg-cover bg-center"
         style={{
@@ -39,7 +40,9 @@ function Blog({ blog, ...props }) {
       </div>
 
       <div className="py-16">
-        {status === 'loading' ? (
+        {error ? (
+          <DisplayError msg="There was a problem with fetching the posts" />
+        ) : loading ? (
           <Loading />
         ) : (
           <>
@@ -53,7 +56,7 @@ function Blog({ blog, ...props }) {
           </>
         )}
       </div>
-    </div>
+    </>
   );
 }
 
@@ -63,14 +66,14 @@ Blog.propTypes = {
 
 function BlogContainer(props) {
   const { blogSlug } = useParams();
-  const [blog, status] = useBlogBySlugName(blogSlug);
+  const [blog, loading, error] = useBlogBySlugName(blogSlug);
 
-  if (status === 'loading' || !blog) {
+  if (loading) {
     return <Loading />;
   }
 
-  if (status === 'error') {
-    return <DisplayError />;
+  if (error) {
+    return <DisplayError msg="There was a problem fetching a blog" />;
   }
 
   return <Blog blog={blog} />;

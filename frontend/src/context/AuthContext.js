@@ -38,27 +38,21 @@ function AuthProvider(props) {
   }, [isSeattled]);
 
   const login = useCallback(
-    async (formData) => {
-      // auth.login(formData).then(reload);
-      try {
-        await auth.login(formData);
-        reload();
-      } catch (err) {
-        return Promise.reject(err);
-      }
+    (formData) => {
+      return auth
+        .login(formData)
+        .then(reload)
+        .catch((err) => Promise.reject(err));
     },
     [reload]
   );
 
   const register = useCallback(
-    async (formData) => {
-      // auth.register(formData).then(reload);
-      try {
-        await auth.register(formData);
-        reload();
-      } catch (err) {
-        return Promise.reject(err);
-      }
+    (formData) => {
+      return auth
+        .register(formData)
+        .then(reload)
+        .catch((err) => Promise.reject(err));
     },
     [reload]
   );
