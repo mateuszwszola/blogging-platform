@@ -1,11 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import * as blogAPI from 'api/blog';
-import { blogReducer } from 'reducers/blogReducer';
+import { blogReducer, blogsReducer } from 'reducers/blogReducer';
 import useThunkReducer from './useThunkReducer';
-import { fetchBlogBySlug } from 'actions/blogActions';
+import { fetchBlogBySlug, fetchAllBlogs } from 'actions/blogActions';
 
 const initialBlogState = {
   blog: {},
+  loading: true,
+  error: null,
+};
+
+const initialBlogsState = {
+  blogs: [],
   loading: true,
   error: null,
 };
@@ -25,41 +31,19 @@ function useBlogBySlugName(slug) {
 }
 
 function useAllBlogs() {
-  const [status, setStatus] = useState('loading');
-  const [blogs, setBlogs] = useState(null);
+  const [state, dispatch] = useThunkReducer(blogsReducer, initialBlogsState);
 
-  function reloadBlogs() {
-    setStatus('loading');
-  }
+  const getBlogs = useCallback(() => {
+    dispatch(() => {
+      fetchAllBlogs(dispatch);
+    });
+  }, [dispatch]);
 
   useEffect(() => {
-    let canceled = false;
+    getBlogs();
+  }, [getBlogs]);
 
-    function getBlogs() {
-      blogAPI
-        .getAllBlogs()
-        .then((res) => {
-          if (!canceled) {
-            setBlogs(res.blogs);
-            setStatus('loaded');
-          }
-        })
-        .catch((err) => {
-          if (!canceled) {
-            console.error(err);
-            setStatus('error');
-          }
-        });
-    }
-
-    if (status === 'loading') {
-      getBlogs();
-    }
-
-    return () => (canceled = true);
-  }, [status]);
-
-  return [blogs, status, reloadBlogs];
+  return [state.blogs, state.loading, state.error, getBlogs];
 }
 
 function useUserBlogs() {
