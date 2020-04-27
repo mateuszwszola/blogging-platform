@@ -1,4 +1,10 @@
-import { LOADING, RESPONSE_COMPLETE, ERROR } from 'actions/types';
+import {
+  LOADING,
+  RESPONSE_COMPLETE,
+  ERROR,
+  SET_BLOG,
+  REMOVE_BLOG,
+} from 'actions/types';
 
 export const blogsReducer = (state, action) => {
   if (action.type === LOADING) {
@@ -20,6 +26,18 @@ export const blogsReducer = (state, action) => {
       blogs: [],
       loading: false,
       error: action.type.error,
+    };
+  }
+  if (action.type === SET_BLOG) {
+    return {
+      ...state,
+      blogs: [action.payload.blog, ...state.blogs],
+    };
+  }
+  if (action.type === REMOVE_BLOG) {
+    return {
+      ...state,
+      blogs: state.blogs.filter((blog) => blog._id !== action.payload.blogId),
     };
   }
   return state;
@@ -45,6 +63,18 @@ export const blogReducer = (state, action) => {
       blog: {},
       loading: false,
       error: action.type.error,
+    };
+  }
+  if (action.type === SET_BLOG) {
+    return {
+      ...state,
+      blog: action.payload.blog,
+    };
+  }
+  if (action.type === REMOVE_BLOG) {
+    return {
+      ...state,
+      blog: {},
     };
   }
   return state;

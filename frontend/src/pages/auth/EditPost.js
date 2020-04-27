@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'hooks';
-import { convertToRaw } from 'draft-js';
-import BlogPostForm from 'components/layout/BlogPostForm';
 import validate from 'utils/AddBlogPostValidationRules';
+import formatBlogPostData from 'utils/formatBlogPostData';
 import useEditorState from 'hooks/useEditorState';
 import useImgUpload from 'hooks/useImgUpload';
-import client from 'api/client';
+import useForm from 'hooks/useForm';
+import useStatus from 'hooks/useStatus';
+import { updatePost } from 'api/post';
+import BlogPostForm from 'components/layout/BlogPostForm';
 
 function EditPost({ post, onUpdatePost }) {
-  const [status, setStatus] = useState('idle');
+  const { status, requestFailed, requestStarted } = useStatus('idle');
   const {
     handleChange,
     handleSubmit,
@@ -35,43 +36,24 @@ function EditPost({ post, onUpdatePost }) {
     if (!editorStatePlainText.trim()) {
       return setErrors({ body: 'post content is required' });
     }
-    const data = {
+
+    const formData = formatBlogPostData({
       title,
-      body: JSON.stringify({
-        content: convertToRaw(editorState.getCurrentContent()),
-      }),
-      tags: tags
-        .split(',')
-        .filter((t) => t.trim())
-        .join(','),
-    };
+      editorState,
+      tags,
+      photo,
+      bgImgUrl,
+      imgAttribution,
+    });
 
-    if (photo || bgImgUrl) {
-      if (imgAttribution) {
-        data.imgAttribution = imgAttribution;
-      }
-      if (photo) {
-        data.photo = photo;
-        delete data.bgImgUrl;
-      } else {
-        data.bgImgUrl = bgImgUrl;
-        delete data.photo;
-      }
-    }
+    requestStarted();
 
-    const formData = new FormData();
-    for (const field in data) {
-      formData.append(field, data[field]);
-    }
-
-    setStatus('pending');
-
-    client(`posts/${post._id}`, { formData, method: 'PUT' })
+    updatePost(post._id, { formData })
       .then((res) => {
         onUpdatePost(res.post);
       })
       .catch((err) => {
-        setStatus('error');
+        requestFailed();
         if (err.errors) {
           setErrors(err.errors);
         } else {
@@ -83,6 +65,8 @@ function EditPost({ post, onUpdatePost }) {
         }
       });
   }
+
+  const loading = status === 'pending';
 
   return (
     <div className="px-2 py-4">
@@ -99,7 +83,7 @@ function EditPost({ post, onUpdatePost }) {
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}
-        loading={status === 'pending'}
+        loading={loading}
         update={true}
       />
     </div>

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
-import { useOnClickOutside, useToggle } from 'hooks';
+import useOnClickOutside from 'hooks/useOnClickOutside';
+import useToggle from 'hooks/useToggle';
 import profileImg from 'img/undraw_profile.svg';
 import NavLink from './NavLink';
 

@@ -2,12 +2,10 @@ import React from 'react';
 import { useAllBlogs } from 'hooks/useBlog';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import BlogCard from 'components/BlogCard';
+import BlogCard from 'components/layout/BlogCard';
 
 function Explore() {
   const [blogs, loading, error] = useAllBlogs();
-
-  const renderBlogCard = (blog) => <BlogCard blog={blog} />;
 
   return (
     <div className="mt-16 md:mt-6 md:pt-16 pb-16 max-w-screen-xl mx-auto w-full">
@@ -20,7 +18,9 @@ function Explore() {
           <Loading />
         ) : (
           <div className="flex flex-wrap justify-center">
-            {blogs.map(renderBlogCard)}
+            {blogs.map((blog) => (
+              <BlogCard key={blog._id} blog={blog} />
+            ))}
           </div>
         )}
       </div>

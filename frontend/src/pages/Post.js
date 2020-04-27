@@ -7,27 +7,13 @@ import { deletePost } from 'api/post';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import DisplayPost from 'components/layout/DisplayPost';
+import isUserPostOwner from 'utils/isUserPostOwner';
 
 const PostControllers = React.lazy(() =>
   import('components/layout/PostControllers')
 );
 
 const EditPost = React.lazy(() => import('./auth/EditPost'));
-
-const isUserPostOwner = (user, post) => {
-  let isOwner = false;
-  if (post && user) {
-    if (post.user && typeof post.user === 'string') {
-      if (post.user === user._id) {
-        isOwner = true;
-      }
-    } else if (post.user && post.user._id === user._id) {
-      isOwner = true;
-    }
-  }
-
-  return isOwner;
-};
 
 function Post(props) {
   const { postSlug } = useParams();
@@ -37,12 +23,12 @@ function Post(props) {
   const [post, loading, error, updatePost] = usePostBySlug(postSlug);
   const [isEditting, setIsEditting] = React.useState(false);
 
-  function onUpdatePost(updatedPost) {
+  const onUpdatePost = (updatedPost) => {
     updatePost(updatedPost);
     setIsEditting(false);
-  }
+  };
 
-  function handleDeletePost() {
+  const handleDeletePost = () => {
     if (!isUserPostOwner(user, post)) return;
 
     deletePost(post._id)
@@ -57,7 +43,7 @@ function Post(props) {
           'There was a problem with the server. Cannot delete a post'
         );
       });
-  }
+  };
 
   if (loading) {
     return <Loading />;
@@ -71,19 +57,21 @@ function Post(props) {
 
   return (
     <div className="mt-16 md:pt-16 pb-16 max-w-screen-md lg:max-w-screen-lg w-full mx-auto">
-      {isOwner ? (
-        <PostControllers
-          isEditting={isEditting}
-          setIsEditting={setIsEditting}
-          handleDeletePost={handleDeletePost}
-        />
-      ) : null}
+      <React.Suspense fallback={<Loading />}>
+        {isOwner ? (
+          <PostControllers
+            isEditting={isEditting}
+            setIsEditting={setIsEditting}
+            handleDeletePost={handleDeletePost}
+          />
+        ) : null}
 
-      {isEditting && isOwner ? (
-        <EditPost post={post} onUpdatePost={onUpdatePost} />
-      ) : (
-        <DisplayPost post={post} />
-      )}
+        {isEditting && isOwner ? (
+          <EditPost post={post} onUpdatePost={onUpdatePost} />
+        ) : (
+          <DisplayPost post={post} />
+        )}
+      </React.Suspense>
     </div>
   );
 }

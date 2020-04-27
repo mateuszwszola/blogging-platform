@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import profileImg from 'img/undraw_profile.svg';
 
-const BlogCard = (blog) => (
+const BlogCard = ({ blog }) => (
   <div
     key={blog._id}
     className="w-full max-w-xs m-2 bg-gray-200 shadow py-4 px-2 rounded flex flex-col justify-between"

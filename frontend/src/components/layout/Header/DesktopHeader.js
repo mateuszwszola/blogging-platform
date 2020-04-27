@@ -2,7 +2,7 @@ import React from 'react';
 import clsx from 'clsx';
 import { useLocation } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
-import { useScrolledAfterVHeight } from 'hooks';
+import useScrolledAfterVHeight from 'hooks/useScrolledAfterVHeight';
 import { DesktopNav } from '../Nav';
 
 const DesktopHeader = (props) => {

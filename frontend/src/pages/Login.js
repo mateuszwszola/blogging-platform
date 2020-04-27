@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
 import { EnvelopeIcon, LockOpenIcon, KeyIcon } from 'icons';
-import { useForm } from 'hooks';
+import useForm from 'hooks/useForm';
 import { useAuth } from 'context/AuthContext';
 import validate from 'utils/LoginFormValidationRules';
 import { InputGroup, InputSubmit } from 'components/layout/Input';

@@ -4,39 +4,39 @@ import { useParams, useHistory, Link } from 'react-router-dom';
 import { useBlogBySlugName } from 'hooks/useBlog';
 import { deleteBlog } from 'api/blog';
 import Loading from 'components/Loading';
+import DisplayError from 'components/DisplayError';
 import { useAlert } from 'context/AlertContext';
 import AddBlogPost from './AddBlogPost';
 
 function ManageBlog({ removeBlog }) {
   const { blogSlug } = useParams();
-  const [blog, status] = useBlogBySlugName(blogSlug);
+  const [blog, loading, error] = useBlogBySlugName(blogSlug);
   const { setAlert } = useAlert();
   let history = useHistory();
 
   function handleDeleteBlog() {
     if (!blog) return;
 
-    function onDelete() {
-      removeBlog(blog._id);
-      setAlert('success', 'Blog deleted');
-      history.push('/dashboard');
-    }
-
-    function onError(err) {
-      console.error(err);
-      setAlert(
-        'error',
-        'There was a problem with the server. Cannot delete a blog',
-        3000
-      );
-    }
-
-    deleteBlog(blog._id).then(onDelete).catch(onError);
+    deleteBlog(blog._id)
+      .then(() => {
+        removeBlog(blog._id);
+        setAlert('success', 'Blog deleted');
+        history.push('/dashboard');
+      })
+      .catch((err) => {
+        setAlert(
+          'error',
+          'There was a problem with the server. Cannot delete a blog',
+          3000
+        );
+      });
   }
 
   return (
     <div className="relative h-full">
-      {status === 'loading' || !blog ? (
+      {error ? (
+        <DisplayError />
+      ) : loading ? (
         <Loading />
       ) : (
         <>

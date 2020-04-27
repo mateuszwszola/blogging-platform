@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { useForm } from 'hooks';
+import useForm from 'hooks/useForm';
 import validate from 'utils/CreateBlogValidationRules';
 import { createBlog } from 'api/blog';
 import { useAlert } from 'context/AlertContext';
@@ -25,18 +25,18 @@ function CreateBlog({ addBlog }) {
     handleCreateBlog,
     validate
   );
-  const [status, setStatus] = React.useState('idle');
+  const [status, setStatus] = useState('idle');
   const { setAlert } = useAlert();
 
   function handleCreateBlog() {
     const data = { name, description, bgImgUrl, imgAttribution };
-    setStatus('pending');
-    createBlog(data)
-      .then((res) => {
+    setStatus('loading');
+    createBlog({ body: data })
+      .then((response) => {
         handleReset();
         setStatus('created');
         setAlert('success', 'Blog Created');
-        addBlog(res.blog);
+        addBlog(response.blog);
       })
       .catch((err) => {
         setStatus('error');
@@ -52,7 +52,7 @@ function CreateBlog({ addBlog }) {
       });
   }
 
-  const loading = status === 'pending';
+  const loading = status === 'loading';
 
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">

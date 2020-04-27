@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-export function useScrolledAfterVHeight(offset) {
+function useScrolledAfterVHeight(offset) {
   const [scrolledAfterVHeight, setScrolledAfterVHeight] = useState(false);
 
   useEffect(() => {
@@ -24,3 +24,5 @@ export function useScrolledAfterVHeight(offset) {
 
   return scrolledAfterVHeight;
 }
+
+export default useScrolledAfterVHeight;

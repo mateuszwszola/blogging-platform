@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export function useForm(initialValues = {}, callback, validate) {
+function useForm(initialValues = {}, callback, validate) {
   const [values, setValues] = useState(initialValues);
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -41,3 +41,5 @@ export function useForm(initialValues = {}, callback, validate) {
     setErrors,
   };
 }
+
+export default useForm;

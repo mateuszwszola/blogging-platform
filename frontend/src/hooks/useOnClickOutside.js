@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-export function useOnClickOutside(ref, callback) {
+function useOnClickOutside(ref, callback) {
   useEffect(() => {
     function handleMouseDown(event) {
       if (!ref.current || ref.current.contains(event.target)) {
@@ -15,3 +15,5 @@ export function useOnClickOutside(ref, callback) {
     };
   }, [ref, callback]);
 }
+
+export default useOnClickOutside;

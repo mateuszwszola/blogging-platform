@@ -13,7 +13,7 @@ function getUserBlogs() {
 }
 
 function createBlog(data) {
-  return client('blogs', { body: data });
+  return client('blogs', data);
 }
 
 function deleteBlog(blogId) {

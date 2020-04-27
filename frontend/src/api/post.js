@@ -13,11 +13,11 @@ function getUserPosts() {
 }
 
 function addBlogPost(blogId, data) {
-  return client(`posts/${blogId}`, { body: data });
+  return client(`posts/${blogId}`, data);
 }
 
 function updatePost(postId, data) {
-  return client(`posts/${postId}`, { body: data, method: 'PUT' });
+  return client(`posts/${postId}`, { data, method: 'PUT' });
 }
 
 function deletePost(postId) {

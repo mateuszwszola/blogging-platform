@@ -1,17 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { convertToRaw } from 'draft-js';
-import { useForm } from 'hooks';
-import validate from 'utils/AddBlogPostValidationRules';
 import { useAlert } from 'context/AlertContext';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import useEditorState from 'hooks/useEditorState';
 import useImgUpload from 'hooks/useImgUpload';
-import client from 'api/client';
+import useStatus from 'hooks/useStatus';
+import useForm from 'hooks/useForm';
+import { addBlogPost } from 'api/post';
+import formatBlogPostData from 'utils/formatBlogPostData';
+import validate from 'utils/AddBlogPostValidationRules';
 
-function AddBlogPost({ blog, ...props }) {
-  const [status, setStatus] = useState('idle');
+function AddBlogPost({ blog }) {
+  const {
+    status,
+    requestStarted,
+    requestSuccessful,
+    requestFailed,
+  } = useStatus();
   const {
     handleChange,
     handleSubmit,
@@ -36,53 +42,31 @@ function AddBlogPost({ blog, ...props }) {
   const editorStatePlainText = editorState.getCurrentContent().getPlainText();
 
   function handleAddBlogPost() {
-    if (blog === null) return;
+    if (!blog) return;
     if (!editorStatePlainText.trim()) {
       return setErrors({ body: 'post content is required' });
     }
 
-    const data = {
+    const formData = formatBlogPostData({
       title,
-      body: JSON.stringify({
-        content: convertToRaw(editorState.getCurrentContent()),
-      }),
-      tags: tags
-        .split(',')
-        .filter((t) => t.trim())
-        .join(','),
-    };
+      editorState,
+      tags,
+      photo,
+      bgImgUrl,
+      imgAttribution,
+    });
 
-    if (photo || bgImgUrl) {
-      if (imgAttribution) {
-        data.imgAttribution = imgAttribution;
-      }
-      if (photo) {
-        data.photo = photo;
-        delete data.bgImgUrl;
-      } else {
-        data.bgImgUrl = bgImgUrl;
-        delete data.photo;
-      }
-    }
+    requestStarted();
 
-    const formData = new FormData();
-    for (const field in data) {
-      formData.append(field, data[field]);
-    }
-
-    setStatus('pending');
-
-    client(`posts/${blog._id}`, { formData })
+    addBlogPost(blog._id, { formData })
       .then((res) => {
+        requestSuccessful();
         handleReset();
         resetEditorState();
-        setStatus('loaded');
         setAlert('success', 'Blog Post Added');
       })
       .catch((err) => {
-        console.log(err);
-        setStatus('error');
-
+        requestFailed();
         if (err.errors) {
           setErrors(err.errors);
         } else {
@@ -94,6 +78,8 @@ function AddBlogPost({ blog, ...props }) {
         }
       });
   }
+
+  const loading = status === 'pending';
 
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
@@ -115,7 +101,7 @@ function AddBlogPost({ blog, ...props }) {
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}
-        loading={status === 'pending'}
+        loading={loading}
       />
     </div>
   );

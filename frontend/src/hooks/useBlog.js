@@ -1,8 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
-import * as blogAPI from 'api/blog';
+import { useEffect, useCallback } from 'react';
 import { blogReducer, blogsReducer } from 'reducers/blogReducer';
 import useThunkReducer from './useThunkReducer';
-import { fetchBlogBySlug, fetchAllBlogs } from 'actions/blogActions';
+import {
+  fetchBlogBySlug,
+  fetchAllBlogs,
+  fetchUserBlogs,
+  setBlogAction,
+  removeBlogAction,
+} from 'actions/blogActions';
 
 const initialBlogState = {
   blog: {},
@@ -47,50 +52,38 @@ function useAllBlogs() {
 }
 
 function useUserBlogs() {
-  const [blogs, setBlogs] = useState(null);
-  const [status, setStatus] = useState('loading');
+  const [state, dispatch] = useThunkReducer(blogsReducer, initialBlogsState);
 
-  function reloadBlogs() {
-    setStatus('loading');
-  }
+  const getBlogs = useCallback(() => {
+    dispatch(() => {
+      fetchUserBlogs(dispatch);
+    });
+  }, [dispatch]);
 
-  function addBlog(newBlog) {
-    setBlogs([...blogs, newBlog]);
-  }
+  const setBlog = useCallback(
+    (blog) => {
+      dispatch(setBlogAction(blog));
+    },
+    [dispatch]
+  );
 
-  function removeBlog(blogId) {
-    const newBlogs = blogs.filter((blog) => blog._id !== blogId);
-    setBlogs(newBlogs);
-  }
+  const removeBlog = useCallback(
+    (blogId) => {
+      dispatch(removeBlogAction(blogId));
+    },
+    [dispatch]
+  );
 
   useEffect(() => {
-    let canceled = false;
+    getBlogs();
+  }, [getBlogs]);
 
-    function getBlogs() {
-      blogAPI
-        .getUserBlogs()
-        .then((res) => {
-          if (!canceled) {
-            setBlogs(res.blogs);
-            setStatus('loaded');
-          }
-        })
-        .catch((err) => {
-          if (!canceled) {
-            console.error(err);
-            setStatus('error');
-          }
-        });
-    }
-
-    if (status === 'loading') {
-      getBlogs();
-    }
-
-    return () => (canceled = true);
-  }, [status]);
-
-  return { blogs, status, addBlog, removeBlog, reloadBlogs };
+  return {
+    ...state,
+    getBlogs,
+    setBlog,
+    removeBlog,
+  };
 }
 
 export { useBlogBySlugName, useAllBlogs, useUserBlogs };

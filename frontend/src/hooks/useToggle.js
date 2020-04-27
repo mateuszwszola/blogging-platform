@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export function useToggle(initialValue = false) {
+function useToggle(initialValue = false) {
   const [isToggle, setIsToggle] = useState(initialValue);
   function toggle() {
     setIsToggle(!isToggle);
@@ -8,3 +8,5 @@ export function useToggle(initialValue = false) {
 
   return [isToggle, setIsToggle, toggle];
 }
+
+export default useToggle;

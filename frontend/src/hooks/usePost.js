@@ -1,9 +1,12 @@
-import { useState, useEffect } from 'react';
-import * as postAPI from 'api/post';
+import { useEffect, useCallback } from 'react';
 import useThunkReducer from './useThunkReducer';
-import { fetchBlogPosts, fetchPostBySlug } from 'actions/postActions';
+import {
+  fetchBlogPosts,
+  fetchPostBySlug,
+  fetchUserPosts,
+} from 'actions/postActions';
 import { postsReducer, postReducer } from 'reducers/postReducer';
-import { UPDATE_POST } from 'actions/types';
+import { SET_POST } from 'actions/types';
 
 const initialPostsState = {
   posts: [],
@@ -34,8 +37,8 @@ function useBlogPosts(blogId) {
 function usePostBySlug(slug) {
   const [state, dispatch] = useThunkReducer(postReducer, initialPostState);
 
-  const updatePost = (updatedPost) => {
-    dispatch({ type: UPDATE_POST, payload: { post: updatedPost } });
+  const setPost = (updatedPost) => {
+    dispatch({ type: SET_POST, payload: { post: updatedPost } });
   };
 
   useEffect(() => {
@@ -46,40 +49,21 @@ function usePostBySlug(slug) {
     });
   }, [dispatch, slug]);
 
-  return [state.post, state.loading, state.error, updatePost];
+  return [state.post, state.loading, state.error, setPost];
 }
 
 function useUserPosts() {
-  const [posts, setPosts] = useState(null);
-  const [status, setStatus] = useState('loading');
+  const [state, dispatch] = useThunkReducer(postsReducer, initialPostsState);
 
-  function reloadPosts() {
-    setStatus('loading');
-  }
+  const getPosts = useCallback(() => {
+    fetchUserPosts(dispatch);
+  }, [dispatch]);
 
   useEffect(() => {
-    function getPosts() {
-      postAPI
-        .getUserPosts()
-        .then((res) => {
-          setPosts(res.posts);
-          setStatus('loaded');
-        })
-        .catch((err) => {
-          console.error(err);
-          setStatus('error');
-        });
-    }
-    let canceled = false;
+    getPosts();
+  }, [getPosts]);
 
-    if (!canceled && status === 'loading') {
-      getPosts();
-    }
-
-    return () => (canceled = true);
-  }, [status]);
-
-  return [posts, status, reloadPosts];
+  return [state.posts, state.loading, state.error];
 }
 
 export { useBlogPosts, usePostBySlug, useUserPosts };

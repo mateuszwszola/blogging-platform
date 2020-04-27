@@ -45,15 +45,7 @@ function Blog({ blog }) {
         ) : loading ? (
           <Loading />
         ) : (
-          <>
-            {posts && posts.length > 0 ? (
-              <Posts posts={posts} />
-            ) : (
-              <h2 className="text-center text-2xl uppercase font-semibold">
-                No Blog Posts
-              </h2>
-            )}
-          </>
+          <Posts posts={posts} />
         )}
       </div>
     </>
