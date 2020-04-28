@@ -14,6 +14,8 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
     navOpen ? 'translate-x-0' : '-translate-x-full'
   );
 
+  const hideNav = () => setNavOpen(false);
+
   return (
     <nav
       aria-hidden={!isHidden}
@@ -21,43 +23,27 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
       style={{ backgroundColor: 'rgba(45, 55, 72, 0.95)' }}
     >
       <div className="w-full flex flex-col items-center justify-around h-full">
-        <MobileNavLink
-          onClick={() => setNavOpen(false)}
-          to="/"
-          tabIndex={tabIndex}
-        >
+        <MobileNavLink onClick={hideNav} to="/" tabIndex={tabIndex}>
           Home
         </MobileNavLink>
-        <MobileNavLink
-          onClick={() => setNavOpen(false)}
-          to="/explore"
-          tabIndex={tabIndex}
-        >
+        <MobileNavLink onClick={hideNav} to="/explore" tabIndex={tabIndex}>
           Explore
         </MobileNavLink>
         {user ? (
           <>
             <MobileNavLink
-              onClick={() => setNavOpen(false)}
+              onClick={hideNav}
               to="/dashboard"
               tabIndex={tabIndex}
             >
               Dashboard
             </MobileNavLink>
-            <MobileNavLink
-              onClick={() => setNavOpen(false)}
-              to="/profile"
-              tabIndex={tabIndex}
-            >
+            <MobileNavLink onClick={hideNav} to="/profile" tabIndex={tabIndex}>
               Profile
             </MobileNavLink>
           </>
         ) : (
-          <MobileNavLink
-            onClick={() => setNavOpen(false)}
-            to="/login"
-            tabIndex={tabIndex}
-          >
+          <MobileNavLink onClick={hideNav} to="/login" tabIndex={tabIndex}>
             Login
           </MobileNavLink>
         )}

@@ -51,7 +51,10 @@ function BlogPostForm({
         />
 
         {uploadImg ? (
-          <ImgUploadInput handleChange={handlePhotoChange} />
+          <ImgUploadInput
+            handleChange={handlePhotoChange}
+            label="Background Image"
+          />
         ) : (
           <InputGroup
             name="bgImgUrl"

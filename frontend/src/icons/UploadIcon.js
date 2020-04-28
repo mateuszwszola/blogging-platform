@@ -1,19 +1,8 @@
 import React from 'react';
 
 export const UploadIcon = (props) => (
-  <svg
-    {...props}
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    className="feather feather-upload"
-  >
+  <svg {...props} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
     <title>Upload Icon</title>
-    <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12" />
+    <path d="M13 10v6H7v-6H2l8-8 8 8h-5zM0 18h20v2H0v-2z" />
   </svg>
 );

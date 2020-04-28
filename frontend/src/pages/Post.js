@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, lazy } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
@@ -9,11 +9,9 @@ import DisplayError from 'components/DisplayError';
 import DisplayPost from 'components/layout/DisplayPost';
 import isUserPostOwner from 'utils/isUserPostOwner';
 
-const PostControllers = React.lazy(() =>
-  import('components/layout/PostControllers')
-);
+const PostControllers = lazy(() => import('components/layout/PostControllers'));
 
-const EditPost = React.lazy(() => import('./auth/EditPost'));
+const EditPost = lazy(() => import('./auth/EditPost'));
 
 function Post(props) {
   const { postSlug } = useParams();
@@ -21,7 +19,7 @@ function Post(props) {
   const user = useUser();
   const { setAlert } = useAlert();
   const [post, loading, error, updatePost] = usePostBySlug(postSlug);
-  const [isEditting, setIsEditting] = React.useState(false);
+  const [isEditting, setIsEditting] = useState(false);
 
   const onUpdatePost = (updatedPost) => {
     updatePost(updatedPost);

@@ -18,15 +18,19 @@ const DesktopNav = () => {
     history.push('/');
   };
 
+  const hideNav = () => setIsOpen(false);
+
   const authLinks = (
     <>
       <NavLink
+        onClick={hideNav}
         to="/explore"
         className="block text-lg px-4 py-2 font-medium text-gray-500 hover:text-gray-400"
       >
         Explore
       </NavLink>
       <NavLink
+        onClick={hideNav}
         to="/dashboard"
         className="block text-lg px-4 py-2 font-medium text-gray-500 hover:text-gray-400"
       >
@@ -52,12 +56,14 @@ const DesktopNav = () => {
         >
           <div className="py-1 rounded-md bg-white shadow-xs">
             <NavLink
+              onClick={hideNav}
               to="/profile"
               className="block text-sm px-4 py-2 font-medium text-gray-700"
             >
               Your Profile
             </NavLink>
             <NavLink
+              onClick={hideNav}
               to="/settings"
               className="block text-sm px-4 py-2 font-medium text-gray-700"
             >
