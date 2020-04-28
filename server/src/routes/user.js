@@ -2,6 +2,7 @@ const router = require('express').Router();
 const userController = require('../controllers/userController');
 const userValidation = require('../validations/user');
 const auth = require('../middleware/auth');
+const photoUpload = require('../middleware/photoUpload');
 
 /*
   @route   POST api/users
@@ -24,5 +25,16 @@ router.post('/login', userValidation.validateLogin, userController.loginUser);
  */
 router.get('/me', auth, userController.getUser);
 
+/*
+  @route   POST api/users/photo
+  @desc    Upload user photo
+  @access  Private
+ */
+router.post(
+  '/photo',
+  auth,
+  photoUpload.single('photo'),
+  userController.uploadPhoto
+);
 
 module.exports = router;

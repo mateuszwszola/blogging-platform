@@ -50,6 +50,10 @@ const UserSchema = new mongoose.Schema(
       type: String,
       ...specifiedStringLength('bio', 2, 60),
     },
+    photo: {
+      type: mongoose.ObjectId,
+      ref: 'Photo',
+    },
   },
   { timestamps: true }
 );

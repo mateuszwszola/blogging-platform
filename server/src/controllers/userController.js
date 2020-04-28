@@ -1,7 +1,11 @@
 const { validationResult } = require('express-validator');
 const User = require('../models/User');
+const Photo = require('../models/Photo');
 const errorFormatter = require('../validations/errorFormatter');
-
+const {
+  convertBufferToJimpImg,
+  resizeAndOptimizeImg,
+} = require('../utils/optimizeImg');
 
 exports.registerUser = async (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
@@ -45,7 +49,40 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
-// eslint-disable-next-line no-unused-vars
-exports.getUser = async (req, res, next) => {
+exports.getUser = async (req, res) => {
   res.json(req.user);
+};
+
+exports.uploadPhoto = async (req, res, next) => {
+  try {
+    if (!req.file) {
+      res.status(422);
+      throw new Error('cannot upload photo');
+    }
+
+    const img = await convertBufferToJimpImg(req.file.buffer);
+    const buffer = await resizeAndOptimizeImg(img, 256, undefined, 90);
+
+    const photo = new Photo({
+      photo: buffer,
+    });
+
+    await photo.save();
+
+    const user = await User.findById(req.user.id);
+
+    // deleted old photo
+    if (user.photo) {
+      await Photo.findByIdAndDelete(user.photo);
+    }
+
+    user.photo = photo.id;
+
+    await user.save();
+
+    res.json({ photoId: photo.id });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
 };
