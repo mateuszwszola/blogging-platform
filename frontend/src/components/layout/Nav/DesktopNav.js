@@ -1,24 +1,27 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import useOnClickOutside from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
 import profileImg from 'img/undraw_profile.svg';
 import NavLink from './NavLink';
+import { API_BASE_URL } from 'api/client';
 
 const DesktopNav = () => {
-  const auth = useAuth();
-  const navNode = React.useRef();
+  const { data, logout } = useAuth();
+  const navNode = useRef();
   const history = useHistory();
   const [isOpen, setIsOpen, toggleIsOpen] = useToggle(false);
   useOnClickOutside(navNode, () => setIsOpen(false));
 
   const handleLogout = async () => {
-    await auth.logout();
+    await logout();
     history.push('/');
   };
 
   const hideNav = () => setIsOpen(false);
+
+  const photoId = (data.user && data.user.photo) || null;
 
   const authLinks = (
     <>
@@ -43,11 +46,19 @@ const DesktopNav = () => {
             aria-label="Toggle profile menu"
             className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-outline"
           >
-            <img
-              className="h-8 w-8 rounded-full"
-              src={profileImg}
-              alt="User Profile"
-            />
+            {photoId ? (
+              <img
+                className="h-8 w-8 rounded-full"
+                src={`${API_BASE_URL}/photos/${photoId}`}
+                alt=""
+              />
+            ) : (
+              <img
+                className="h-8 w-8 rounded-full"
+                src={profileImg}
+                alt="User Profile"
+              />
+            )}
           </button>
         </div>
         <div
@@ -111,7 +122,7 @@ const DesktopNav = () => {
             </NavLink>
           </div>
           <div className="flex items-center">
-            {auth.data.user ? authLinks : links}
+            {data.user ? authLinks : links}
           </div>
         </div>
       </div>

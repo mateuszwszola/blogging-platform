@@ -1,4 +1,4 @@
-import { useReducer, useCallback } from 'react';
+import { useReducer } from 'react';
 import client from 'api/client';
 
 import { LOADING, RESPONSE_COMPLETE, ERROR } from 'actions/types';
@@ -43,15 +43,12 @@ function useImgUpload(url) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { photoFile, photoId, error, loading } = state;
 
-  const handleChange = useCallback(
-    (e) => {
-      const file = e.target.files[0];
-      dispatch({ type: 'SET_PHOTO_FILE', payload: { photoFile: file } });
-    },
-    [dispatch]
-  );
+  const handleChange = (e) => {
+    const file = e.target.files[0];
+    dispatch({ type: 'SET_PHOTO_FILE', payload: { photoFile: file } });
+  };
 
-  const uploadPhoto = useCallback(() => {
+  const uploadPhoto = () => {
     const formData = new FormData();
     formData.append('photo', photoFile);
 
@@ -67,7 +64,7 @@ function useImgUpload(url) {
       .catch((error) => {
         dispatch({ type: ERROR, payload: { error } });
       });
-  }, [dispatch, photoFile, url]);
+  };
 
   return [photoFile, handleChange, uploadPhoto, loading, error, photoId];
 }
