@@ -29,7 +29,7 @@ const UserSchema = new mongoose.Schema(
   {
     name: {
       ...requiredString,
-      ...specifiedStringLength('name', 2, 20),
+      ...specifiedStringLength('name', 2, 40),
       trim: true,
     },
     email: {
@@ -48,7 +48,7 @@ const UserSchema = new mongoose.Schema(
     },
     bio: {
       type: String,
-      ...specifiedStringLength('bio', 2, 60),
+      ...specifiedStringLength('bio', 2, 100),
     },
     photo: {
       type: mongoose.ObjectId,

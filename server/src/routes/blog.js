@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const auth = require('../middleware/auth');
+const { auth } = require('../middleware/auth');
 const blogController = require('../controllers/blogController');
 const blogValidation = require('../validations/blog');
 
@@ -57,6 +57,11 @@ router.delete('/:blogId', auth, blogController.deleteBlog);
   @desc    Update blog
   @access  Private
  */
-router.put('/:blogId', auth, blogValidation.validateBlog, blogController.updateBlog);
+router.put(
+  '/:blogId',
+  auth,
+  blogValidation.validateBlog,
+  blogController.updateBlog
+);
 
 module.exports = router;

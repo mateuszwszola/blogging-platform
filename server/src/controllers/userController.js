@@ -49,6 +49,31 @@ exports.loginUser = async (req, res, next) => {
   }
 };
 
+exports.updateUser = async (req, res, next) => {
+  const errors = validationResult(req).formatWith(errorFormatter);
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.mapped() });
+  }
+
+  const newUserData = {
+    name: req.body.name,
+  };
+
+  if (req.body.bio) {
+    newUserData.bio = req.body.bio;
+  }
+
+  try {
+    const newUser = await User.findByIdAndUpdate(req.user.id, newUserData, {
+      new: true,
+    });
+    res.json({ user: newUser });
+  } catch (err) {
+    res.status(err.status || 400);
+    next(err);
+  }
+};
+
 exports.getUser = async (req, res) => {
   res.json(req.user);
 };
@@ -61,7 +86,7 @@ exports.uploadPhoto = async (req, res, next) => {
     }
 
     const img = await convertBufferToJimpImg(req.file.buffer);
-    const buffer = await resizeAndOptimizeImg(img, 256, undefined, 90);
+    const buffer = await resizeAndOptimizeImg(img, 300, undefined, 90);
 
     const photo = new Photo({
       photo: buffer,
