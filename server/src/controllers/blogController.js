@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const Blog = require('../models/Blog');
 const User = require('../models/User');
+const Photo = require('../models/Photo');
 const errorFormatter = require('../validations/errorFormatter');
 
 exports.createBlog = async (req, res, next) => {
@@ -26,8 +27,23 @@ exports.createBlog = async (req, res, next) => {
       }
     });
 
-    const newBlog = new Blog(blogData);
-    newBlog.user = req.user.id;
+    const newBlog = new Blog({ user: req.user.id, ...blogData });
+
+    const file = req.file && req.file.buffer;
+    if (file && !blogData.bgImgUrl) {
+      try {
+        const photo = new Photo({
+          photo: req.file.buffer,
+        });
+
+        await photo.save();
+
+        newBlog.photo = photo.id;
+      } catch (error) {
+        return next(error);
+      }
+    }
+
     await newBlog.save();
     res.status(201).json({ blog: newBlog });
   } catch (err) {

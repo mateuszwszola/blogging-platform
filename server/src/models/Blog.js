@@ -48,6 +48,10 @@ const BlogSchema = new mongoose.Schema(
     imgAttribution: {
       type: String,
     },
+    photo: {
+      type: mongoose.ObjectId,
+      ref: 'Photo',
+    },
   },
   { timestamps: true }
 );

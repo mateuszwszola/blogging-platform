@@ -2,13 +2,20 @@ const router = require('express').Router();
 const { auth } = require('../middleware/auth');
 const blogController = require('../controllers/blogController');
 const blogValidation = require('../validations/blog');
+const photoUpload = require('../middleware/photoUpload');
 
 /*
   @route   POST api/blogs
   @desc    Create a blog
   @access  Private
  */
-router.post('/', auth, blogValidation.validateBlog, blogController.createBlog);
+router.post(
+  '/',
+  auth,
+  photoUpload.single('photo'),
+  blogValidation.validateBlog,
+  blogController.createBlog
+);
 
 /*
   @route   GET api/blogs
