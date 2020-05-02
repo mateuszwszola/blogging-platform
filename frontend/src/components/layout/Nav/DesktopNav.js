@@ -48,13 +48,13 @@ const DesktopNav = () => {
           >
             {photoId ? (
               <img
-                className="h-8 w-8 rounded-full"
+                className="h-10 w-10 rounded-full border-2 border-gray-700"
                 src={`${API_BASE_URL}/photos/${photoId}`}
                 alt=""
               />
             ) : (
               <img
-                className="h-8 w-8 rounded-full"
+                className="h-10 w-10 rounded-full border border-gray-700"
                 src={profileImg}
                 alt="User Profile"
               />

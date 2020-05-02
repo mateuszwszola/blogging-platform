@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, InputSubmit } from './Input';
-import Loading from '../Loading';
+import { LoadingWithOverlay } from '../Loading';
 import Editor from '../Editor';
 import ImgUploadInput from './Input/ImgUploadInput';
+// import ProgressBar from 'components/layout/ProgressBar';
 
 function BlogPostForm({
   title,
@@ -26,11 +27,7 @@ function BlogPostForm({
 
   return (
     <div className="relative">
-      {loading && (
-        <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
-          <Loading />
-        </div>
-      )}
+      {loading && <LoadingWithOverlay />}
 
       {errors.message && (
         <p className="text-red-500 text-sm text-center my-4">
@@ -80,9 +77,9 @@ function BlogPostForm({
           name="imgAttribution"
           value={imgAttribution}
           handleChange={handleChange}
-          placeholder="(optional) Photo By ..."
+          placeholder="Photo By ..."
           classnames="border border-gray-400"
-          label="Image Attribution"
+          label="Image Attribution (optional)"
         />
 
         <InputGroup

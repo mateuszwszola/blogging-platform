@@ -2,14 +2,25 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { useBlogBySlugName } from 'hooks/useBlog';
-import { useBlogPosts } from 'hooks/usePost';
+import useAsync from 'hooks/useAsync';
+// import { useBlogPosts } from 'hooks/usePost';
+import { getBlogPosts } from 'api/post';
 
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
+import { API_BASE_URL } from 'api/client';
+
+const formatData = (result) => result.posts;
 
 function Blog({ blog }) {
-  const [posts, loading, error] = useBlogPosts(blog._id);
+  // const [posts, loading, error] = useBlogPosts(blog._id);
+  const { loading, error, result: posts } = useAsync({
+    promiseFn: getBlogPosts,
+    immediate: true,
+    data: blog._id,
+    formatData,
+  });
 
   return (
     <>
@@ -17,7 +28,11 @@ function Blog({ blog }) {
         className="w-full min-h-screen relative bg-cover bg-center"
         style={{
           backgroundImage: `url(${
-            blog.bgImgUrl ? blog.bgImgUrl : 'https://picsum.photos/1280/720'
+            blog.photo
+              ? `${API_BASE_URL}/photos/${blog.photo}`
+              : blog.bgImgUrl
+              ? blog.bgImgUrl
+              : 'https://picsum.photos/1280/720'
           })`,
         }}
       >

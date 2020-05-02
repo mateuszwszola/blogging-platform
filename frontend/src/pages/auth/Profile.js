@@ -2,11 +2,13 @@ import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import useImgUpload from 'hooks/useImgUpload';
-import Loading from 'components/Loading';
-import UploadImgAvatar from 'components/layout/UploadImgAvatar';
-import styles from './Profile.module.css';
 import { ArrowLeftIcon } from 'icons/ArrowLeftIcon';
 import { SettingsIcon } from 'icons/SettingsIcon';
+import Loading from 'components/Loading';
+import UploadImgAvatar from 'components/layout/UploadImgAvatar';
+import UpdateUserForm from 'components/UpdateUserForm';
+
+import styles from './Profile.module.css';
 
 function Profile() {
   const { data, logout } = useAuth();
@@ -23,7 +25,7 @@ function Profile() {
     handlePhotoChange,
     uploadPhoto,
     imgLoading,
-    error,
+    photoUploadError,
     photoId,
   ] = useImgUpload('users/photo');
 
@@ -33,7 +35,7 @@ function Profile() {
     <div className="h-full px-2 pb-2 pt-8 md:pt-20">
       <div className="flex flex-col">
         <div className="mt-8 w-full max-w-xs mx-auto bg-white rounded-t-md shadow-md">
-          <div className="flex flex-col items-center p-2 border-b border-gray-200">
+          <div className="flex flex-col items-center p-2 border-b border-gray-200 relative">
             {imgLoading ? (
               <Loading />
             ) : (
@@ -53,9 +55,9 @@ function Profile() {
                 )}
               </>
             )}
-            {error && (
+            {photoUploadError && (
               <p className="text-red-500 text-sm text-center">
-                {error.message}
+                {photoUploadError.message}
               </p>
             )}
           </div>
@@ -65,7 +67,7 @@ function Profile() {
 
           <div className="flex flex-col w-full">
             <Link
-              className="p-4 bg-gray-300 hover:bg-gray-400 text-gray-700 hover:text-gray-800 border-t border-b border-gray-400 flex justify-between items-center"
+              className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
               to="/settings"
             >
               <span className="font-medium">Settings</span>
@@ -73,13 +75,17 @@ function Profile() {
             </Link>
 
             <button
-              className="p-4 bg-gray-300 hover:bg-gray-400 text-gray-700 hover:text-gray-800 border-t border-b border-gray-400 flex justify-between items-center"
+              className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
               onClick={handleLogout}
             >
               <span className="font-medium">Log Out</span>
               <ArrowLeftIcon className="fill-current w-5 h-5" />
             </button>
           </div>
+        </div>
+
+        <div className="w-full max-w-md mx-auto mt-4">
+          <UpdateUserForm />
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import React, {
 } from 'react';
 import { useAsync } from 'react-async';
 import * as auth from 'api/auth';
+import { updateUser as updateUserAPI } from 'api/user';
 import Loading from 'components/Loading';
 
 const AuthContext = createContext();
@@ -62,6 +63,15 @@ function AuthProvider(props) {
     reload();
   }, [reload]);
 
+  const updateUser = useCallback(
+    (newUserData) => {
+      return updateUserAPI(newUserData)
+        .then(reload)
+        .catch((err) => Promise.reject(err));
+    },
+    [reload]
+  );
+
   if (!firstAttemptFinished) {
     if (isPending) {
       return <Loading />;
@@ -73,7 +83,7 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ data, login, register, logout }}
+      value={{ data, login, register, logout, updateUser }}
       {...props}
     />
   );

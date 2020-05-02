@@ -21,7 +21,7 @@ const UploadImgAvatar = ({ handlePhotoChange, userPhotoId, styles }) => (
     </div>
 
     <label
-      className={`${styles.label} absolute top-0 left-0 bottom-0 right-0 text-blue-400 hover:bg-gray-100 rounded-full border border-gray-400 cursor-pointer`}
+      className={`${styles.label} z-10 absolute top-0 left-0 bottom-0 right-0 text-blue-400 rounded-full hover:bg-gray-100 cursor-pointer`}
     >
       <div
         className={`${styles.uploadContent} h-full flex flex-col items-center justify-center`}

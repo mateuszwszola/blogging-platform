@@ -25,10 +25,8 @@ function formatBlogPostData({
     }
     if (photo) {
       formattedData.photo = photo;
-      delete formattedData.bgImgUrl;
     } else {
       formattedData.bgImgUrl = bgImgUrl;
-      delete formattedData.photo;
     }
   }
 

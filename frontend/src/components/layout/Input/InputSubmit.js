@@ -6,7 +6,7 @@ const InputSubmit = ({ value, classnames, ...props }) => {
   return (
     <input
       className={clsx(
-        `w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer focus:outline-none focus:shadow-outline`,
+        `w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer focus:outline-none focus:shadow-outline disabled:opacity-75 disabled:cursor-not-allowed`,
         classnames
       )}
       type="submit"

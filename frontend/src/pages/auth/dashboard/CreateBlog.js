@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
-import useForm from 'hooks/useForm';
-import validate from 'utils/CreateBlogValidationRules';
 import { createBlog } from 'api/blog';
-import { useAlert } from 'context/AlertContext';
-import Loading from 'components/Loading';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
+import useImgUpload from 'hooks/useImgUpload';
+import useForm from 'hooks/useForm';
+import useStatus from 'hooks/useStatus';
+import { LoadingWithOverlay } from 'components/Loading';
+import validate from 'utils/CreateBlogValidationRules';
+
+import formatBlogData from 'utils/formatBlogData';
+
+import CreateBlogForm from 'components/layout/CreateBlogForm';
 
 function CreateBlog({ addBlog }) {
+  const {
+    status,
+    requestStarted,
+    requestSuccessful,
+    requestFailed,
+  } = useStatus();
+
   const {
     handleChange,
     handleSubmit,
@@ -25,21 +36,27 @@ function CreateBlog({ addBlog }) {
     handleCreateBlog,
     validate
   );
-  const [status, setStatus] = useState('idle');
-  const { setAlert } = useAlert();
+
+  const [photo, handlePhotoChange] = useImgUpload();
 
   function handleCreateBlog() {
-    const data = { name, description, bgImgUrl, imgAttribution };
-    setStatus('loading');
-    createBlog({ body: data })
+    const formData = formatBlogData({
+      name,
+      description,
+      bgImgUrl,
+      imgAttribution,
+      photo,
+    });
+
+    requestStarted();
+    createBlog({ formData })
       .then((response) => {
+        requestSuccessful();
         handleReset();
-        setStatus('created');
-        setAlert('success', 'Blog Created');
         addBlog(response.blog);
       })
       .catch((err) => {
-        setStatus('error');
+        requestFailed();
         if (err.errors) {
           setErrors(err.errors);
         } else {
@@ -52,76 +69,35 @@ function CreateBlog({ addBlog }) {
       });
   }
 
-  const loading = status === 'loading';
+  const loading = status === 'pending';
+  const success = status === 'resolved';
 
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
-      {loading && (
-        <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
-          <Loading />
-        </div>
-      )}
+      {errors.message ? (
+        <p className="text-red-500 text-sm text-center my-2 rounded py-1">
+          {errors.message}
+        </p>
+      ) : success ? (
+        <p className="text-white bg-green-500 text-sm text-center my-2 rounded py-1">
+          Successfully created a blog
+        </p>
+      ) : loading ? (
+        <LoadingWithOverlay />
+      ) : null}
       <h1 className="text-3xl text-center leading-loose">Create A Blog</h1>
-      <form
-        onSubmit={handleSubmit}
-        className={`${loading ? 'opacity-50' : 'opacity-100'}`}
-      >
-        <InputGroup
-          isError={
-            !!(
-              Object.keys(errors).length > 0 &&
-              (errors.name || errors.message)
-            )
-          }
-          errors={errors}
-          name="name"
-          placeholder="Give it a name like 'Programming with John'"
-          classnames="border border-gray-400"
-          value={name}
-          handleChange={handleChange}
-          label="Blog Name"
-        />
-        <InputGroup
-          isError={
-            !!(
-              Object.keys(errors).length > 0 &&
-              (errors.description || errors.message)
-            )
-          }
-          errors={errors}
-          name="description"
-          placeholder="What is your blog about?"
-          classnames="border border-gray-400"
-          value={description}
-          handleChange={handleChange}
-          label="Blog Description"
-        />
 
-        <InputGroup
-          name="bgImgUrl"
-          value={bgImgUrl}
-          handleChange={handleChange}
-          placeholder="https://"
-          classnames="border border-gray-400"
-          label="Background Image"
-          type="url"
-          pattern="https://.*"
-        />
-
-        <InputGroup
-          name="imgAttribution"
-          value={imgAttribution}
-          handleChange={handleChange}
-          placeholder="Photo By ... On ..."
-          classnames="border border-gray-400"
-          label="Image Attribution"
-        />
-
-        <InputSubmit
-          value="Create A Blog"
-          classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
-        />
-      </form>
+      <CreateBlogForm
+        handleSubmit={handleSubmit}
+        handleChange={handleChange}
+        handlePhotoChange={handlePhotoChange}
+        loading={loading}
+        errors={errors}
+        name={name}
+        description={description}
+        imgAttribution={imgAttribution}
+        bgImgUrl={bgImgUrl}
+      />
     </div>
   );
 }

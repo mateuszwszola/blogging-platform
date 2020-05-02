@@ -1,7 +1,10 @@
 module.exports = {
   theme: {
-    extend: {}
+    extend: {},
   },
-  variants: {},
-  plugins: []
+  variants: {
+    opacity: ['responsive', 'hover', 'focus', 'disabled'],
+    cursor: ['responsive', 'disabled'],
+  },
+  plugins: [],
 };
