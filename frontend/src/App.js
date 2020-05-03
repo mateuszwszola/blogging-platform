@@ -7,7 +7,7 @@ const AuthenticatedApp = React.lazy(() => import('./AuthenticatedApp'));
 const UnauthenticatedApp = React.lazy(() => import('./UnauthenticatedApp'));
 
 function App() {
-  const user = useUser();
+  const { user } = useUser();
 
   useEffect(() => {
     loadAuthenticatedApp();

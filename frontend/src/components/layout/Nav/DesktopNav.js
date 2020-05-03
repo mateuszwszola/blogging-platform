@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
+import { useUser } from 'context/UserContext';
 import useOnClickOutside from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
 import profileImg from 'img/undraw_profile.svg';
@@ -9,7 +10,8 @@ import DropdownMenuLink from './DropdownMenuLink';
 import { API_BASE_URL } from 'api/client';
 
 const DesktopNav = () => {
-  const { data, logout } = useAuth();
+  const { logout } = useAuth();
+  const { user } = useUser();
   const navNode = useRef();
   const history = useHistory();
   const [isOpen, setIsOpen, toggleIsOpen] = useToggle(false);
@@ -22,7 +24,7 @@ const DesktopNav = () => {
 
   const hideNav = () => setIsOpen(false);
 
-  const photoId = (data.user && data.user.photo) || null;
+  const photoId = (user && user.photo) || null;
 
   const authLinks = (
     <>
@@ -96,9 +98,7 @@ const DesktopNav = () => {
               Home
             </NavLink>
           </div>
-          <div className="flex items-center">
-            {data.user ? authLinks : links}
-          </div>
+          <div className="flex items-center">{user ? authLinks : links}</div>
         </div>
       </div>
     </nav>

@@ -39,6 +39,7 @@ function useForm(initialValues = {}, callback, validate) {
     values,
     errors,
     setErrors,
+    setValues,
   };
 }
 

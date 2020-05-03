@@ -1,14 +1,20 @@
 import React from 'react';
 import { useAuth } from './AuthContext';
+import useUseState from 'hooks/useUseState';
 
 const UserContext = React.createContext();
 
 function UserProvider(props) {
-  const {
-    data: { user },
-  } = useAuth();
+  const { data } = useAuth();
 
-  return <UserContext.Provider value={user} {...props} />;
+  const [user, setUser] = useUseState(data.user);
+
+  const value = {
+    user,
+    setUser,
+  };
+
+  return <UserContext.Provider value={value} {...props} />;
 }
 
 function useUser() {

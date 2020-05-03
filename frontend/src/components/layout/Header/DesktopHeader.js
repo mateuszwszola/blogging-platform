@@ -7,7 +7,7 @@ import { DesktopNav } from '../Nav';
 
 const DesktopHeader = (props) => {
   const { pathname } = useLocation();
-  const user = useUser();
+  const { user } = useUser();
   const headerOffset = 75;
   const headerScrolledAfterVHeight = useScrolledAfterVHeight(headerOffset);
 

@@ -1,18 +1,18 @@
 import React from 'react';
-import { useAuth } from 'context/AuthContext';
+import { useUser } from 'context/UserContext';
 import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import Loading from './Loading';
+import updateUserValidationRules from 'utils/UpdateUserValidatoinRules';
+import { updateUser } from 'api/user';
 
 function UpdateUserForm() {
-  const {
-    data: { user },
-    updateUser,
-  } = useAuth();
+  const { user, setUser } = useUser();
   const {
     handleChange,
     handleSubmit,
+    setValues,
     values: { name, bio },
     errors,
     setErrors,
@@ -21,24 +21,42 @@ function UpdateUserForm() {
       name: (user && user.name) || '',
       bio: (user && user.bio) || '',
     },
-    handleUpdateUser
+    handleUpdateUser,
+    updateUserValidationRules
   );
 
-  const { status, requestStarted, requestFailed } = useStatus();
+  const {
+    status,
+    requestStarted,
+    requestFailed,
+    requestSuccessful,
+  } = useStatus();
 
   function handleUpdateUser() {
     const newUserData = { name, bio };
 
     requestStarted();
-    updateUser(newUserData).catch((err) => {
-      requestFailed();
-      if (err.errors) {
-        setErrors(err.errors);
-      } else {
-        setErrors({ message: 'There was the problem with the server' });
-      }
-    });
+    updateUser(newUserData)
+      .then((response) => {
+        requestSuccessful();
+        setUser(response.user);
+      })
+      .catch((err) => {
+        requestFailed();
+        if (err.errors) {
+          setErrors(err.errors);
+        } else {
+          setErrors({ message: 'There was the problem with the server' });
+        }
+      });
   }
+
+  const handleBlur = (e) => {
+    setValues((values) => ({
+      ...values,
+      [e.target.name]: (user && user[e.target.name]) || '',
+    }));
+  };
 
   const loading = status === 'pending';
   const buttonDisabled = user && user.name === name && user.bio === bio;
@@ -58,6 +76,7 @@ function UpdateUserForm() {
             errors={errors}
             value={name}
             handleChange={handleChange}
+            onBlur={handleBlur}
             name="name"
             label="User Name"
           />
@@ -67,6 +86,7 @@ function UpdateUserForm() {
             errors={errors}
             value={bio}
             handleChange={handleChange}
+            onBlur={handleBlur}
             name="bio"
             label="User Bio"
           />

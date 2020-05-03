@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
+import { useUser } from 'context/UserContext';
 import useImgUpload from 'hooks/useImgUpload';
 import { ArrowLeftIcon } from 'icons/ArrowLeftIcon';
 import { SettingsIcon } from 'icons/SettingsIcon';
@@ -10,8 +11,8 @@ import UpdateUserForm from 'components/UpdateUserForm';
 import { API_BASE_URL } from 'api/client';
 
 function Profile() {
-  const { data, logout } = useAuth();
-  const { user } = data;
+  const { logout } = useAuth();
+  const { user, setUser } = useUser();
   const history = useHistory();
 
   const handleLogout = async () => {
@@ -27,6 +28,12 @@ function Profile() {
     photoUploadError,
     photoId,
   ] = useImgUpload('users/photo');
+
+  useEffect(() => {
+    if (photoId) {
+      setUser({ photo: photoId });
+    }
+  }, [photoId, setUser]);
 
   const getPhotoSrc = (photoId) => `${API_BASE_URL}/photos/${photoId}`;
   const userPhotoSrc =

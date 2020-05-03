@@ -7,7 +7,7 @@ import MobileNavLink from './MobileNavLink';
 const MobileNav = ({ navOpen, setNavOpen }) => {
   const isHidden = navOpen ? true : false;
   const tabIndex = isHidden ? 0 : 1;
-  const user = useUser();
+  const { user } = useUser();
 
   const navClassnames = clsx(
     'flex flex-col justify-center items-center fixed top-0 left-0 h-screen w-full text-gray-400 transform transition-all duration-300 ease-in-out md:max-w-sm z-40',

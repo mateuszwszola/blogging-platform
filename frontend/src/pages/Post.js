@@ -16,7 +16,7 @@ const EditPost = lazy(() => import('./auth/EditPost'));
 function Post(props) {
   const { postSlug } = useParams();
   const history = useHistory();
-  const user = useUser();
+  const { user } = useUser();
   const { setAlert } = useAlert();
   const [post, loading, error, updatePost] = usePostBySlug(postSlug);
   const [isEditting, setIsEditting] = useState(false);
