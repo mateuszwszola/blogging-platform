@@ -13,9 +13,6 @@
       "dest": "src/index.js"
     }
   ],
-  "alias": [
-    "blogging-platform-server"
-  ],
   "env": {
     "NODE_ENV": "production",
     "PORT": "3001",

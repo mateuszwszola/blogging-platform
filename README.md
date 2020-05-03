@@ -1,6 +1,6 @@
-# Full Stack Blogging Platform
+# Blogging Platform
 
-A full stack application to start and manage your blog
+A full stack application to start and manage a blog
 
 ## Author
 
