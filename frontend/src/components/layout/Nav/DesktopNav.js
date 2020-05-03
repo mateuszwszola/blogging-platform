@@ -5,6 +5,7 @@ import useOnClickOutside from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
 import profileImg from 'img/undraw_profile.svg';
 import NavLink from './NavLink';
+import DropdownMenuLink from './DropdownMenuLink';
 import { API_BASE_URL } from 'api/client';
 
 const DesktopNav = () => {
@@ -25,18 +26,10 @@ const DesktopNav = () => {
 
   const authLinks = (
     <>
-      <NavLink
-        onClick={hideNav}
-        to="/explore"
-        className="block text-lg px-4 py-2 font-medium text-gray-500 hover:text-gray-400"
-      >
+      <NavLink onClick={hideNav} to="/explore">
         Explore
       </NavLink>
-      <NavLink
-        onClick={hideNav}
-        to="/dashboard"
-        className="block text-lg px-4 py-2 font-medium text-gray-500 hover:text-gray-400"
-      >
+      <NavLink onClick={hideNav} to="/dashboard">
         Dashboard
       </NavLink>
       <div className="relative ml-3">
@@ -66,23 +59,15 @@ const DesktopNav = () => {
           className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg"
         >
           <div className="py-1 rounded-md bg-white shadow-xs">
-            <NavLink
-              onClick={hideNav}
-              to="/profile"
-              className="block text-sm px-4 py-2 font-medium text-gray-700"
-            >
+            <DropdownMenuLink onClick={hideNav} to="/profile">
               Your Profile
-            </NavLink>
-            <NavLink
-              onClick={hideNav}
-              to="/settings"
-              className="block text-sm px-4 py-2 font-medium text-gray-700"
-            >
+            </DropdownMenuLink>
+            <DropdownMenuLink onClick={hideNav} to="/settings">
               Settings
-            </NavLink>
+            </DropdownMenuLink>
             <button
               onClick={handleLogout}
-              className="block text-sm px-4 py-2 font-medium text-gray-700 focus:outline-none focus:shadow-solid"
+              className="block text-sm px-4 py-2 font-medium text-gray-700 focus:outline-none focus:shadow-outline"
             >
               Logout
             </button>
@@ -94,18 +79,8 @@ const DesktopNav = () => {
 
   const links = (
     <>
-      <NavLink
-        to="/explore"
-        className="block text-lg px-4 py-2 font-medium text-gray-500 hover:text-gray-400"
-      >
-        Explore
-      </NavLink>
-      <NavLink
-        to="/login"
-        className="block text-lg px-4 py-2 font-medium text-gray-500 hover:text-gray-400"
-      >
-        Login
-      </NavLink>
+      <NavLink to="/explore">Explore</NavLink>
+      <NavLink to="/login">Login</NavLink>
     </>
   );
 

@@ -7,8 +7,7 @@ import { SettingsIcon } from 'icons/SettingsIcon';
 import Loading from 'components/Loading';
 import UploadImgAvatar from 'components/layout/UploadImgAvatar';
 import UpdateUserForm from 'components/UpdateUserForm';
-
-import styles from './Profile.module.css';
+import { API_BASE_URL } from 'api/client';
 
 function Profile() {
   const { data, logout } = useAuth();
@@ -29,7 +28,10 @@ function Profile() {
     photoId,
   ] = useImgUpload('users/photo');
 
-  const userPhotoId = photoId || (user.photo ? user.photo : null);
+  const getPhotoSrc = (photoId) => `${API_BASE_URL}/photos/${photoId}`;
+  const userPhotoSrc =
+    (photoId && getPhotoSrc(photoId)) ||
+    (user.photo ? getPhotoSrc(user.photo) : null);
 
   return (
     <div className="h-full px-2 pb-2 pt-8 md:pt-20">
@@ -42,8 +44,7 @@ function Profile() {
               <>
                 <UploadImgAvatar
                   handlePhotoChange={handlePhotoChange}
-                  userPhotoId={userPhotoId}
-                  styles={styles}
+                  userPhotoSrc={userPhotoSrc}
                 />
                 {photoFile && (
                   <button
