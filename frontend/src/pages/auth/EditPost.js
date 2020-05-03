@@ -30,7 +30,7 @@ function EditPost({ post, onUpdatePost }) {
   const { editorState, updateEditorState } = useEditorState(post.body);
   const editorStatePlainText = editorState.getCurrentContent().getPlainText();
 
-  const [photo, handlePhotoChange] = useImgUpload();
+  const { photo, handlePhotoChange } = useImgUpload();
 
   function handleUpdateBlogPost() {
     if (!editorStatePlainText.trim()) {

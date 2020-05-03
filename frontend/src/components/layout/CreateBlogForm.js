@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import ImgUploadInput from 'components/layout/Input/ImgUploadInput';
+import useToggle from 'hooks/useToggle';
 
 function CreateBlogForm({
   handleSubmit,
@@ -11,11 +12,12 @@ function CreateBlogForm({
   handleChange,
   description,
   imgAttribution,
+  photoFile,
+  handlePhotoReset,
   handlePhotoChange,
   bgImgUrl,
 }) {
-  const [uploadImg, setUploadImg] = useState(true);
-  const toggleUploadImg = () => setUploadImg((show) => !show);
+  const [uploadImg, toggleUploadImg] = useToggle(true);
 
   return (
     <form
@@ -71,11 +73,20 @@ function CreateBlogForm({
 
       <button
         type="button"
-        className="bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+        className="inline-block bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         onClick={toggleUploadImg}
       >
         {uploadImg ? 'Add image URL' : 'Upload img'}
       </button>
+
+      {photoFile && (
+        <button
+          className="inline-block bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+          onClick={handlePhotoReset}
+        >
+          Remove Photo
+        </button>
+      )}
 
       <InputGroup
         name="imgAttribution"
@@ -99,6 +110,7 @@ CreateBlogForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handlePhotoChange: PropTypes.func.isRequired,
+  handlePhotoReset: PropTypes.func.isRequired,
   loading: PropTypes.bool.isRequired,
   errors: PropTypes.object.isRequired,
   name: PropTypes.string.isRequired,

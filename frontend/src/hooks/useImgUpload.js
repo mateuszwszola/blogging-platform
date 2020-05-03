@@ -43,9 +43,13 @@ function useImgUpload(url) {
   const [state, dispatch] = useReducer(reducer, initialState);
   const { photoFile, photoId, error, loading } = state;
 
-  const handleChange = (e) => {
+  const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     dispatch({ type: 'SET_PHOTO_FILE', payload: { photoFile: file } });
+  };
+
+  const handlePhotoReset = () => {
+    dispatch({ type: 'SET_PHOTO_FILE', payload: { photoFile: null } });
   };
 
   const uploadPhoto = () => {
@@ -66,7 +70,15 @@ function useImgUpload(url) {
       });
   };
 
-  return [photoFile, handleChange, uploadPhoto, loading, error, photoId];
+  return {
+    photoFile,
+    handlePhotoChange,
+    uploadPhoto,
+    loading,
+    error,
+    photoId,
+    handlePhotoReset,
+  };
 }
 
 export default useImgUpload;

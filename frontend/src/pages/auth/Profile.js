@@ -20,14 +20,14 @@ function Profile() {
     history.push('/');
   };
 
-  const [
+  const {
     photoFile,
     handlePhotoChange,
     uploadPhoto,
     imgLoading,
     photoUploadError,
     photoId,
-  ] = useImgUpload('users/photo');
+  } = useImgUpload('users/photo');
 
   useEffect(() => {
     if (photoId) {

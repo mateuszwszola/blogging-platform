@@ -37,7 +37,7 @@ function CreateBlog({ addBlog }) {
     validate
   );
 
-  const [photo, handlePhotoChange] = useImgUpload();
+  const { photoFile, handlePhotoChange, handlePhotoReset } = useImgUpload();
 
   function handleCreateBlog() {
     const formData = formatBlogData({
@@ -45,7 +45,7 @@ function CreateBlog({ addBlog }) {
       description,
       bgImgUrl,
       imgAttribution,
-      photo,
+      photoFile,
     });
 
     requestStarted();
@@ -90,7 +90,9 @@ function CreateBlog({ addBlog }) {
       <CreateBlogForm
         handleSubmit={handleSubmit}
         handleChange={handleChange}
+        photoFile={photoFile}
         handlePhotoChange={handlePhotoChange}
+        handlePhotoReset={handlePhotoReset}
         loading={loading}
         errors={errors}
         name={name}

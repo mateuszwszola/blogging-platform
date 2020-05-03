@@ -36,7 +36,7 @@ function AddBlogPost({ blog }) {
     validate
   );
   const { editorState, updateEditorState, resetEditorState } = useEditorState();
-  const [photo, handlePhotoChange] = useImgUpload();
+  const { photo, handlePhotoChange } = useImgUpload();
   const { setAlert } = useAlert();
 
   const editorStatePlainText = editorState.getCurrentContent().getPlainText();

@@ -37,6 +37,7 @@ function useBlogBySlugName(slug) {
 
 function useAllBlogs() {
   const [state, dispatch] = useThunkReducer(blogsReducer, initialBlogsState);
+  const { blogs, loading, error } = state;
 
   const getBlogs = useCallback(() => {
     dispatch(() => {
@@ -48,7 +49,7 @@ function useAllBlogs() {
     getBlogs();
   }, [getBlogs]);
 
-  return [state.blogs, state.loading, state.error, getBlogs];
+  return [blogs, loading, error, getBlogs];
 }
 
 function useUserBlogs() {

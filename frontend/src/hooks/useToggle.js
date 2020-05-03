@@ -3,10 +3,10 @@ import { useState } from 'react';
 function useToggle(initialValue = false) {
   const [isToggle, setIsToggle] = useState(initialValue);
   function toggle() {
-    setIsToggle(!isToggle);
+    setIsToggle((on) => !on);
   }
 
-  return [isToggle, setIsToggle, toggle];
+  return [isToggle, toggle, setIsToggle];
 }
 
 export default useToggle;

@@ -14,7 +14,7 @@ const DesktopNav = () => {
   const { user } = useUser();
   const navNode = useRef();
   const history = useHistory();
-  const [isOpen, setIsOpen, toggleIsOpen] = useToggle(false);
+  const [isOpen, toggleIsOpen, setIsOpen] = useToggle(false);
   useOnClickOutside(navNode, () => setIsOpen(false));
 
   const handleLogout = async () => {

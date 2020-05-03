@@ -54,7 +54,7 @@ function UpdateUserForm() {
   const handleBlur = (e) => {
     setValues((values) => ({
       ...values,
-      [e.target.name]: (user && user[e.target.name]) || '',
+      [e.target.name]: (user && user[e.target.name]) || values[e.target.name],
     }));
   };
 
