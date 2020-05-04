@@ -22,27 +22,23 @@ function Blog({ blog }) {
     formatData,
   });
 
+  const photoSrc = blog.photo
+    ? `${API_BASE_URL}/photos/${blog.photo}`
+    : blog.bgImgUrl
+    ? blog.bgImgUrl
+    : 'https://picsum.photos/1280/720';
+
   return (
-    <>
+    <div className="mt-16">
       <div
-        className="w-full min-h-screen relative bg-cover bg-center"
+        className="w-full h-64 relative bg-cover bg-center"
         style={{
-          backgroundImage: `url(${
-            blog.photo
-              ? `${API_BASE_URL}/photos/${blog.photo}`
-              : blog.bgImgUrl
-              ? blog.bgImgUrl
-              : 'https://picsum.photos/1280/720'
-          })`,
+          backgroundImage: `url(${photoSrc})`,
         }}
       >
-        <div
-          style={{ backgroundColor: 'rgba(0,0,0,0.2)' }}
-          className="w-full h-full absolute top-0 left-0 bottom-0 right-0"
-        >
+        <div className="w-full h-full absolute top-0 left-0 bottom-0 right-0 bg-black bg-opacity-25">
           <div className="h-full flex flex-col justify-center items-center px-2">
-            <img src="" alt="" />
-            <h1 className="text-3xl xl:text-4xl text-center leading-loose my-2 text-gray-100">
+            <h1 className="text-4xl lg:text-6xl text-center leading-loose my-2 text-white">
               {blog.name}
             </h1>
             {blog.description && (
@@ -63,7 +59,7 @@ function Blog({ blog }) {
           <Posts posts={posts} />
         )}
       </div>
-    </>
+    </div>
   );
 }
 

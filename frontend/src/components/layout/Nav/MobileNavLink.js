@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 const MobileNavLink = ({ tabIndex, children, ...props }) => (
   <Link
     {...props}
-    className="text-3xl py-4 px-6 focus:outline-none focus:shadow-outline"
+    className="block w-full text-center text-4xl py-2 my-8 focus:outline-none focus:shadow-outline"
     tabIndex={tabIndex}
   >
     {children}
