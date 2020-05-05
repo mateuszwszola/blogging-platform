@@ -1,4 +1,5 @@
 import React from 'react';
+import clsx from 'clsx';
 import { useAllBlogs } from 'hooks/useBlog';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
@@ -17,10 +18,23 @@ function Explore() {
         ) : loading ? (
           <Loading />
         ) : (
-          <div className="flex flex-wrap justify-center">
-            {blogs.map((blog) => (
-              <BlogCard key={blog._id} blog={blog} />
-            ))}
+          <div className="">
+            {blogs.length === 0 ? (
+              <h2 className="text-center text-2xl uppercase font-semibold">
+                There are no blogs. Be the first one!
+              </h2>
+            ) : (
+              <div
+                className={clsx(
+                  'grid grid-cols-1 gap-4 p-2',
+                  blogs.length > 1 && 'lg:grid-cols-2'
+                )}
+              >
+                {blogs.map((blog) => (
+                  <BlogCard key={blog._id} blog={blog} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

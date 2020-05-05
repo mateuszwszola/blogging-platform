@@ -16,7 +16,7 @@ function Dashboard() {
 
   return (
     <div className="flex flex-col md:flex-row flex-auto flex-shrink-0 md:pt-16">
-      <div className="pt-10 md:pt-0 md:w-2/6 md:max-w-xs bg-gray-200 px-2 py-4">
+      <div className="pt-10 md:pt-0 md:w-2/6 md:max-w-sm bg-gray-200 px-4 py-4">
         <Sidebar blogs={blogs} loading={loading} />
       </div>
 

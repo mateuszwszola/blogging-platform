@@ -20,7 +20,7 @@ function Posts({ posts }) {
           No Blog Posts
         </h2>
       ) : (
-        posts.map((post, index) => (
+        posts.map((post) => (
           <div key={post._id} className="block mx-auto max-w-screen-sm">
             <img
               src={

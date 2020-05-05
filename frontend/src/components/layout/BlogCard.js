@@ -7,7 +7,7 @@ import { API_BASE_URL } from 'api/client';
 const BlogCard = ({ blog }) => (
   <div
     key={blog._id}
-    className="block w-full md:max-w-md m-2 bg-white rounded shadow overflow-hidden"
+    className="flex flex-col w-full mx-auto max-w-screen-sm bg-white rounded shadow overflow-hidden "
   >
     <img
       className="h-56 w-full object-cover object-center"
@@ -19,7 +19,7 @@ const BlogCard = ({ blog }) => (
       alt=""
     />
 
-    <div className="px-4 py-2">
+    <div className="px-4 py-2 h-full flex flex-col justify-between">
       <div className="py-2">
         <h3 className="mb-2 text-blue-700 hover:text-blue-800 text-2xl font-medium">
           <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
@@ -30,11 +30,19 @@ const BlogCard = ({ blog }) => (
       </div>
 
       <div className="flex items-center mt-5">
-        <div className="p-3 bg-gray-300 rounded-full">
-          <UserIcon className="h-8 w-8 text-gray-700 fill-current" />
-        </div>
+        {blog.user && blog.user.photo ? (
+          <img
+            className="w-12 h-12 rounded-full"
+            src={`${API_BASE_URL}/photos/${blog.user.photo}`}
+            alt=""
+          />
+        ) : (
+          <div className="p-3 bg-gray-300 rounded-full">
+            <UserIcon className="h-8 w-8 text-gray-700 fill-current" />
+          </div>
+        )}
         <div className="ml-4">
-          <h4 className="text-md font-medium cursor-pointer text-blue-700 hover:text-gray-800">
+          <h4 className="text-md font-medium cursor-pointer text-blue-700 hover:text-blue-800">
             {blog.user.name}
           </h4>
           {blog.user.bio && (

@@ -10,10 +10,7 @@ const LandingPage = () => (
     }}
     className="bg-cover bg-center h-screen relative"
   >
-    <div
-      style={{ backgroundColor: 'rgba(26, 32, 44, 0.75)' }}
-      className="h-full absolute top-0 left-0 bottom-0 right-0 text-gray-100"
-    >
+    <div className="bg-gray-900 bg-opacity-75 h-full absolute top-0 left-0 bottom-0 right-0 text-gray-100">
       <div className="h-full flex flex-col justify-center items-center px-2 fadein">
         <div className="my-3 text-center select-none">
           <h1 className="text-3xl sm:text-4xl md:text-5xl">

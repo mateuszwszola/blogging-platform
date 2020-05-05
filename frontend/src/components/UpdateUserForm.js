@@ -3,7 +3,7 @@ import { useUser } from 'context/UserContext';
 import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
-import Loading from './Loading';
+import { LoadingWithOverlay } from './Loading';
 import updateUserValidationRules from 'utils/UpdateUserValidatoinRules';
 import { updateUser } from 'api/user';
 
@@ -52,10 +52,12 @@ function UpdateUserForm() {
   }
 
   const handleBlur = (e) => {
-    setValues((values) => ({
-      ...values,
-      [e.target.name]: (user && user[e.target.name]) || values[e.target.name],
-    }));
+    if (e.relatedTarget === null) {
+      setValues((values) => ({
+        ...values,
+        [e.target.name]: (user && user[e.target.name]) || values[e.target.name],
+      }));
+    }
   };
 
   const loading = status === 'pending';
@@ -66,38 +68,38 @@ function UpdateUserForm() {
       {errors.message && (
         <p className="text-red-500 text-sm text-center">{errors.message}</p>
       )}
-      {loading ? (
-        <Loading />
-      ) : (
-        <form onSubmit={handleSubmit}>
-          <InputGroup
-            classnames="border border-gray-400"
-            isError={!!(errors.name || errors.message)}
-            errors={errors}
-            value={name}
-            handleChange={handleChange}
-            onBlur={handleBlur}
-            name="name"
-            label="User Name"
-          />
-          <InputGroup
-            classnames="border border-gray-400"
-            isError={!!(errors.bio || errors.message)}
-            errors={errors}
-            value={bio}
-            handleChange={handleChange}
-            onBlur={handleBlur}
-            name="bio"
-            label="User Bio"
-          />
+      {loading && <LoadingWithOverlay />}
+      <form
+        onSubmit={handleSubmit}
+        className={`${loading ? 'opacity-75' : 'opacity-100'}`}
+      >
+        <InputGroup
+          classnames="border border-gray-400"
+          isError={!!(errors.name || errors.message)}
+          errors={errors}
+          value={name}
+          handleChange={handleChange}
+          onBlur={handleBlur}
+          name="name"
+          label="User Name"
+        />
+        <InputGroup
+          classnames="border border-gray-400"
+          isError={!!(errors.bio || errors.message)}
+          errors={errors}
+          value={bio}
+          handleChange={handleChange}
+          onBlur={handleBlur}
+          name="bio"
+          label="User Bio"
+        />
 
-          <InputSubmit
-            disabled={buttonDisabled}
-            value="Update User"
-            classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
-          />
-        </form>
-      )}
+        <InputSubmit
+          disabled={buttonDisabled}
+          value="Update User"
+          classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
+        />
+      </form>
     </div>
   );
 }

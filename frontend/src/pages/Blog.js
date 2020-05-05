@@ -36,13 +36,13 @@ function Blog({ blog }) {
           backgroundImage: `url(${photoSrc})`,
         }}
       >
-        <div className="w-full h-full absolute top-0 left-0 bottom-0 right-0 bg-black bg-opacity-25">
+        <div className="w-full h-full absolute top-0 left-0 bottom-0 right-0 bg-black bg-opacity-50">
           <div className="h-full flex flex-col justify-center items-center px-2">
             <h1 className="text-4xl lg:text-6xl text-center leading-loose my-2 text-white">
               {blog.name}
             </h1>
             {blog.description && (
-              <p className="text-center text-lg uppercase text-gray-200">
+              <p className="text-center text-lg uppercase text-gray-200 rounded bg-white bg-opacity-25 py-1 px-2">
                 {blog.description}
               </p>
             )}

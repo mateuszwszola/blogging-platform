@@ -10,25 +10,24 @@ function Sidebar({ blogs, loading }) {
     <div className="relative h-full">
       <Link
         to={`${url}/create-blog`}
-        className="block w-4/5 max-w-xs mx-auto my-4 py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
+        className="shadow-xs block w-4/5 max-w-xs mx-auto my-4 py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
       >
         Create Blog
       </Link>
 
       <div className="mt-8">
         <h2 className="text-center text-2xl">Select Blog</h2>
-        {loading || blogs === null ? (
+        {loading ? (
           <Loading />
+        ) : blogs.length === 0 ? (
+          <p className="text-center mt-8">There is no blogs</p>
         ) : (
-          <ul className="h-full mt-8 flex flex-row flex-wrap justify-around md:flex-col md:justify-center items-center list-none">
+          <ul className="mt-8 h-full space-y-4 flex flex-col items-center list-none">
             {blogs.map((blog) => (
-              <li
-                key={blog.slug}
-                className="block w-2/5 md:w-4/5 max-w-xs mx-auto"
-              >
+              <li key={blog.slug} className="block w-full max-w-xs">
                 <NavLink
                   to={`${url}/${blog.slug}`}
-                  className="block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded transition duration-100 text-center"
+                  className="shadow-xs block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded text-center"
                   activeClassName="bg-gray-400"
                 >
                   {blog.name}
