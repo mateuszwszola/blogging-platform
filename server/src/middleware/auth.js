@@ -28,10 +28,7 @@ const auth = async (req, res, next) => {
 
   try {
     const data = await verifyToken(token);
-    const user = await User.findOne({ _id: data.user.id })
-      .select('-password')
-      .exec();
-
+    const user = await User.findOne({ _id: data.user.id }).select('-password');
     if (!user) {
       return res.status(401).json({ message: errMsg });
     }
