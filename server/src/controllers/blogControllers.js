@@ -98,6 +98,7 @@ exports.getBlogById = async (req, res, next) => {
     const blog = await Blog.findById(req.params.blogId).populate('user', [
       'name',
       'bio',
+      'photo',
     ]);
     if (!blog) {
       res.status(404);
@@ -114,7 +115,11 @@ exports.getBlogBySlugName = async (req, res, next) => {
   const { slug } = req.params;
 
   try {
-    const blog = await Blog.findOne({ slug }).populate('user', ['name', 'bio']);
+    const blog = await Blog.findOne({ slug }).populate('user', [
+      'name',
+      'bio',
+      'photo',
+    ]);
     if (!blog) {
       res.status(404);
       throw new Error('Blog Not Found');
@@ -128,7 +133,11 @@ exports.getBlogBySlugName = async (req, res, next) => {
 
 exports.getAllBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find({}).populate('user', ['name', 'bio']);
+    const blogs = await Blog.find({}).populate('user', [
+      'name',
+      'bio',
+      'photo',
+    ]);
     res.json({ blogs });
   } catch (err) {
     res.status(err.status || 400);
@@ -141,6 +150,7 @@ exports.getAuthUserBlogs = async (req, res, next) => {
     const blogs = await Blog.find({ user: req.user.id }).populate('user', [
       'name',
       'bio',
+      'photo',
     ]);
     res.json({ blogs });
   } catch (err) {
@@ -153,7 +163,7 @@ exports.getUserBlogs = async (req, res, next) => {
   try {
     const blogs = await Blog.find({ user: req.params.userId }).populate(
       'user',
-      ['name', 'bio']
+      ['name', 'bio', 'photo']
     );
     res.json({ blogs });
   } catch (err) {

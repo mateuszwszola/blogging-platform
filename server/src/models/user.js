@@ -3,26 +3,11 @@ const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
 
+const specifiedStringLength = require('../validations/specifiedStringLength');
+
 const requiredString = {
   type: String,
   required: [true, "can't be blank"],
-};
-
-const specifiedStringLength = (field, minlength, maxlength) => {
-  const obj = {};
-  if (minlength) {
-    obj.minlength = [
-      minlength,
-      `${field} must have min ${minlength} characters`,
-    ];
-  }
-  if (maxlength) {
-    obj.maxlength = [
-      maxlength,
-      `${field} must have max ${maxlength} characters`,
-    ];
-  }
-  return obj;
 };
 
 const UserSchema = new mongoose.Schema(

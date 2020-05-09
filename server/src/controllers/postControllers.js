@@ -151,8 +151,8 @@ exports.deletePost = async (req, res, next) => {
 exports.getAllPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({})
-      .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug', 'description'])
+      .populate('user', ['name', 'bio', 'photo'])
+      .populate('blog', ['name', 'slug', 'description', 'photo', 'bgImgUrl'])
       .sort({ createdAt: -1 });
     res.json({ posts });
   } catch (err) {
@@ -166,8 +166,8 @@ exports.getAllBlogPosts = async (req, res, next) => {
 
   try {
     const posts = await Post.find({ blog: blogId })
-      .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug', 'description'])
+      .populate('user', ['name', 'bio', 'photo'])
+      .populate('blog', ['name', 'slug', 'description', 'photo', 'bgImgUrl'])
       .sort({ createdAt: -1 });
     res.json({ posts });
   } catch (err) {
@@ -181,8 +181,8 @@ exports.getPostBySlug = async (req, res, next) => {
 
   try {
     const post = await Post.findOne({ slug })
-      .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug', 'description']);
+      .populate('user', ['name', 'bio', 'photo'])
+      .populate('blog', ['name', 'slug', 'description', 'photo', 'bgImgUrl']);
     if (!post) {
       res.status(404);
       throw new Error('Post Not Found');
@@ -198,8 +198,8 @@ exports.getPostBySlug = async (req, res, next) => {
 exports.getUserPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({ user: req.user.id })
-      .populate('user', ['name', 'bio'])
-      .populate('blog', ['name', 'slug', 'description'])
+      .populate('user', ['name', 'bio', 'photo'])
+      .populate('blog', ['name', 'slug', 'description', 'photo', 'bgImgUrl'])
       .sort({
         createdAt: -1,
       });

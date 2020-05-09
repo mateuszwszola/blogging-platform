@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/auth');
-const blogController = require('../controllers/blogController');
+const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
 const photoUpload = require('../middleware/photoUpload');
 
@@ -14,7 +14,7 @@ router.post(
   auth,
   photoUpload.single('photo'),
   blogValidation.validateBlog,
-  blogController.createBlog
+  blogControllers.createBlog
 );
 
 /*
@@ -22,42 +22,42 @@ router.post(
   @desc    Get auth user blogs
   @access  Private
  */
-router.get('/', auth, blogController.getAuthUserBlogs);
+router.get('/', auth, blogControllers.getAuthUserBlogs);
 
 /*
   @route   GET api/blogs/all
   @desc    Get all blogs
   @access  Public
  */
-router.get('/all', blogController.getAllBlogs);
+router.get('/all', blogControllers.getAllBlogs);
 
 /*
   @route   GET api/blogs/:blogId
   @desc    Get blog by ID
   @access  Public
  */
-router.get('/:blogId', blogController.getBlogById);
+router.get('/:blogId', blogControllers.getBlogById);
 
 /*
   @route   GET api/blogs/slug/:slugName
   @desc    Get a blog by slug name
   @access  Public
  */
-router.get('/slug/:slug', blogController.getBlogBySlugName);
+router.get('/slug/:slug', blogControllers.getBlogBySlugName);
 
 /*
   @route   GET api/blogs/user/:userId
   @desc    Get user blogs
   @access  Public
  */
-router.get('/user/:userId', blogController.getUserBlogs);
+router.get('/user/:userId', blogControllers.getUserBlogs);
 
 /*
   @route   DELETE api/blogs/:blogId
   @desc    Delete blog
   @access  Private
  */
-router.delete('/:blogId', auth, blogController.deleteBlog);
+router.delete('/:blogId', auth, blogControllers.deleteBlog);
 
 /*
   @route   PUT api/blogs/:blogId
@@ -68,7 +68,7 @@ router.put(
   '/:blogId',
   auth,
   blogValidation.validateBlog,
-  blogController.updateBlog
+  blogControllers.updateBlog
 );
 
 module.exports = router;

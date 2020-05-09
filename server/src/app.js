@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
-const db = require('./config/db');
 const errorMiddlewares = require('./middleware/error');
 
 const app = express();
@@ -12,7 +11,9 @@ const app = express();
 app.enable('trust proxy'); // for rate limiting by Client IP
 
 // Connect to the db
-db();
+if (process.env.NODE_ENV !== 'testing') {
+  require('./config/db')();
+}
 
 app.use(morgan('dev'));
 app.use(helmet());

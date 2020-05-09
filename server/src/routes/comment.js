@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/auth');
-const commentController = require('../controllers/commentController');
+const commentControllers = require('../controllers/commentControllers');
 const { validateComment } = require('../validations/comment');
 
 /*
@@ -8,20 +8,20 @@ const { validateComment } = require('../validations/comment');
   @desc    Add a comment
   @access  Private
  */
-router.post('/:postId', auth, validateComment, commentController.addComment);
+router.post('/:postId', auth, validateComment, commentControllers.addComment);
 
 /*
   @route   DELETE api/comments/:commentId
   @desc    Delete a comment
   @access  Private
  */
-router.delete('/:commentId', auth, commentController.deleteComment);
+router.delete('/:commentId', auth, commentControllers.deleteComment);
 
 /*
   @route   GET api/comments/:postId
   @desc    Get post comments
   @access  Public
  */
-router.get('/:postId', commentController.getPostComments);
+router.get('/:postId', commentControllers.getPostComments);
 
 module.exports = router;

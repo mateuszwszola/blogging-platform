@@ -7,7 +7,7 @@ const {
   resizeAndOptimizeImg,
 } = require('../utils/optimizeImg');
 
-exports.registerUser = async (req, res, next) => {
+exports.registerUser = async (req, res) => {
   const errors = validationResult(req).formatWith(errorFormatter);
   if (!errors.isEmpty()) {
     return res.status(422).json({ errors: errors.mapped() });
@@ -16,14 +16,14 @@ exports.registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
 
   try {
-    const user = new User({ name, email, password });
-    await user.save();
+    const user = await User.create({ name, email, password }).exec();
     const token = await user.generateAuthToken();
-    delete user.password;
+
     res.status(201).json({ user, token });
   } catch (err) {
-    res.status(400);
-    next(err);
+    return res
+      .status(400)
+      .json({ message: 'There was a problem creating a new account' });
   }
 };
 

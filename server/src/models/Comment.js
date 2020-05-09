@@ -5,19 +5,22 @@ const requiredString = {
   required: true,
 };
 
-const CommentSchema = new mongoose.Schema({
-  user: {
-    type: mongoose.ObjectId,
-    ref: 'User',
+const CommentSchema = new mongoose.Schema(
+  {
+    author: {
+      type: mongoose.ObjectId,
+      ref: 'User',
+    },
+    post: {
+      type: mongoose.ObjectId,
+      ref: 'Post',
+    },
+    body: {
+      ...requiredString,
+    },
   },
-  post: {
-    type: mongoose.ObjectId,
-    ref: 'Post',
-  },
-  body: {
-    ...requiredString,
-  },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 const Comment = mongoose.model('Comment', CommentSchema);
 

@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/auth');
 const photoUpload = require('../middleware/photoUpload');
-const photoController = require('../controllers/photoController');
+const photoControllers = require('../controllers/photoControllers');
 
 /*
   @route   POST api/photos
@@ -12,7 +12,7 @@ router.post(
   '/',
   auth,
   photoUpload.single('photo'),
-  photoController.uploadPhoto
+  photoControllers.uploadPhoto
 );
 
 /*
@@ -20,13 +20,13 @@ router.post(
   @desc    Get photos
   @access  Public
  */
-router.get('/', photoController.getPhotos);
+router.get('/', photoControllers.getPhotos);
 
 /*
   @route   GET api/photos/:id
   @desc    Get photo
   @access  Public
  */
-router.get('/:id', photoController.getPhoto);
+router.get('/:id', photoControllers.getPhoto);
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/auth');
-const postController = require('../controllers/postController');
+const postControllers = require('../controllers/postControllers');
 const postValidation = require('../validations/post');
 const photoUpload = require('../middleware/photoUpload');
 
@@ -14,7 +14,7 @@ router.post(
   auth,
   photoUpload.single('photo'),
   postValidation.validatePost,
-  postController.createPost
+  postControllers.createPost
 );
 
 /*
@@ -27,7 +27,7 @@ router.put(
   auth,
   photoUpload.single('photo'),
   postValidation.validatePost,
-  postController.updatePost
+  postControllers.updatePost
 );
 
 /*
@@ -35,34 +35,34 @@ router.put(
   @desc    Delete a post
   @access  Private
  */
-router.delete('/:postId', auth, postController.deletePost);
+router.delete('/:postId', auth, postControllers.deletePost);
 
 /*
   @route   GET api/posts
   @desc    Get user posts
   @access  Private
  */
-router.get('/', auth, postController.getUserPosts);
+router.get('/', auth, postControllers.getUserPosts);
 
 /*
   @route   GET api/posts/all
   @desc    Get all posts
   @access  Public
  */
-router.get('/all', postController.getAllPosts);
+router.get('/all', postControllers.getAllPosts);
 
 /*
   @route   GET api/posts/blog/:blogId
   @desc    Get all blog posts
   @access  Public
  */
-router.get('/blog/:blogId', postController.getAllBlogPosts);
+router.get('/blog/:blogId', postControllers.getAllBlogPosts);
 
 /*
   @route   GET api/posts/slug/:slug
   @desc    Get post by slug
   @access  Public
  */
-router.get('/slug/:slug', postController.getPostBySlug);
+router.get('/slug/:slug', postControllers.getPostBySlug);
 
 module.exports = router;

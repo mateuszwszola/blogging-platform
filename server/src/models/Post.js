@@ -1,26 +1,11 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 
+const specifiedStringLength = require('../validations/specifiedStringLength');
+
 const requiredString = {
   type: String,
   required: [true, "can't be blank"],
-};
-
-const specifiedStringLength = (field, minlength, maxlength) => {
-  const obj = {};
-  if (minlength) {
-    obj.minlength = [
-      minlength,
-      `${field} must have min ${minlength} characters`,
-    ];
-  }
-  if (maxlength) {
-    obj.maxlength = [
-      maxlength,
-      `${field} must have max ${maxlength} characters`,
-    ];
-  }
-  return obj;
 };
 
 const PostSchema = new mongoose.Schema(
@@ -61,11 +46,7 @@ const PostSchema = new mongoose.Schema(
         ref: 'Comment',
       },
     ],
-    tags: [
-      {
-        type: String,
-      },
-    ],
+    tags: [String],
   },
   { timestamps: true }
 );
@@ -86,7 +67,7 @@ PostSchema.methods.slugify = function () {
 };
 
 PostSchema.methods.addComment = function (commentId) {
-  this.comments.push(commentId);
+  this.comments = this.comments.concat(commentId);
   this.save();
 };
 
