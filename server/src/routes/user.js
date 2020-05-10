@@ -3,6 +3,9 @@ const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
 const { auth } = require('../middleware/auth');
 const photoUpload = require('../middleware/photoUpload');
+const emailRouter = require('./email');
+
+router.use('/user', emailRouter);
 
 /*
   @route   POST api/users

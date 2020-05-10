@@ -54,7 +54,7 @@ exports.updateUser = async (req, res, next) => {
     name: req.body.name,
   };
 
-  if (req.body.bio) {
+  if (Object.prototype.hasOwnProperty.call(req.body, 'bio')) {
     newUserData.bio = req.body.bio;
   }
 
@@ -70,28 +70,23 @@ exports.updateUser = async (req, res, next) => {
 };
 
 exports.getUser = async (req, res) => {
-  res.json(req.user);
+  res.json({ user: req.user });
 };
 
 exports.uploadPhoto = async (req, res, next) => {
   try {
     if (!req.file) {
-      res.status(422);
       throw new Error('cannot upload photo');
     }
 
     const img = await convertBufferToJimpImg(req.file.buffer);
     const buffer = await resizeAndOptimizeImg(img, 300, undefined, 90);
 
-    const photo = new Photo({
-      photo: buffer,
-    });
-
-    await photo.save();
+    const photo = await Photo.create({ photo: buffer });
 
     const user = await User.findById(req.user.id);
 
-    // deleted old photo
+    // delete old photo
     if (user.photo) {
       await Photo.findByIdAndDelete(user.photo);
     }
@@ -102,7 +97,7 @@ exports.uploadPhoto = async (req, res, next) => {
 
     res.json({ photoId: photo.id });
   } catch (err) {
-    res.status(err.status || 400);
+    res.status(err.status || 422);
     next(err);
   }
 };

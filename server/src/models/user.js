@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema(
     },
     bio: {
       type: String,
-      ...specifiedStringLength('bio', 2, 100),
+      ...specifiedStringLength('bio', null, 100),
     },
     photo: {
       type: mongoose.ObjectId,
@@ -58,7 +58,7 @@ UserSchema.pre('save', async function (next) {
 });
 
 // example of document/instance method
-UserSchema.methods.generateAuthToken = async function () {
+UserSchema.methods.generateAuthToken = function () {
   const user = this;
   const payload = {
     user: {

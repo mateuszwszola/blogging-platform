@@ -23,8 +23,7 @@ exports.validateRegister = [
         throw new Error('e-mail already exists');
       }
       return user;
-    })
-    .normalizeEmail(),
+    }),
   body('password', 'password is required')
     .exists()
     .trim()
@@ -53,5 +52,5 @@ exports.validateUser = [
     .withMessage('The name must be between 2 and 40 chars'),
   body('bio', 'The bio must be between 2 and 100 chars')
     .optional()
-    .isLength({ min: 2, max: 100 }),
+    .isLength({ max: 100 }),
 ];

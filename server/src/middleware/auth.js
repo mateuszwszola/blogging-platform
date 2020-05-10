@@ -1,16 +1,15 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { JWT_KEY, JWT_EXP } = process.env;
 
 const generateNewToken = (user) => {
-  return jwt.sign({ user: { id: user.id } }, JWT_KEY, {
-    expiresIn: JWT_EXP || 3600,
+  return jwt.sign({ user: { id: user.id } }, process.env.JWT_KEY, {
+    expiresIn: process.env.JWT_EXP || 3600,
   });
 };
 
 const verifyToken = (token) => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, JWT_KEY, (err, payload) => {
+    jwt.verify(token, process.env.JWT_KEY, (err, payload) => {
       if (err) return reject(err);
       resolve(payload);
     });

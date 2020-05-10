@@ -11,7 +11,7 @@ const dummyUser = require('../seeds/user.seed.json')[0];
 setupDB();
 
 describe('User API tests', () => {
-  describe('POST api/users | SIGNUP', () => {
+  describe('POST api/users - signup', () => {
     test('should return errors when empty body', async () => {
       expect.assertions(3);
       let res = await request.post('/api/users');
@@ -131,7 +131,7 @@ describe('User API tests', () => {
       expect(res.body.message).toBe('Not authorized to access this resource');
     });
 
-    test.skip('should error when user does not exists', async () => {
+    test('should error when user does not exists', async () => {
       const token = generateNewToken({ id: newId() });
 
       const res = await request.get('/api/users/me').set('x-auth-token', token);
@@ -139,5 +139,29 @@ describe('User API tests', () => {
       expect(res.statusCode).toBe(401);
       expect(res.body.message).toBe('Not authorized to access this resource');
     });
+
+    test('should GET and return user', async () => {
+      const user = await User.create(dummyUser);
+      const token = user.generateAuthToken();
+
+      const res = await request.get('/api/users/me').set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.user).toBeTruthy();
+      expect(res.body.user.email).toBe(dummyUser.email);
+      expect(res.body.user.name).toBe(dummyUser.name);
+    });
+  });
+
+  describe('PUT /api/users', () => {
+    test('should return error when no name provided', async () => {});
+
+    test('should return error when invalid name length', async () => {});
+
+    test('should trim user name', async () => {});
+
+    test('should return error when invalid bio length', async () => {});
+
+    test('should reset user bio', async () => {});
   });
 });

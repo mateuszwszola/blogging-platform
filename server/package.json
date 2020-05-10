@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
+    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
     "test": "cross-env NODE_ENV=testing jest",
     "test:watch": "npm test -- --watch",
     "format": "prettier \"src/\" --write",
@@ -36,6 +36,7 @@
     "jimp": "^0.10.3",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
+    "mailgun-js": "^0.22.0",
     "mongoose": "^5.9.4",
     "morgan": "^1.9.1",
     "multer": "^1.4.2",
