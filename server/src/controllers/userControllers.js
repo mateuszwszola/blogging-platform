@@ -50,15 +50,21 @@ exports.updateUser = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const newUserData = {
-    name: req.body.name,
-  };
+  const newUserData = {};
 
   if (Object.prototype.hasOwnProperty.call(req.body, 'bio')) {
     newUserData.bio = req.body.bio;
   }
 
+  if (Object.prototype.hasOwnProperty.call(req.body, 'name')) {
+    newUserData.name = req.body.name;
+  }
+
   try {
+    if (Object.keys(newUserData).length === 0) {
+      return res.json({ user: req.user });
+    }
+    
     const newUser = await User.findByIdAndUpdate(req.user.id, newUserData, {
       new: true,
     });

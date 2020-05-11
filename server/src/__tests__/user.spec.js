@@ -154,9 +154,20 @@ describe('User API tests', () => {
   });
 
   describe('PUT /api/users', () => {
-    test('should return error when no name provided', async () => {});
+    let user;
+    let token;
+    beforeEach(async () => {
+      user = await User.create(dummyUser);
+      token = user.generateAuthToken();
+    });
 
-    test('should return error when invalid name length', async () => {});
+
+
+    // test('should return error when invalid name length provided', async () => {
+    //   const res = await request.post('/api/users/').set('x-auth-token', token).send({
+    //     name: 'M'
+    //   });
+    // });
 
     test('should trim user name', async () => {});
 

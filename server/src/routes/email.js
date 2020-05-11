@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const emailControllers = require('../controllers/emailControllers');
+const { validateNewPassword } = require('../validations/user');
 
 /*
   @route   POST api/users/user/email
@@ -15,6 +16,7 @@ router.post('/email', emailControllers.sendPasswordResetEmail);
  */
 router.post(
   '/receive_new_password/:userId/:token',
+  validateNewPassword,
   emailControllers.receiveNewPassword
 );
 

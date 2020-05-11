@@ -8,4 +8,5 @@ module.exports = {
   // globalSetup: './test-setup',
   // A path to a module which exports an async function that is triggered once after all test suites
   // globalTeardown: './test-teardown.js',
+  setupFiles: ['dotenv/config']
 };

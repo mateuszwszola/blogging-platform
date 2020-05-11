@@ -7,9 +7,9 @@ const generateNewToken = (user) => {
   });
 };
 
-const verifyToken = (token) => {
+const verifyToken = (token, secret = process.env.JWT_KEY) => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, process.env.JWT_KEY, (err, payload) => {
+    jwt.verify(token, secret, (err, payload) => {
       if (err) return reject(err);
       resolve(payload);
     });
@@ -27,7 +27,7 @@ const auth = async (req, res, next) => {
 
   try {
     const data = await verifyToken(token);
-    const user = await User.findOne({ _id: data.user.id }).select('-password');
+    const user = await User.findById(data.user.id).select('-password').lean();
     if (!user) {
       return res.status(401).json({ message: errMsg });
     }

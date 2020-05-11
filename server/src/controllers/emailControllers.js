@@ -3,6 +3,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/User');
 const mg = require('../config/mailgun');
 
+/*
+  Helpful resource: https://www.smashingmagazine.com/2017/11/safe-password-resets-with-json-web-tokens/
+*/
+
 const {
   usePasswordHashToMakeToken,
   getPasswordResetURL,
@@ -19,8 +23,13 @@ exports.sendPasswordResetEmail = async (req, res, next) => {
   let user;
   try {
     user = await User.findOne({ email }).exec();
+    /*
+      "Always indicate success when the user enters their email address in the forgotten-password page."
+    */
     if (!user) {
-      return res.status(404).json({ message: 'No user with that email found' });
+      return res.status(200).json({
+        message: 'Success! Check your email inbox and follow the steps',
+      });
     }
   } catch (err) {
     return next(err);
@@ -35,7 +44,10 @@ exports.sendPasswordResetEmail = async (req, res, next) => {
       if (err) {
         return res.status(400).json({ message: 'Unable to send email' });
       }
-      return res.json({ body });
+      return res.json({
+        body,
+        message: 'Success! Check your email inbox and follow the steps',
+      });
     });
   };
 
