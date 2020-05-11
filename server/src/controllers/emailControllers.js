@@ -10,13 +10,20 @@ const {
 } = require('../utils/email');
 
 exports.sendPasswordResetEmail = async (req, res, next) => {
-  const { email } = req.params;
+  if (typeof req.body.email === 'undefined') {
+    return res.status(400).json({ message: 'Email is required' });
+  }
+
+  const { email } = req.body;
 
   let user;
   try {
     user = await User.findOne({ email }).exec();
+    if (!user) {
+      return res.status(404).json({ message: 'No user with that email found' });
+    }
   } catch (err) {
-    return res.status(404).json({ message: 'No user with that email' });
+    return next(err);
   }
 
   const token = usePasswordHashToMakeToken(user);
@@ -26,7 +33,6 @@ exports.sendPasswordResetEmail = async (req, res, next) => {
   const sendEmail = () => {
     mg.messages().send(emailTemplate, (err, body) => {
       if (err) {
-        console.error(err);
         return res.status(400).json({ message: 'Unable to send email' });
       }
       return res.json({ body });
@@ -37,25 +43,49 @@ exports.sendPasswordResetEmail = async (req, res, next) => {
 };
 
 exports.receiveNewPassword = async (req, res, next) => {
+  if (typeof req.body.password === 'undefined') {
+    return res.status(400).json({ message: 'Password is required' });
+  }
+
   const { userId, token } = req.params;
   const { password } = req.body;
 
   try {
     const user = await User.findById(userId);
-    const secret = user.password + '-' + user.createdAt;
-    const payload = jwt.decode(token, secret);
-
-    if (payload.userId !== user.id) {
-      throw new Error('Invalid user');
+    if (!user) {
+      return res.status(404).json({ message: 'No user with that email found' });
     }
 
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(password, salt);
-    await User.findByIdAndUpdate(userId, { password: hash });
+    const secret = user.password + '-' + user.createdAt.getTime();
 
-    return res.status(202).json({ message: 'Successfully changed password' });
+    jwt.verify(token, secret, (err, payload) => {
+      if (err || !payload) {
+        return res.status(401).json({ message: 'Unable to verify the user' });
+      }
+
+      if (payload && payload.userId !== user.id) {
+        return res.status(401).json({ message: 'Unable to verify the user' });
+      }
+
+      bcrypt.genSalt(10, (err, salt) => {
+        if (err) {
+          return next(err);
+        }
+        bcrypt.hash(password, salt, (err, hash) => {
+          if (err) {
+            return next(err);
+          }
+          User.findByIdAndUpdate(userId, { password: hash })
+            .then(() => {
+              return res
+                .status(202)
+                .json({ message: 'Successfully changed password' });
+            })
+            .catch((err) => next(err));
+        });
+      });
+    });
   } catch (err) {
-    res.status(err.status || 404);
-    next(err);
+    return next(err);
   }
 };

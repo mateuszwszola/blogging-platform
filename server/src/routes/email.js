@@ -2,11 +2,11 @@ const router = require('express').Router();
 const emailControllers = require('../controllers/emailControllers');
 
 /*
-  @route   POST api/users/user/:email
+  @route   POST api/users/user/email
   @desc    Send password reset email
   @access  Public
  */
-router.post('/:email', emailControllers.sendPasswordResetEmail);
+router.post('/email', emailControllers.sendPasswordResetEmail);
 
 /*
   @route   POST api/users/user/receive_new_password/:userId/:token

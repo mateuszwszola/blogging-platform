@@ -5,7 +5,7 @@ exports.usePasswordHashToMakeToken = ({
   _id: userId,
   createdAt,
 }) => {
-  const secret = passwordHash + '-' + createdAt;
+  const secret = passwordHash + '-' + createdAt.getTime();
   const token = jwt.sign({ userId }, secret, {
     expiresIn: 3600, // 1 hour
   });
@@ -13,7 +13,7 @@ exports.usePasswordHashToMakeToken = ({
 };
 
 exports.getPasswordResetURL = (user, token) => {
-  return `${process.env.CORS_ORIGIN}/password/reset/${user._id}/${token}`;
+  return `${process.env.CORS_ORIGIN}/resetpassword/${user._id}/${token}`;
 };
 
 exports.resetPasswordTemplate = (user, url) => {

@@ -25,7 +25,6 @@ app.use(
     origin: process.env.CORS_ORIGIN,
   })
 );
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
