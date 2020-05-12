@@ -1,12 +1,12 @@
 const supertest = require('supertest');
-const app = require('../app');
+const app = require('../../app');
 const request = supertest(app);
 
-const User = require('../models/User');
-const { setupDB, newId } = require('../../test-setup.js');
-const { generateNewToken } = require('../middleware/auth');
+const User = require('../../models/User');
+const { setupDB, newId } = require('../../../test-setup.js');
+const { generateNewToken } = require('../../middleware/auth');
 
-const dummyUser = require('../seeds/user.seed.json')[0];
+const dummyUser = require('../../seeds/user.seed.json')[0];
 
 setupDB();
 
@@ -157,22 +157,53 @@ describe('User API tests', () => {
     let user;
     let token;
     beforeEach(async () => {
-      user = await User.create(dummyUser);
+      user = await User.create({ ...dummyUser, bio: 'User bio' });
       token = user.generateAuthToken();
     });
 
+    test('should return error when invalid name length provided', async () => {
+      const res = await request
+        .put('/api/users')
+        .set('x-auth-token', token)
+        .send({
+          name: 'M',
+        });
 
+      expect(res.statusCode).toBe(422);
+      expect(res.body).toHaveProperty('errors');
+      expect(res.body.errors).toHaveProperty('name');
+      expect(typeof res.body.errors.name).toBe('string');
+    });
 
-    // test('should return error when invalid name length provided', async () => {
-    //   const res = await request.post('/api/users/').set('x-auth-token', token).send({
-    //     name: 'M'
-    //   });
-    // });
+    test('should reset user bio', async () => {
+      const res = await request
+        .put('/api/users')
+        .set('x-auth-token', token)
+        .send({
+          name: dummyUser.name,
+          bio: '',
+        });
 
-    test('should trim user name', async () => {});
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('user');
+      expect(res.body.user.bio).toBe('');
+    });
 
-    test('should return error when invalid bio length', async () => {});
+    test('should update user info', async () => {
+      const data = {
+        name: 'Jason',
+        bio: 'My name is Jason',
+      };
 
-    test('should reset user bio', async () => {});
+      const res = await request
+        .put('/api/users')
+        .set('x-auth-token', token)
+        .send(data);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('user');
+      expect(res.body.user.bio).toBe(data.bio);
+      expect(res.body.user.name).toBe(data.name);
+    });
   });
 });

@@ -52,20 +52,16 @@ exports.updateUser = async (req, res, next) => {
 
   const newUserData = {};
 
-  if (Object.prototype.hasOwnProperty.call(req.body, 'bio')) {
+  if (typeof req.body.bio !== undefined) {
     newUserData.bio = req.body.bio;
   }
 
-  if (Object.prototype.hasOwnProperty.call(req.body, 'name')) {
+  if (typeof req.body.name !== undefined) {
     newUserData.name = req.body.name;
   }
 
   try {
-    if (Object.keys(newUserData).length === 0) {
-      return res.json({ user: req.user });
-    }
-    
-    const newUser = await User.findByIdAndUpdate(req.user.id, newUserData, {
+    const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
       new: true,
     });
     res.json({ user: newUser });

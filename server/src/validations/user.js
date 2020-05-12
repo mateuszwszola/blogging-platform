@@ -52,12 +52,15 @@ exports.validateLogin = [
 ];
 
 exports.validateUser = [
-  body('name', 'The name must be between 2 and 40 chars')
-    .optional()
+  body('name', 'name is required')
+    .exists()
     .trim()
+    .not()
+    .isEmpty()
     .escape()
-    .isLength({ min: 2, max: 40 }),
-  body('bio', 'The bio must be between 2 and 100 chars')
+    .isLength({ min: 2, max: 40 })
+    .withMessage('The name must be between 2 and 40 chars'),
+  body('bio', 'The bio must be under 100 chars')
     .optional()
     .trim()
     .isLength({ max: 100 }), // user can reset their bio
