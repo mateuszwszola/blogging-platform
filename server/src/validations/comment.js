@@ -1,11 +1,14 @@
 const { body } = require('express-validator');
+const Filter = require('bad-words');
+const filter = new Filter();
 
 exports.validateComment = [
-  body('body', 'body is required')
-    .exists().trim()
+  body('body', 'comment body is required')
+    .exists()
+    .trim()
     .not()
     .isEmpty()
-    .escape()
-    .isLength({ min: 1, max: 255 })
-    .withMessage('The body must be between 1 and 255 chars'),
+    .customSanitizer((name) => filter.clean(name))
+    .isLength({ max: 255 })
+    .withMessage('comment body must be up to 255 characters'),
 ];

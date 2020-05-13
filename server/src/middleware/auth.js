@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const config = require('../config');
 
 const generateNewToken = (user) => {
-  return jwt.sign({ user: { id: user.id } }, process.env.JWT_KEY, {
-    expiresIn: process.env.JWT_EXP || 3600,
+  return jwt.sign({ user: { id: user.id } }, config.secrets.jwt, {
+    expiresIn: config.secrets.jwtExp,
   });
 };
 
-const verifyToken = (token, secret = process.env.JWT_KEY) => {
+const verifyToken = (token, secret = config.secrets.jwt) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, secret, (err, payload) => {
       if (err) return reject(err);

@@ -1,16 +1,13 @@
 const jwt = require('jsonwebtoken');
-const { setupDB, newId } = require('../../../test-setup.js');
 const User = require('../../models/User');
 const { generateNewToken, verifyToken, auth } = require('../auth');
 
 const dummyUser = require('../../seeds/user.seed.json')[0];
 
-setupDB();
-
 describe('Authorization', () => {
   describe('generateNewToken', () => {
     test('should create new jwt token from user', () => {
-      const id = newId().toString();
+      const id = global.newId().toString();
       const token = generateNewToken({ id });
       const payload = jwt.verify(token, process.env.JWT_KEY);
 
@@ -20,7 +17,7 @@ describe('Authorization', () => {
 
   describe('verifyToken', () => {
     test('should verify token and return payload with user id', async () => {
-      const id = newId().toString();
+      const id = global.newId().toString();
       const token = generateNewToken({ id });
       const payload = await verifyToken(token);
 
@@ -88,7 +85,7 @@ describe('Authorization', () => {
     test('should return error when user from payload does not exists', async () => {
       expect.assertions(3);
 
-      const token = generateNewToken({ id: newId() });
+      const token = generateNewToken({ id: global.newId() });
 
       const req = {
         header(prop) {

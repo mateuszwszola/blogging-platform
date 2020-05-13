@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
+const config = require('./index');
 
-module.exports = async () => {
+exports.connect = async (url = config.dbUrl, opts = {}) => {
   try {
-    await mongoose.connect(process.env.DB_URL, {
+    await mongoose.connect(url, {
+      ...opts,
       useNewUrlParser: true,
       useFindAndModify: false,
       useUnifiedTopology: true,

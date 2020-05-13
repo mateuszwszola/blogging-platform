@@ -18,7 +18,7 @@ exports.addComment = async (req, res, next) => {
       res.status(404);
       throw new Error('Post Not Found');
     }
-    const newComment = new Comment({ body, user: req.user.id, post: postId });
+    const newComment = new Comment({ body, user: req.user._id, post: postId });
     await newComment.save();
     post.addComment(newComment.id);
     res.json({ comment: newComment });
@@ -33,7 +33,7 @@ exports.deleteComment = async (req, res, next) => {
 
   try {
     const comment = await Comment.findById(commentId);
-    if (!comment.user.equals(req.user.id)) {
+    if (!comment.user.equals(req.user._id)) {
       res.status(401);
       throw new Error('You are not authorized to delete this comment');
     }

@@ -4,8 +4,6 @@ const PhotoSchema = mongoose.Schema({
   photo: {
     type: Buffer,
   },
-  contentType: String,
-  link: String,
 });
 
 PhotoSchema.methods.toJSON = function () {

@@ -7,7 +7,6 @@ exports.validateRegister = [
     .trim()
     .not()
     .isEmpty()
-    .escape()
     .isLength({ min: 2, max: 40 })
     .withMessage('The name must be between 2 and 40 chars'),
   body('email', 'email is required')
@@ -26,7 +25,6 @@ exports.validateRegister = [
     }),
   body('password', 'password is required')
     .exists()
-    .trim()
     .not()
     .isEmpty()
     .isLength({ min: 7 })
@@ -39,7 +37,6 @@ exports.validateRegister = [
 exports.validateNewPassword = [
   body('password', 'password is required')
     .exists()
-    .trim()
     .not()
     .isEmpty()
     .isLength({ min: 7 })
@@ -52,12 +49,9 @@ exports.validateLogin = [
 ];
 
 exports.validateUser = [
-  body('name', 'name is required')
-    .exists()
+  body('name')
+    .optional()
     .trim()
-    .not()
-    .isEmpty()
-    .escape()
     .isLength({ min: 2, max: 40 })
     .withMessage('The name must be between 2 and 40 chars'),
   body('bio', 'The bio must be under 100 chars')

@@ -29,15 +29,20 @@ const UserSchema = new mongoose.Schema(
     },
     password: {
       ...requiredString,
-      ...specifiedStringLength('password', 7),
+      minlength: 7,
     },
     bio: {
       type: String,
-      ...specifiedStringLength('bio', null, 100),
+      maxlength: 100,
     },
-    photo: {
-      type: mongoose.ObjectId,
-      ref: 'Photo',
+    avatar: {
+      photoURL: {
+        type: String,
+      },
+      photoID: {
+        type: mongoose.ObjectId,
+        ref: 'Photo',
+      },
     },
   },
   { timestamps: true }

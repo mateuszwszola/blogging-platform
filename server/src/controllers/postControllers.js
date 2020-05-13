@@ -19,7 +19,7 @@ exports.createPost = async (req, res, next) => {
       res.status(404);
       throw new Error('blog does not exists');
     }
-    if (!blog.user.equals(req.user.id)) {
+    if (!blog.user.equals(req.user._id)) {
       res.status(401);
       throw new Error('you are not allowed to create post in this blog');
     }
@@ -33,7 +33,7 @@ exports.createPost = async (req, res, next) => {
     });
 
     const post = new Post({
-      user: req.user.id,
+      user: req.user._id,
       blog: blogId,
       ...postData,
     });
@@ -77,7 +77,7 @@ exports.updatePost = async (req, res, next) => {
       res.status(404);
       throw new Error('Post Not Found');
     }
-    if (!post.user.equals(req.user.id)) {
+    if (!post.user.equals(req.user._id)) {
       res.status(401);
       throw new Error('you are not allowed to create post in this blog');
     }
@@ -135,7 +135,7 @@ exports.deletePost = async (req, res, next) => {
       res.status(404);
       throw new Error('Post Not Found');
     }
-    if (!post.user.equals(req.user.id)) {
+    if (!post.user.equals(req.user._id)) {
       res.status(401);
       throw new Error('you are not allowed to create post in this blog');
     }
@@ -197,7 +197,7 @@ exports.getPostBySlug = async (req, res, next) => {
 
 exports.getUserPosts = async (req, res, next) => {
   try {
-    const posts = await Post.find({ user: req.user.id })
+    const posts = await Post.find({ user: req.user._id })
       .populate('user', ['name', 'bio', 'photo'])
       .populate('blog', ['name', 'slug', 'description', 'photo', 'bgImgUrl'])
       .sort({

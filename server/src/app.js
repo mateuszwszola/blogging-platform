@@ -3,19 +3,17 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const config = require('./config');
+const { connect } = require('./config/db');
 
 const errorMiddlewares = require('./middleware/error');
 
 const app = express();
+exports.app = app;
 
 app.enable('trust proxy'); // for rate limiting by Client IP
 
-// Connect to the db
-if (process.env.NODE_ENV !== 'testing') {
-  require('./config/db')();
-}
-
-if (process.env.NODE_ENV === 'development') {
+if (config.isDev) {
   app.use(morgan('dev'));
 }
 
@@ -39,4 +37,9 @@ app.use(errorMiddlewares.notFound);
 
 app.use(errorMiddlewares.errorHandler);
 
-module.exports = app;
+exports.start = async () => {
+  await connect();
+  app.listen(config.port, () => {
+    console.log(`Server listens on port ${config.port}`);
+  });
+};

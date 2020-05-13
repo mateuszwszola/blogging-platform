@@ -24,18 +24,20 @@ const BlogSchema = new mongoose.Schema(
       unique: true,
     },
     description: {
-      ...requiredString,
+      type: String,
       ...specifiedStringLength('description', 2, 140),
     },
-    bgImgUrl: {
-      type: String,
-    },
-    imgAttribution: {
-      type: String,
-    },
-    photo: {
-      type: mongoose.ObjectId,
-      ref: 'Photo',
+    bgImg: {
+      photoURL: {
+        type: String,
+      },
+      photoID: {
+        type: mongoose.ObjectId,
+        ref: 'Photo',
+      },
+      imgAttribution: {
+        type: String,
+      },
     },
   },
   { timestamps: true }

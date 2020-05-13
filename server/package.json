@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "cross-env NODE_ENV=development nodemon src/index.js",
+    "dev": "nodemon src/index.js",
     "test": "cross-env NODE_ENV=testing jest",
     "test:watch": "npm test -- --watch",
     "format": "prettier \"src/\" --write",
@@ -45,13 +45,11 @@
     "validator": "^12.2.0"
   },
   "devDependencies": {
-    "@shelf/jest-mongodb": "^1.1.5",
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-import": "^2.20.1",
     "eslint-plugin-jest": "^23.9.0",
     "jest": "^26.0.1",
-    "mongodb": "^3.5.7",
     "nodemon": "^2.0.2",
     "prettier": "^2.0.2",
     "supertest": "^4.0.2"

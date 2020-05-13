@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 exports.usePasswordHashToMakeToken = ({
   password: passwordHash,
@@ -13,11 +14,11 @@ exports.usePasswordHashToMakeToken = ({
 };
 
 exports.getPasswordResetURL = (user, token) => {
-  return `${process.env.CORS_ORIGIN}/resetpassword/${user._id}/${token}`;
+  return `${config.corsOrigin}/resetpassword/${user._id}/${token}`;
 };
 
 exports.resetPasswordTemplate = (user, url) => {
-  const from = process.env.EMAIL_FROM;
+  const from = 'Blogging Platform <blogging-platform@samples.mailgun.org>';
   const to = `${user.name} <${user.email}>`;
   const subject = 'Blogging Platform Password Reset 🙈';
   const html = `

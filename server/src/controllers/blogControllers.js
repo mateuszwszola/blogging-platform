@@ -3,6 +3,7 @@ const Blog = require('../models/Blog');
 const User = require('../models/User');
 const Photo = require('../models/Photo');
 const errorFormatter = require('../validations/errorFormatter');
+const createPhotoLink = require('../utils/createPhotoLink');
 
 exports.createBlog = async (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
@@ -10,27 +11,32 @@ exports.createBlog = async (req, res, next) => {
     return res.status(422).json({ errors: errors.mapped() });
   }
 
-  const { name, description } = req.body;
+  const { name } = req.body;
 
   try {
     const blog = await Blog.findOne({ name });
     if (blog) {
-      res.status(400);
-      throw new Error(`blog '${name}' already exists`);
+      return res.status(400).json({ message: `blog '${name}' already exists` });
     }
 
-    const blogData = { name, description };
-    const optionalFields = ['bgImgUrl', 'imgAttribution'];
-    optionalFields.forEach((field) => {
-      if (field in req.body) {
-        blogData[field] = req.body[field];
-      }
-    });
+    const blogData = { name, bgImg: {} };
 
-    const newBlog = new Blog({ user: req.user.id, ...blogData });
+    if (typeof req.body.description !== 'undefined') {
+      blogData.description = req.body.description;
+    }
+
+    if (typeof req.body.bgImgUrl !== 'undefined') {
+      blogData.bgImg.photoURL = req.body.bgImgUrl;
+    }
+
+    if (typeof req.body.imgAttribution !== 'undefined') {
+      blogData.bgImg.imgAttribution = req.body.imgAttribution;
+    }
+
+    const newBlog = new Blog({ user: req.user._id, ...blogData });
 
     const file = req.file && req.file.buffer;
-    if (file && !blogData.bgImgUrl) {
+    if (file && !(blogData.bgImg && blogData.bgImg.photoURL)) {
       try {
         const photo = new Photo({
           photo: req.file.buffer,
@@ -38,9 +44,10 @@ exports.createBlog = async (req, res, next) => {
 
         await photo.save();
 
-        newBlog.photo = photo.id;
-      } catch (error) {
-        return next(error);
+        newBlog.bgImg.photoID = photo.id;
+        newBlog.bgImg.photoURL = createPhotoLink(photo.id);
+      } catch (err) {
+        return next(err);
       }
     }
 
@@ -66,7 +73,7 @@ exports.updateBlog = async (req, res, next) => {
       res.status(404);
       throw new Error('Blog Not Found');
     }
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!blog.user.equals(user.id)) {
       res.status(401);
       throw new Error('You are not authorized to access this resource');
@@ -147,7 +154,7 @@ exports.getAllBlogs = async (req, res, next) => {
 
 exports.getAuthUserBlogs = async (req, res, next) => {
   try {
-    const blogs = await Blog.find({ user: req.user.id }).populate('user', [
+    const blogs = await Blog.find({ user: req.user._id }).populate('user', [
       'name',
       'bio',
       'photo',
@@ -179,7 +186,7 @@ exports.deleteBlog = async (req, res, next) => {
       res.status(404);
       throw new Error('Blog Not Found');
     }
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user._id);
     if (!blog.user.equals(user.id)) {
       res.status(401);
       throw new Error('You are not authorized to access this resource');

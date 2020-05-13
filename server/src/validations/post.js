@@ -9,10 +9,10 @@ exports.validatePost = [
     .trim()
     .not()
     .isEmpty()
+    .customSanitizer((title) => filter.clean(title))
     .isLength({ min: 2, max: 60 })
-    .withMessage('The title must be between 2 and 60 chars')
-    .customSanitizer((title) => filter.clean(title)),
-  body('body', 'body is required').exists().trim().not().isEmpty(),
+    .withMessage('title must be between 2 and 60 chars'),
+  body('body', 'post body is required').exists().trim().not().isEmpty(),
   body('bgImgUrl', 'invalid img URL')
     .trim()
     .custom((value) => {

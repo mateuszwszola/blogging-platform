@@ -6,6 +6,7 @@ const {
   convertBufferToJimpImg,
   resizeAndOptimizeImg,
 } = require('../utils/optimizeImg');
+const createPhotoLink = require('../utils/createPhotoLink');
 
 exports.registerUser = async (req, res, next) => {
   const errors = validationResult(req).formatWith(errorFormatter);
@@ -52,12 +53,12 @@ exports.updateUser = async (req, res, next) => {
 
   const newUserData = {};
 
-  if (typeof req.body.bio !== undefined) {
-    newUserData.bio = req.body.bio;
+  if ('name' in req.body) {
+    newUserData.name = req.body.name;
   }
 
-  if (typeof req.body.name !== undefined) {
-    newUserData.name = req.body.name;
+  if ('bio' in req.body) {
+    newUserData.bio = req.body.bio;
   }
 
   try {
@@ -86,20 +87,24 @@ exports.uploadPhoto = async (req, res, next) => {
 
     const photo = await Photo.create({ photo: buffer });
 
-    const user = await User.findById(req.user.id);
-
-    // delete old photo
-    if (user.photo) {
-      await Photo.findByIdAndDelete(user.photo);
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
     }
 
-    user.photo = photo.id;
+    if (user.avatar.photoID) {
+      // delete old photo
+      await Photo.findByIdAndDelete(user.avatar.photoID);
+    }
+
+    user.avatar.photoURL = createPhotoLink(photo.id);
+    user.avatar.photoID = photo.id;
 
     await user.save();
 
-    res.json({ photoId: photo.id });
+    res.json({ photoURL: user.avatar.photoURL });
   } catch (err) {
-    res.status(err.status || 422);
+    res.status(err.status || 400);
     next(err);
   }
 };
