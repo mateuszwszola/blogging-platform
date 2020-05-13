@@ -61,6 +61,11 @@ exports.updateUser = async (req, res, next) => {
     newUserData.bio = req.body.bio;
   }
 
+  // if ('avatarURL' in req.body) {
+  //   newUserData.avatar = {}
+  //   newUserData.avatar.photoURL = req.body.avatarURL
+  // }
+
   try {
     const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
       new: true,

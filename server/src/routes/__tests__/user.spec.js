@@ -3,6 +3,7 @@ const { app } = require('../../app');
 const request = supertest(app);
 
 const User = require('../../models/User');
+const Photo = require('../../models/Photo');
 const { generateNewToken } = require('../../middleware/auth');
 
 const dummyUser = require('../../seeds/user.seed.json')[0];
@@ -150,7 +151,7 @@ describe('User API tests', () => {
     });
   });
 
-  describe('PUT /api/users', () => {
+  describe('PUT api/users', () => {
     let user;
     let token;
     beforeEach(async () => {
@@ -201,6 +202,37 @@ describe('User API tests', () => {
       expect(res.body).toHaveProperty('user');
       expect(res.body.user.bio).toBe(data.bio);
       expect(res.body.user.name).toBe(data.name);
+    });
+  });
+
+  describe('POST api/users/photo', () => {
+    let user;
+    let token;
+    beforeEach(async () => {
+      user = await User.create({ ...dummyUser });
+      token = user.generateAuthToken();
+    });
+
+    async function uploadAvatar() {
+      return request
+        .post('/api/users/photo')
+        .set('x-auth-token', token)
+        .attach('photo', 'src/fixtures/avatar.png');
+    }
+
+    test('should upload user avatar', async () => {
+      const res = await uploadAvatar();
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.photoURL).toBeTruthy();
+    });
+
+    test('should delete old avatar', async () => {
+      await uploadAvatar();
+      await uploadAvatar();
+
+      const numberOfPhotos = await Photo.countDocuments({}).exec();
+      expect(numberOfPhotos).toBe(1);
     });
   });
 });

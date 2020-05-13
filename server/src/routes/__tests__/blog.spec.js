@@ -2,7 +2,6 @@ const supertest = require('supertest');
 const { app } = require('../../app');
 const User = require('../../models/User');
 const Blog = require('../../models/Blog');
-const path = require('path');
 
 const request = supertest(app);
 
@@ -130,5 +129,25 @@ describe('Blog API tests', () => {
       expect(res.body.blog.bgImg.photoID).toBeTruthy();
       expect(res.body.blog.bgImg.photoURL).toBeTruthy();
     });
+  });
+
+  describe('GET api/blogs', () => {
+    test('should error when no token', async () => {
+      const res = await request.get('/api/blogs');
+
+      expect(res.statusCode).toBe(401);
+      expect(res.body).toHaveProperty('message');
+      expect(typeof res.body.message).toBe('string');
+    });
+
+    test.only('should return empty blogs array', async () => {
+      const res = await request.get('/api/blogs').set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('blogs');
+      expect(res.body.blogs).toStrictEqual([]);
+    });
+
+    // test('should return populated user blogs', async () => {});
   });
 });

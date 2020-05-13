@@ -157,7 +157,7 @@ exports.getAuthUserBlogs = async (req, res, next) => {
     const blogs = await Blog.find({ user: req.user._id }).populate('user', [
       'name',
       'bio',
-      'photo',
+      'avatar',
     ]);
     res.json({ blogs });
   } catch (err) {
