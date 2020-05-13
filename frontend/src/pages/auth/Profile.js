@@ -8,11 +8,12 @@ import { SettingsIcon } from 'icons/SettingsIcon';
 import Loading from 'components/Loading';
 import UploadImgAvatar from 'components/layout/UploadImgAvatar';
 import UpdateUserForm from 'components/UpdateUserForm';
-import { API_BASE_URL } from 'api/client';
+import { useAlert } from 'context/AlertContext';
 
 function Profile() {
   const { logout } = useAuth();
   const { user, setUser } = useUser();
+  const { setAlert } = useAlert();
   const history = useHistory();
 
   const handleLogout = async () => {
@@ -26,19 +27,23 @@ function Profile() {
     uploadPhoto,
     imgLoading,
     photoUploadError,
-    photoId,
+    photoURL,
   } = useImgUpload('users/photo');
 
   useEffect(() => {
-    if (photoId) {
-      setUser({ photo: photoId });
+    if (photoURL) {
+      setAlert('success', 'Img uploaded');
     }
-  }, [photoId, setUser]);
+  }, [photoURL, setAlert]);
 
-  const getPhotoSrc = (photoId) => `${API_BASE_URL}/photos/${photoId}`;
+  useEffect(() => {
+    if (photoURL) {
+      setUser({ avatar: { ...user.avatar, photoURL } });
+    }
+  }, [photoURL]);
+
   const userPhotoSrc =
-    (photoId && getPhotoSrc(photoId)) ||
-    (user.photo ? getPhotoSrc(user.photo) : null);
+    photoURL || (user.avatar && user.avatar.photoURL) || null;
 
   return (
     <div className="h-full px-2 pb-2 pt-8 md:pt-20">

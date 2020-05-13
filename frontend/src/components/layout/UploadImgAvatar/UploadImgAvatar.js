@@ -34,7 +34,7 @@ const UploadImgAvatar = ({ handlePhotoChange, userPhotoSrc }) => {
         )}
       </div>
 
-      <label className="group z-10 absolute top-0 left-0 bottom-0 right-0 text-blue-400 rounded-full hover:bg-gray-100 cursor-pointer focus:outline-none">
+      <label className="group absolute top-0 left-0 bottom-0 right-0 text-blue-400 rounded-full hover:bg-gray-100 cursor-pointer focus:outline-none">
         <div className="invisible group-hover:visible h-full flex flex-col items-center justify-center">
           <UploadIcon className="w-8 md:w-10 h-8 md:h-10 text-blue-400 fill-current" />
           <span className="mt-2 text-sm leading-normal text-center">

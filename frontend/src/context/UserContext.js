@@ -9,10 +9,13 @@ function UserProvider(props) {
 
   const [user, setUser] = useUseState(data.user);
 
-  const value = {
-    user,
-    setUser,
-  };
+  const value = React.useMemo(
+    () => ({
+      user,
+      setUser,
+    }),
+    [user, setUser]
+  );
 
   return <UserContext.Provider value={value} {...props} />;
 }

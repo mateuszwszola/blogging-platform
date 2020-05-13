@@ -6,6 +6,7 @@ import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
 import { LoadingWithOverlay } from 'components/Loading';
 import validate from 'utils/CreateBlogValidationRules';
+import { useAlert } from 'context/AlertContext';
 
 import formatBlogData from 'utils/formatBlogData';
 
@@ -13,11 +14,14 @@ import CreateBlogForm from 'components/layout/CreateBlogForm';
 
 function CreateBlog({ addBlog }) {
   const {
-    status,
+    loading,
+    error,
     requestStarted,
     requestSuccessful,
     requestFailed,
   } = useStatus();
+
+  const { setAlert } = useAlert();
 
   const {
     handleChange,
@@ -54,6 +58,7 @@ function CreateBlog({ addBlog }) {
         requestSuccessful();
         handleReset();
         addBlog(response.blog);
+        setAlert('success', 'Blog created');
       })
       .catch((err) => {
         requestFailed();
@@ -61,26 +66,17 @@ function CreateBlog({ addBlog }) {
           setErrors(err.errors);
         } else {
           setErrors({
-            message:
-              err.message ||
-              'There is a problem with the server. Try again later',
+            message: err.message || 'There was a problem with the server',
           });
         }
       });
   }
 
-  const loading = status === 'pending';
-  const success = status === 'resolved';
-
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
-      {errors.message ? (
-        <p className="text-red-500 text-sm text-center my-2 rounded py-1">
-          {errors.message}
-        </p>
-      ) : success ? (
-        <p className="text-white bg-green-500 text-sm text-center my-2 rounded py-1">
-          Successfully created a blog
+      {error ? (
+        <p className="bg-red-500 text-white text-sm text-center my-2 rounded py-1">
+          {errors.message || 'There was a problem with the server'}
         </p>
       ) : loading ? (
         <LoadingWithOverlay />

@@ -21,7 +21,14 @@ function useStatus(initialStatus = 'idle') {
   const requestStarted = () => dispatch({ type: 'started' });
   const requestSuccessful = () => dispatch({ type: 'success' });
 
-  return { status, requestFailed, requestStarted, requestSuccessful };
+  return {
+    loading: status === 'pending',
+    success: status === 'resolved',
+    error: status === 'rejected',
+    requestFailed,
+    requestStarted,
+    requestSuccessful,
+  };
 }
 
 export default useStatus;

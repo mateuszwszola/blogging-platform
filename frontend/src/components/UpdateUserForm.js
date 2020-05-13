@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useUser } from 'context/UserContext';
 import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
@@ -6,6 +6,7 @@ import { InputGroup, InputSubmit } from 'components/layout/Input';
 import { LoadingWithOverlay } from './Loading';
 import updateUserValidationRules from 'utils/UpdateUserValidatoinRules';
 import { updateUser } from 'api/user';
+import { useAlert } from 'context/AlertContext';
 
 function UpdateUserForm() {
   const { user, setUser } = useUser();
@@ -24,13 +25,22 @@ function UpdateUserForm() {
     handleUpdateUser,
     updateUserValidationRules
   );
+  const { setAlert } = useAlert();
 
   const {
-    status,
+    loading,
+    error,
+    success,
     requestStarted,
     requestFailed,
     requestSuccessful,
   } = useStatus();
+
+  useEffect(() => {
+    if (success) {
+      setAlert('success', 'Profile updated!');
+    }
+  }, [success, setAlert]);
 
   function handleUpdateUser() {
     const newUserData = { name, bio };
@@ -60,13 +70,14 @@ function UpdateUserForm() {
     }
   };
 
-  const loading = status === 'pending';
   const buttonDisabled = user && user.name === name && user.bio === bio;
 
   return (
     <div className="relative">
-      {errors.message && (
-        <p className="text-red-500 text-sm text-center">{errors.message}</p>
+      {error && (
+        <p className="text-red-500 text-sm text-center">
+          {errors.message || 'Cannot update the user'}
+        </p>
       )}
       {loading && <LoadingWithOverlay />}
       <form

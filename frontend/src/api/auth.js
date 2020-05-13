@@ -12,10 +12,12 @@ async function getUser() {
     return Promise.resolve(null);
   }
 
-  return client('users/me').catch((err) => {
-    logout();
-    return Promise.reject(err);
-  });
+  return client('users/me')
+    .then((res) => res.user)
+    .catch((err) => {
+      logout();
+      return Promise.reject(err);
+    });
 }
 
 async function login({ email, password }) {

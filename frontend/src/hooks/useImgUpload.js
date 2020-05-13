@@ -6,7 +6,7 @@ const SET_PHOTO_FILE = 'SET_PHOTO_FILE';
 
 const initialState = {
   photoFile: null,
-  photoId: null,
+  photoURL: null,
   error: null,
   loading: false,
 };
@@ -21,7 +21,7 @@ const reducer = (state, action) => {
     case RESPONSE_COMPLETE:
       return {
         ...initialState,
-        photoId: action.payload.photoId,
+        photoURL: action.payload.photoURL,
       };
     case ERROR:
       return {
@@ -41,7 +41,7 @@ const reducer = (state, action) => {
 
 function useImgUpload(url) {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const { photoFile, photoId, error, loading } = state;
+  const { photoFile, photoURL, error, loading } = state;
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -62,7 +62,7 @@ function useImgUpload(url) {
       .then((response) => {
         dispatch({
           type: RESPONSE_COMPLETE,
-          payload: { photoId: response.photoId },
+          payload: { photoURL: response.photoURL },
         });
       })
       .catch((error) => {
@@ -72,11 +72,11 @@ function useImgUpload(url) {
 
   return {
     photoFile,
+    photoURL,
     handlePhotoChange,
     uploadPhoto,
     loading,
     error,
-    photoId,
     handlePhotoReset,
   };
 }

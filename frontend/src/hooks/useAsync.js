@@ -51,14 +51,14 @@ const useAsync = ({
 
     requestStarted();
 
-    return promiseFn(data).then(requestSuccessful).catch(requestFailed);
+    promiseFn(data).then(requestSuccessful).catch(requestFailed);
   }, [promiseFn, data, formatData]);
 
   useEffect(() => {
     if (immediate) {
       run();
     }
-  }, [run, immediate, data]);
+  }, [run, immediate]);
 
   return { run, loading, error, result };
 };

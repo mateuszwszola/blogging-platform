@@ -24,11 +24,7 @@ function ManageBlog({ removeBlog }) {
         history.push('/dashboard');
       })
       .catch((err) => {
-        setAlert(
-          'error',
-          'There was a problem with the server. Cannot delete a blog',
-          3000
-        );
+        setAlert('error', 'Cannot delete a blog', 2000);
       });
   }
 

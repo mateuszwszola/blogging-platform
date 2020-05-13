@@ -10,7 +10,7 @@ import { updatePost } from 'api/post';
 import BlogPostForm from 'components/layout/BlogPostForm';
 
 function EditPost({ post, onUpdatePost }) {
-  const { status, requestFailed, requestStarted } = useStatus('idle');
+  const { loading, requestFailed, requestStarted } = useStatus();
   const {
     handleChange,
     handleSubmit,
@@ -65,8 +65,6 @@ function EditPost({ post, onUpdatePost }) {
         }
       });
   }
-
-  const loading = status === 'pending';
 
   return (
     <div className="px-2 py-4">

@@ -13,7 +13,7 @@ import validate from 'utils/AddBlogPostValidationRules';
 
 function AddBlogPost({ blog }) {
   const {
-    status,
+    loading,
     requestStarted,
     requestSuccessful,
     requestFailed,
@@ -78,8 +78,6 @@ function AddBlogPost({ blog }) {
         }
       });
   }
-
-  const loading = status === 'pending';
 
   return (
     <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
