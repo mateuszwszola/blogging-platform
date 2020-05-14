@@ -1,9 +1,10 @@
 const router = require('express').Router();
+const emailRouter = require('./email');
 const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
-const { auth } = require('../middleware/auth');
 const photoUpload = require('../middleware/photoUpload');
-const emailRouter = require('./email');
+const { auth } = require('../middleware/auth');
+const { validate } = require('../middleware/validate');
 
 router.use('/user', emailRouter);
 
@@ -12,21 +13,34 @@ router.use('/user', emailRouter);
   @desc    Create a new user | Return JWT token
   @access  Public
  */
-router.post('/', userValidation.validateRegister, userControllers.registerUser);
+router.post(
+  '/',
+  validate(userValidation.validateRegister),
+  userControllers.registerUser
+);
 
 /*
   @route   PUT api/users
   @desc    Update user info
   @access  Private
  */
-router.put('/', auth, userValidation.validateUser, userControllers.updateUser);
+router.put(
+  '/',
+  auth,
+  validate(userValidation.validateUser),
+  userControllers.updateUser
+);
 
 /*
   @route   POST api/users/login
   @desc    Login a registered user | Return JWT token
   @access  Public
  */
-router.post('/login', userValidation.validateLogin, userControllers.loginUser);
+router.post(
+  '/login',
+  validate(userValidation.validateLogin),
+  userControllers.loginUser
+);
 
 /*
   @route   GET api/users/me

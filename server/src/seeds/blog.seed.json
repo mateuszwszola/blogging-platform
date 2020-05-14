@@ -1,0 +1,20 @@
+[
+  {
+    "name": "Blog name #1",
+    "description": "Blog description #1",
+    "bgImgUrl": "https://dummyimage.com/600x400/000/fff&text=1",
+    "imgAttribution": "Image #1 from dummyimage.com"
+  },
+  {
+    "name": "Blog name #2",
+    "description": "Blog description #2",
+    "bgImgUrl": "https://dummyimage.com/600x400/000/fff&text=2",
+    "imgAttribution": "Image #2  from dummyimage.com"
+  },
+  {
+    "name": "Blog name #3",
+    "description": "Blog description #3",
+    "bgImgUrl": "https://dummyimage.com/600x400/000/fff&text=3",
+    "imgAttribution": "Image #3  from dummyimage.com"
+  }
+]

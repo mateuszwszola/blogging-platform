@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
 const jwt = require('jsonwebtoken');
+const config = require('../config');
+const { ErrorHandler } = require('../utils/error');
 
 const specifiedStringLength = require('../validations/specifiedStringLength');
 
@@ -23,7 +25,7 @@ const UserSchema = new mongoose.Schema(
       lowercase: true,
       validate: (value) => {
         if (!validator.isEmail(value)) {
-          throw new Error('Invalid Email Address');
+          throw new ErrorHandler(400, 'Invalid Email Address');
         }
       },
     },
@@ -70,7 +72,7 @@ UserSchema.methods.generateAuthToken = function () {
       id: user.id,
     },
   };
-  const token = jwt.sign(payload, process.env.JWT_KEY, { expiresIn: 3600 });
+  const token = jwt.sign(payload, config.secrets.jwt, { expiresIn: 3600 });
   return token;
 };
 
@@ -84,11 +86,11 @@ UserSchema.methods.toJSON = function () {
 UserSchema.statics.findByCredentials = async function (email, password) {
   const user = await this.findOne({ email });
   if (!user) {
-    throw new Error('Invalid login credentials');
+    throw new ErrorHandler(401, 'Invalid login credentials');
   }
   const isPasswordMatch = await bcrypt.compare(password, user.password);
   if (!isPasswordMatch) {
-    throw new Error('Invalid login credentials');
+    throw new ErrorHandler(401, 'Invalid login credentials');
   }
 
   return user;

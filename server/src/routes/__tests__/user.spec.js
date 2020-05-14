@@ -12,7 +12,7 @@ describe('User API tests', () => {
   describe('POST api/users - signup', () => {
     test('should return errors when empty body', async () => {
       expect.assertions(3);
-      let res = await request.post('/api/users');
+      const res = await request.post('/api/users');
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('errors');
@@ -202,6 +202,20 @@ describe('User API tests', () => {
       expect(res.body).toHaveProperty('user');
       expect(res.body.user.bio).toBe(data.bio);
       expect(res.body.user.name).toBe(data.name);
+      expect(res.body.user.name).toBe(data.name);
+    });
+
+    test('should set user avatar URL', async () => {
+      const avatarURL = 'https://dummyimage.com/250';
+
+      const res = await request
+        .put('/api/users')
+        .set('x-auth-token', token)
+        .send({ avatarURL });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.user.avatar.photoURL).toBe(avatarURL);
+      expect(res.body.user.avatar.photoID).toBe(null);
     });
   });
 

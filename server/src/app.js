@@ -5,8 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const config = require('./config');
 const { connect } = require('./config/db');
-
-const errorMiddlewares = require('./middleware/error');
+const { handleNotFound, handleError } = require('./utils/error');
 
 const app = express();
 exports.app = app;
@@ -20,7 +19,7 @@ if (config.isDev) {
 app.use(helmet());
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN,
+    origin: config.corsOrigin,
   })
 );
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,9 +32,11 @@ app.get('/', (req, res) => {
 app.use('/api', require('./routes'));
 
 // 404 handler
-app.use(errorMiddlewares.notFound);
+app.use(handleNotFound);
 
-app.use(errorMiddlewares.errorHandler);
+app.use((err, req, res, next) => {
+  handleError(err, res);
+});
 
 exports.start = async () => {
   await connect();

@@ -1,25 +1,19 @@
-const { validationResult } = require('express-validator');
 const Blog = require('../models/Blog');
 const User = require('../models/User');
 const Photo = require('../models/Photo');
-const errorFormatter = require('../validations/errorFormatter');
 const createPhotoLink = require('../utils/createPhotoLink');
+const { ErrorHandler } = require('../utils/error');
 
 exports.createBlog = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.mapped() });
-  }
-
   const { name } = req.body;
 
   try {
     const blog = await Blog.findOne({ name });
     if (blog) {
-      return res.status(400).json({ message: `blog '${name}' already exists` });
+      throw new ErrorHandler(400, `blog '${name}' already exists`);
     }
 
-    const blogData = { name, bgImg: {} };
+    const blogData = { user: req.user._id, name, bgImg: {} };
 
     if (typeof req.body.description !== 'undefined') {
       blogData.description = req.body.description;
@@ -27,65 +21,76 @@ exports.createBlog = async (req, res, next) => {
 
     if (typeof req.body.bgImgUrl !== 'undefined') {
       blogData.bgImg.photoURL = req.body.bgImgUrl;
+      blogData.bgImg.photoID = null;
     }
 
     if (typeof req.body.imgAttribution !== 'undefined') {
       blogData.bgImg.imgAttribution = req.body.imgAttribution;
     }
 
-    const newBlog = new Blog({ user: req.user._id, ...blogData });
-
     const file = req.file && req.file.buffer;
-    if (file && !(blogData.bgImg && blogData.bgImg.photoURL)) {
-      try {
-        const photo = new Photo({
-          photo: req.file.buffer,
-        });
+    if (file && !blogData.bgImg.photoURL) {
+      const photo = await Photo.create({
+        photo: req.file.buffer,
+      });
 
-        await photo.save();
-
-        newBlog.bgImg.photoID = photo.id;
-        newBlog.bgImg.photoURL = createPhotoLink(photo.id);
-      } catch (err) {
-        return next(err);
-      }
+      blogData.bgImg.photoID = photo.id;
+      blogData.bgImg.photoURL = createPhotoLink(photo.id);
     }
 
-    await newBlog.save();
+    const newBlog = await Blog.create({ ...blogData });
+
     res.status(201).json({ blog: newBlog });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
 
 exports.updateBlog = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.mapped() });
-  }
-
-  const { name, description } = req.body;
-
   try {
-    const blog = await Blog.findById(req.params.blogId);
+    const blog = await Blog.findOne({
+      _id: req.params.blogId,
+      user: req.user._id,
+    });
+
     if (!blog) {
-      res.status(404);
-      throw new Error('Blog Not Found');
-    }
-    const user = await User.findById(req.user._id);
-    if (!blog.user.equals(user.id)) {
-      res.status(401);
-      throw new Error('You are not authorized to access this resource');
+      throw new ErrorHandler(404, 'Blog Not Found');
     }
 
-    const blogData = { name, description };
-    const optionalFields = ['bgImgUrl', 'imgAttribution'];
-    optionalFields.forEach((field) => {
-      if (field in req.body) {
-        blogData[field] = req.body[field];
-      }
-    });
+    const blogData = { name: req.body.name, bgImg: {} };
+
+    if (typeof req.body.description !== 'undefined') {
+      blogData.description = req.body.description;
+    }
+
+    if (typeof req.body.bgImgUrl !== 'undefined') {
+      blogData.bgImg.photoURL = req.body.bgImgUrl;
+      blogData.bgImg.photoID = null;
+    }
+
+    if (typeof req.body.imgAttribution !== 'undefined') {
+      blogData.bgImg.imgAttribution = req.body.imgAttribution;
+    }
+
+    const newPhoto = req.file && req.file.buffer;
+
+    if (
+      blog.bgImg &&
+      blog.bgImg.photoID &&
+      (blogData.bgImg.photoURL || newPhoto)
+    ) {
+      // delete old photo
+      await Photo.findByIdAndDelete(blog.bgImg.photoID);
+    }
+
+    if (newPhoto) {
+      const photo = await Photo.create({
+        photo: newPhoto,
+      });
+
+      blogData.bgImg.photoID = photo.id;
+      blogData.bgImg.photoURL = createPhotoLink(photo.id);
+    }
 
     const updatedBlog = await Blog.findByIdAndUpdate(
       req.params.blogId,
@@ -95,7 +100,6 @@ exports.updateBlog = async (req, res, next) => {
 
     res.status(200).json({ blog: updatedBlog });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
@@ -105,7 +109,7 @@ exports.getBlogById = async (req, res, next) => {
     const blog = await Blog.findById(req.params.blogId).populate('user', [
       'name',
       'bio',
-      'photo',
+      'avatar',
     ]);
     if (!blog) {
       res.status(404);
@@ -125,7 +129,7 @@ exports.getBlogBySlugName = async (req, res, next) => {
     const blog = await Blog.findOne({ slug }).populate('user', [
       'name',
       'bio',
-      'photo',
+      'avatar',
     ]);
     if (!blog) {
       res.status(404);
@@ -143,7 +147,7 @@ exports.getAllBlogs = async (req, res, next) => {
     const blogs = await Blog.find({}).populate('user', [
       'name',
       'bio',
-      'photo',
+      'avatar',
     ]);
     res.json({ blogs });
   } catch (err) {
@@ -170,7 +174,7 @@ exports.getUserBlogs = async (req, res, next) => {
   try {
     const blogs = await Blog.find({ user: req.params.userId }).populate(
       'user',
-      ['name', 'bio', 'photo']
+      ['name', 'bio', 'avatar']
     );
     res.json({ blogs });
   } catch (err) {

@@ -3,6 +3,7 @@ const { auth } = require('../middleware/auth');
 const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
 const photoUpload = require('../middleware/photoUpload');
+const { validate } = require('../middleware/validate');
 
 /*
   @route   POST api/blogs
@@ -13,8 +14,21 @@ router.post(
   '/',
   auth,
   photoUpload.single('photo'),
-  blogValidation.validateBlog,
+  validate(blogValidation.validateBlog),
   blogControllers.createBlog
+);
+
+/*
+  @route   PUT api/blogs/:blogId
+  @desc    Update blog
+  @access  Private
+ */
+router.put(
+  '/:blogId',
+  auth,
+  photoUpload.single('photo'),
+  validate(blogValidation.validateBlog),
+  blogControllers.updateBlog
 );
 
 /*
@@ -58,17 +72,5 @@ router.get('/user/:userId', blogControllers.getUserBlogs);
   @access  Private
  */
 router.delete('/:blogId', auth, blogControllers.deleteBlog);
-
-/*
-  @route   PUT api/blogs/:blogId
-  @desc    Update blog
-  @access  Private
- */
-router.put(
-  '/:blogId',
-  auth,
-  blogValidation.validateBlog,
-  blogControllers.updateBlog
-);
 
 module.exports = router;

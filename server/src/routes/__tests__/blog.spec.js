@@ -6,19 +6,12 @@ const Blog = require('../../models/Blog');
 const request = supertest(app);
 
 const dummyUser = require('../../seeds/user.seed.json')[0];
-const dummyBlog = {
-  name: 'Blog name',
-  description: 'Blog description',
-  bgImgUrl: 'https://dummyimage.com/600x400',
-  imgAttribution: 'Image from dummyimage.com',
-};
+const dummyBlogs = require('../../seeds/blog.seed.json');
+const dummyPhotoURL = 'https://dummyimage.com/250';
 
-function testValidationResults(expect, res, field) {
-  expect(res.statusCode).toBe(422);
-  expect(res.body).toHaveProperty('errors');
-  expect(res.body.errors).toHaveProperty(field);
-  expect(typeof res.body.errors[field]).toBe('string');
-}
+const {
+  testValidationResults,
+} = require('../../utils/tests/testValidationResults');
 
 describe('Blog API tests', () => {
   let user;
@@ -89,12 +82,12 @@ describe('Blog API tests', () => {
     });
 
     test('should error when blog with that name already exists', async () => {
-      await Blog.create({ name: dummyBlog.name });
+      await Blog.create({ name: dummyBlogs[0].name });
 
       const res = await request
         .post('/api/blogs')
         .set('x-auth-token', token)
-        .send({ name: dummyBlog.name });
+        .send({ name: dummyBlogs[0].name });
 
       expect(res.statusCode).toBe(400);
       expect(res.body).toHaveProperty('message');
@@ -105,14 +98,16 @@ describe('Blog API tests', () => {
       const res = await request
         .post('/api/blogs')
         .set('x-auth-token', token)
-        .send({ ...dummyBlog });
+        .send({ ...dummyBlogs[0] });
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty('blog');
-      expect(res.body.blog.name).toBe(dummyBlog.name);
-      expect(res.body.blog.description).toBe(dummyBlog.description);
-      expect(res.body.blog.bgImg.photoURL).toBe(dummyBlog.bgImgUrl);
-      expect(res.body.blog.bgImg.imgAttribution).toBe(dummyBlog.imgAttribution);
+      expect(res.body.blog.name).toBe(dummyBlogs[0].name);
+      expect(res.body.blog.description).toBe(dummyBlogs[0].description);
+      expect(res.body.blog.bgImg.photoURL).toBe(dummyBlogs[0].bgImgUrl);
+      expect(res.body.blog.bgImg.imgAttribution).toBe(
+        dummyBlogs[0].imgAttribution
+      );
       expect(res.body.blog.user).toBe(user._id.toString());
     });
 
@@ -120,12 +115,12 @@ describe('Blog API tests', () => {
       const res = await request
         .post('/api/blogs')
         .set('x-auth-token', token)
-        .field('name', dummyBlog.name)
+        .field('name', dummyBlogs[0].name)
         .attach('photo', 'src/fixtures/desk-background.jpg');
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty('blog');
-      expect(res.body.blog.name).toBe(dummyBlog.name);
+      expect(res.body.blog.name).toBe(dummyBlogs[0].name);
       expect(res.body.blog.bgImg.photoID).toBeTruthy();
       expect(res.body.blog.bgImg.photoURL).toBeTruthy();
     });
@@ -140,7 +135,7 @@ describe('Blog API tests', () => {
       expect(typeof res.body.message).toBe('string');
     });
 
-    test.only('should return empty blogs array', async () => {
+    test('should return empty blogs array', async () => {
       const res = await request.get('/api/blogs').set('x-auth-token', token);
 
       expect(res.statusCode).toBe(200);
@@ -148,6 +143,100 @@ describe('Blog API tests', () => {
       expect(res.body.blogs).toStrictEqual([]);
     });
 
-    // test('should return populated user blogs', async () => {});
+    test('should return populated user blogs', async () => {
+      const data = {
+        user: {
+          avatar: {
+            photoURL: dummyPhotoURL,
+          },
+        },
+        blog: {
+          ...dummyBlogs[0],
+        },
+      };
+
+      user = await User.findByIdAndUpdate(user._id, data.user);
+
+      await Blog.create({ user: user._id, ...data.blog });
+
+      const res = await request.get('/api/blogs').set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('blogs');
+      expect(res.body.blogs.length).toBe(1);
+
+      const blog = res.body.blogs[0];
+
+      expect(blog.name).toBe(data.blog.name);
+
+      expect(blog.user.name).toBe(user.name);
+      expect(blog.user._id).toBe(user._id.toString());
+      expect(blog.user.avatar.photoURL).toBe(data.user.avatar.photoURL);
+    });
+  });
+
+  describe('PUT api/blogs/:blogId', () => {
+    test('should error when name not provided', async () => {
+      const blogId = global.newId();
+
+      const res = await request
+        .put(`/api/blogs/${blogId}`)
+        .set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(422);
+      expect(res.body.errors.name).toBeTruthy();
+    });
+
+    test('should error when blog does not exists', async () => {
+      const blogId = global.newId();
+
+      const res = await request
+        .put(`/api/blogs/${blogId}`)
+        .set('x-auth-token', token)
+        .send({ name: dummyBlogs[0].name });
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.message).toBeTruthy();
+    });
+
+    test('should error when user is not the owner of the blog', async () => {
+      const userId = global.newId();
+      const blog = await Blog.create({ user: userId, ...dummyBlogs[0] });
+
+      const res = await request
+        .put(`/api/blogs/${blog._id}`)
+        .set('x-auth-token', token)
+        .send({ name: 'Different blog name' });
+
+      expect(res.statusCode).toBe(404);
+      expect(res.body.message).toBeTruthy();
+    });
+
+    test('should update blog', async () => {
+      const blog = await Blog.create({ user: user._id, ...dummyBlogs[0] });
+
+      const res = await request
+        .put(`/api/blogs/${blog._id}`)
+        .set('x-auth-token', token)
+        .send({ ...dummyBlogs[1] });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.blog.name).toBe(dummyBlogs[1].name);
+      expect(res.body.blog.description).toBe(dummyBlogs[1].description);
+      expect(res.body.blog.bgImg.photoURL).toBe(dummyBlogs[1].bgImgUrl);
+      expect(res.body.blog.bgImg.imgAttribution).toBe(
+        dummyBlogs[1].imgAttribution
+      );
+      expect(res.body.blog.bgImg.photoID).toBe(null);
+    });
+
+    // test('should update blog with uploaded photo', async () => {
+    //   const blog = await Blog.create({ user: user._id, ...dummyBlogs[0] });
+
+    //   const res = await request
+    //     .put(`/api/blogs/${blog._id}`)
+    //     .set('x-auth-token', token)
+    //     .attach('photo', 'src/fixtures/background.png')
+    // });
   });
 });

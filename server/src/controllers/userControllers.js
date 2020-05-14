@@ -1,19 +1,13 @@
-const { validationResult } = require('express-validator');
 const User = require('../models/User');
 const Photo = require('../models/Photo');
-const errorFormatter = require('../validations/errorFormatter');
 const {
   convertBufferToJimpImg,
   resizeAndOptimizeImg,
 } = require('../utils/optimizeImg');
 const createPhotoLink = require('../utils/createPhotoLink');
+const { ErrorHandler } = require('../utils/error');
 
 exports.registerUser = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.mapped() });
-  }
-
   const { name, email, password } = req.body;
 
   try {
@@ -22,57 +16,57 @@ exports.registerUser = async (req, res, next) => {
 
     res.status(201).json({ user, token });
   } catch (err) {
-    res.status(400);
     next(err);
   }
 };
 
 exports.loginUser = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.mapped() });
-  }
-
   const { email, password } = req.body;
 
   try {
     const user = await User.findByCredentials(email, password);
     const token = await user.generateAuthToken();
+
     res.json({ user, token });
   } catch (err) {
-    res.status(401);
     next(err);
   }
 };
 
 exports.updateUser = async (req, res, next) => {
-  const errors = validationResult(req).formatWith(errorFormatter);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({ errors: errors.mapped() });
-  }
-
-  const newUserData = {};
-
-  if ('name' in req.body) {
-    newUserData.name = req.body.name;
-  }
-
-  if ('bio' in req.body) {
-    newUserData.bio = req.body.bio;
-  }
-
-  // if ('avatarURL' in req.body) {
-  //   newUserData.avatar = {}
-  //   newUserData.avatar.photoURL = req.body.avatarURL
-  // }
-
   try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      throw new ErrorHandler(404, 'User not found');
+    }
+
+    const newUserData = {};
+
+    if (typeof req.body.name !== 'undefined') {
+      newUserData.name = req.body.name;
+    }
+
+    if (typeof req.body.bio !== 'undefined') {
+      newUserData.bio = req.body.bio;
+    }
+
+    if (req.body.avatarURL !== 'undefined') {
+      newUserData.avatar = {};
+      newUserData.avatar.photoURL = req.body.avatarURL;
+      newUserData.avatar.photoID = null;
+    }
+
+    if (newUserData.avatar.photoURL && user.avatar && user.avatar.photoID) {
+      // delete old, uploaded avatar
+      await Photo.findByIdAndDelete(user.avatar.photoID);
+    }
+
     const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
       new: true,
     });
+
     res.json({ user: newUser });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
@@ -84,7 +78,7 @@ exports.getUser = async (req, res) => {
 exports.uploadPhoto = async (req, res, next) => {
   try {
     if (!req.file) {
-      throw new Error('cannot upload photo');
+      throw new ErrorHandler(400, 'cannot upload photo');
     }
 
     const img = await convertBufferToJimpImg(req.file.buffer);
@@ -94,10 +88,10 @@ exports.uploadPhoto = async (req, res, next) => {
 
     const user = await User.findById(req.user._id);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      throw new ErrorHandler(404, 'User not found');
     }
 
-    if (user.avatar.photoID) {
+    if (user.avatar && user.avatar.photoID) {
       // delete old photo
       await Photo.findByIdAndDelete(user.avatar.photoID);
     }
@@ -109,7 +103,6 @@ exports.uploadPhoto = async (req, res, next) => {
 
     res.json({ photoURL: user.avatar.photoURL });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
