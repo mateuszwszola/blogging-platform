@@ -3,10 +3,10 @@ const { auth } = require('../middleware/auth');
 const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
 const photoUpload = require('../middleware/photoUpload');
-const { validate } = require('../middleware/validate');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
+const { validate } = require('../middleware/validate');
 
 /*
   @route   POST api/blogs

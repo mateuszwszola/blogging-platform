@@ -1,8 +1,12 @@
 const router = require('express').Router();
-const { auth } = require('../middleware/auth');
 const postControllers = require('../controllers/postControllers');
 const postValidation = require('../validations/post');
 const photoUpload = require('../middleware/photoUpload');
+const { auth } = require('../middleware/auth');
+const {
+  validateParamObjectId,
+} = require('../validations/validateParamObjectId');
+const { validate } = require('../middleware/validate');
 
 /*
   @route   POST api/posts/:blogId
@@ -12,8 +16,9 @@ const photoUpload = require('../middleware/photoUpload');
 router.post(
   '/:blogId',
   auth,
+  validateParamObjectId('blogId'),
   photoUpload.single('photo'),
-  postValidation.validatePost,
+  validate(postValidation.validatePost),
   postControllers.createPost
 );
 
@@ -25,8 +30,9 @@ router.post(
 router.put(
   '/:postId',
   auth,
+  validateParamObjectId('postId'),
   photoUpload.single('photo'),
-  postValidation.validatePost,
+  validate(postValidation.validatePost),
   postControllers.updatePost
 );
 
@@ -35,7 +41,12 @@ router.put(
   @desc    Delete a post
   @access  Private
  */
-router.delete('/:postId', auth, postControllers.deletePost);
+router.delete(
+  '/:postId',
+  auth,
+  validateParamObjectId('postId'),
+  postControllers.deletePost
+);
 
 /*
   @route   GET api/posts
@@ -56,7 +67,11 @@ router.get('/all', postControllers.getAllPosts);
   @desc    Get all blog posts
   @access  Public
  */
-router.get('/blog/:blogId', postControllers.getAllBlogPosts);
+router.get(
+  '/blog/:blogId',
+  validateParamObjectId('blogId'),
+  postControllers.getAllBlogPosts
+);
 
 /*
   @route   GET api/posts/slug/:slug

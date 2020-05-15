@@ -1,6 +1,7 @@
 const { body } = require('express-validator');
 const User = require('../models/User');
 const { isURL, isLength } = require('validator');
+const { validate } = require('../middleware/validate');
 
 exports.validateRegister = [
   body('name', 'name is required')

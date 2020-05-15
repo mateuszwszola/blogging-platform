@@ -1,14 +1,24 @@
 const router = require('express').Router();
-const { auth } = require('../middleware/auth');
 const commentControllers = require('../controllers/commentControllers');
 const { validateComment } = require('../validations/comment');
+const { auth } = require('../middleware/auth');
+const {
+  validateParamObjectId,
+} = require('../validations/validateParamObjectId');
+const { validate } = require('../middleware/validate');
 
 /*
   @route   POST api/comments/:postId
   @desc    Add a comment
   @access  Private
  */
-router.post('/:postId', auth, validateComment, commentControllers.addComment);
+router.post(
+  '/:postId',
+  auth,
+  validateParamObjectId('postId'),
+  validate(validateComment),
+  commentControllers.addComment
+);
 
 /*
   @route   DELETE api/comments/:commentId

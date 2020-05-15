@@ -14,6 +14,7 @@ exports.validatePost = [
     .withMessage('title must be between 2 and 60 chars'),
   body('body', 'post body is required').exists().trim().not().isEmpty(),
   body('bgImgUrl', 'invalid img URL')
+    .optional()
     .trim()
     .custom((value) => {
       if (value && !isURL(value)) {
