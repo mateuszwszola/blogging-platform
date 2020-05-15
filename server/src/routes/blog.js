@@ -4,6 +4,9 @@ const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
 const photoUpload = require('../middleware/photoUpload');
 const { validate } = require('../middleware/validate');
+const {
+  validateParamObjectId,
+} = require('../validations/validateParamObjectId');
 
 /*
   @route   POST api/blogs
@@ -26,6 +29,7 @@ router.post(
 router.put(
   '/:blogId',
   auth,
+  validateParamObjectId('blogId'),
   photoUpload.single('photo'),
   validate(blogValidation.validateBlog),
   blogControllers.updateBlog
@@ -50,7 +54,11 @@ router.get('/all', blogControllers.getAllBlogs);
   @desc    Get blog by ID
   @access  Public
  */
-router.get('/:blogId', blogControllers.getBlogById);
+router.get(
+  '/:blogId',
+  validateParamObjectId('blogId'),
+  blogControllers.getBlogById
+);
 
 /*
   @route   GET api/blogs/slug/:slugName
@@ -64,13 +72,22 @@ router.get('/slug/:slug', blogControllers.getBlogBySlugName);
   @desc    Get user blogs
   @access  Public
  */
-router.get('/user/:userId', blogControllers.getUserBlogs);
+router.get(
+  '/user/:userId',
+  validateParamObjectId('userId'),
+  blogControllers.getUserBlogs
+);
 
 /*
   @route   DELETE api/blogs/:blogId
   @desc    Delete blog
   @access  Private
  */
-router.delete('/:blogId', auth, blogControllers.deleteBlog);
+router.delete(
+  '/:blogId',
+  auth,
+  validateParamObjectId('blogId'),
+  blogControllers.deleteBlog
+);
 
 module.exports = router;

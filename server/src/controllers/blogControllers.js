@@ -1,5 +1,4 @@
 const Blog = require('../models/Blog');
-const User = require('../models/User');
 const Photo = require('../models/Photo');
 const createPhotoLink = require('../utils/createPhotoLink');
 const { ErrorHandler } = require('../utils/error');
@@ -111,13 +110,13 @@ exports.getBlogById = async (req, res, next) => {
       'bio',
       'avatar',
     ]);
+
     if (!blog) {
-      res.status(404);
-      throw new Error('Blog Not Found');
+      throw new ErrorHandler(404, 'Blog Not Found');
     }
+
     res.json({ blog });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
@@ -132,12 +131,10 @@ exports.getBlogBySlugName = async (req, res, next) => {
       'avatar',
     ]);
     if (!blog) {
-      res.status(404);
-      throw new Error('Blog Not Found');
+      throw new ErrorHandler(404, 'Blog Not Found');
     }
     res.json({ blog });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
@@ -151,7 +148,6 @@ exports.getAllBlogs = async (req, res, next) => {
     ]);
     res.json({ blogs });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
@@ -165,7 +161,6 @@ exports.getAuthUserBlogs = async (req, res, next) => {
     ]);
     res.json({ blogs });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
@@ -178,28 +173,24 @@ exports.getUserBlogs = async (req, res, next) => {
     );
     res.json({ blogs });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };
 
 exports.deleteBlog = async (req, res, next) => {
   try {
-    const blog = await Blog.findById(req.params.blogId);
+    const blog = await Blog.findOne({
+      _id: req.params.blogId,
+      user: req.user._id,
+    });
+
     if (!blog) {
-      res.status(404);
-      throw new Error('Blog Not Found');
-    }
-    const user = await User.findById(req.user._id);
-    if (!blog.user.equals(user.id)) {
-      res.status(401);
-      throw new Error('You are not authorized to access this resource');
+      throw new ErrorHandler(404, 'Blog not found');
     }
 
-    await Blog.findByIdAndDelete(req.params.blogId);
-    res.status(201).json({ message: 'OK' });
+    const deletedBlog = await Blog.findByIdAndDelete(req.params.blogId);
+    res.status(201).json({ message: 'Blog deleted', blog: deletedBlog });
   } catch (err) {
-    res.status(err.status || 400);
     next(err);
   }
 };

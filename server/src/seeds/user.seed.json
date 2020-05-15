@@ -2,51 +2,61 @@
   {
     "name": "Alisa MacGuffog",
     "email": "amacguffog0@google.de",
-    "password": "ssckgsGnnZV"
+    "password": "ssckgsGnnZV",
+    "bio": "user bio"
   },
   {
     "name": "Ruperto Hamblyn",
     "email": "rhamblyn1@foxnews.com",
-    "password": "zPwHcRWEHA"
+    "password": "zPwHcRWEHA",
+    "bio": "user bio"
   },
   {
     "name": "Raquela Gossage",
     "email": "rgossage2@foxnews.com",
-    "password": "1wV50A8MOiC"
+    "password": "1wV50A8MOiC",
+    "bio": "user bio"
   },
   {
     "name": "Michaella Oneile",
     "email": "moneile3@nih.gov",
-    "password": "Udq2RHo7x"
+    "password": "Udq2RHo7x",
+    "bio": "user bio"
   },
   {
     "name": "Rhianna Edsall",
     "email": "redsall4@vistaprint.com",
-    "password": "QOOKZ5kVq"
+    "password": "QOOKZ5kVq",
+    "bio": "user bio"
   },
   {
     "name": "Alasteir Ateggart",
     "email": "aateggart5@aol.com",
-    "password": "jgD446P"
+    "password": "jgD446P",
+    "bio": "user bio"
   },
   {
     "name": "Paolina Olyonov",
     "email": "polyonov6@businessweek.com",
-    "password": "kwOIsE9B"
+    "password": "kwOIsE9B",
+    "bio": "user bio"
   },
   {
     "name": "Janina Palliser",
     "email": "jpalliser7@youtu.be",
-    "password": "v8rXkww"
+    "password": "v8rXkww",
+    "bio": "user bio"
   },
   {
     "name": "Harbert Birchett",
     "email": "hbirchett8@histats.com",
-    "password": "Gfn1RyqY5lMZ"
+    "password": "Gfn1RyqY5lMZ",
+    "bio": "user bio"
   },
   {
     "name": "Trish Yerrall",
     "email": "tyerrall9@wix.com",
-    "password": "2ySjqA9SMjpm"
+    "password": "2ySjqA9SMjpm",
+    "bio": "user bio"
   }
 ]
