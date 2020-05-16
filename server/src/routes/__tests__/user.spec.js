@@ -92,7 +92,7 @@ describe('User API tests', () => {
         password: dummyUser.password,
       });
 
-      expect(res.statusCode).toBe(401);
+      expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('message');
       expect(typeof res.body.message).toBe('string');
     });

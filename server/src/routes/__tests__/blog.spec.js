@@ -384,8 +384,8 @@ describe('Blog API tests', () => {
     });
 
     test('should error when user is not authorized to delete blog', async () => {
-      const newUser = await User.create(dummyUsers[1]);
-      const blog = await Blog.create({ user: newUser._id, ...dummyBlogs[0] });
+      const userId = global.newId();
+      const blog = await Blog.create({ user: userId, ...dummyBlogs[0] });
 
       const res = await request
         .delete(`/api/blogs/${blog._id}`)

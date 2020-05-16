@@ -141,8 +141,6 @@ describe('Post API tests', () => {
         .field('body', body)
         .attach('photo', 'src/fixtures/background.png');
 
-      console.log(res.body);
-
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('post');
       expect(res.body.post.blog).toBe(blog._id.toString());
@@ -260,8 +258,6 @@ describe('Post API tests', () => {
         .set('x-auth-token', token)
         .send({ ...dummyPosts[0], bgImgUrl: '', imgAttribution: '' });
 
-      console.log(res.body);
-
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('post');
       expect(res.body.post.bgImgUrl).toBe('');
@@ -281,7 +277,6 @@ describe('Post API tests', () => {
         .set('x-auth-token', token)
         .send(dummyPosts[1]);
 
-      console.log(res.body);
       expect.assertions(9);
 
       expect(res.statusCode).toBe(200);
@@ -294,6 +289,95 @@ describe('Post API tests', () => {
       }
     });
 
-    test('should update post with uploaded photo', async () => {});
+    test('should update post with uploaded photo', async () => {
+      const blog = await Blog.create({ user: user._id, ...dummyBlogs[0] });
+      const post = await Post.create({
+        user: user._id,
+        blog: blog._id,
+        ...dummyPosts[0],
+      });
+
+      const { title, body } = dummyPosts[0];
+
+      const res = await request
+        .put(`/api/posts/${post._id}`)
+        .set('x-auth-token', token)
+        .field('title', title)
+        .field('body', body)
+        .attach('photo', 'src/fixtures/background.png');
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.post.title).toBe(title);
+      expect(res.body.post.body).toBe(body);
+      expect(res.body.post.bgImgUrl).toMatch(/photos/);
+      expect(checkForValidObjectId(res.body.post.photo)).toBe(true);
+    });
+  });
+
+  describe('DELETE api/posts/:postId', () => {
+    test('should error if invalid post ID', async () => {
+      const res = await request
+        .delete(`/api/posts/123`)
+        .set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(422);
+      expect(typeof res.body.message).toBe('string');
+    });
+
+    test('should error if post not found', async () => {
+      const postId = global.newId();
+      const res = await request
+        .delete(`/api/posts/${postId}`)
+        .set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(404);
+      expect(typeof res.body.message).toBe('string');
+    });
+
+    test('should error if user is not the owner of the post', async () => {
+      const userId = global.newId();
+      const post = await Post.create({ user: userId, ...dummyPosts[0] });
+
+      const res = await request
+        .delete(`/api/posts/${post._id}`)
+        .set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(401);
+      expect(typeof res.body.message).toBe('string');
+    });
+
+    test('should delete post', async () => {
+      const post = await Post.create({ user: user._id, ...dummyPosts[0] });
+
+      const res = await request
+        .delete(`/api/posts/${post._id}`)
+        .set('x-auth-token', token);
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body).toHaveProperty('post');
+      expect(typeof res.body.message).toBe('string');
+    });
+  });
+
+  describe('GET posts', () => {
+    let blog;
+    let post;
+    beforeEach(async () => {
+      blog = await Blog.create({ user: user._id, ...dummyBlogs[0] });
+      post = await Post.create({
+        user: user._id,
+        blog: blog._id,
+        ...dummyPosts[0],
+      });
+    });
+
+    describe('GET api/posts', () => {
+      test('should return user posts', async () => {
+        const res = await request.get('/api/posts').set('x-auth-token', token);
+        expect(res.statusCode).toBe(200);
+        expect(res.body).toHaveProperty('posts');
+        expect(res.body.posts.length).toBe(1);
+      });
+    });
   });
 });

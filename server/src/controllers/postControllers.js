@@ -37,7 +37,7 @@ exports.createPost = async (req, res, next) => {
 
     const file = req.file && req.file.buffer;
 
-    if (file && !postData.bgImgUrl) {
+    if (file) {
       const photo = await Photo.create({
         photo: req.file.buffer,
       });
@@ -81,7 +81,7 @@ exports.updatePost = async (req, res, next) => {
 
     const file = req.file && req.file.buffer;
 
-    if (file && !postData.bgImgUrl) {
+    if (file) {
       const photo = await Photo.create({
         photo: req.file.buffer,
       });
