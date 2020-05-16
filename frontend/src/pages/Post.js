@@ -36,10 +36,7 @@ function Post(props) {
       })
       .catch((err) => {
         console.error(err);
-        setAlert(
-          'error',
-          'There was a problem with the server. Cannot delete a post'
-        );
+        setAlert('error', 'Cannot delete a post');
       });
   };
 

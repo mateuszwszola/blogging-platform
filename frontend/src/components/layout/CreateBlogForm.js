@@ -6,15 +6,15 @@ import useToggle from 'hooks/useToggle';
 
 function CreateBlogForm({
   handleSubmit,
+  handleChange,
+  photoFile,
+  handlePhotoChange,
+  handlePhotoReset,
   loading,
   errors,
   name,
-  handleChange,
   description,
   imgAttribution,
-  photoFile,
-  handlePhotoReset,
-  handlePhotoChange,
   bgImgUrl,
 }) {
   const [uploadImg, toggleUploadImg] = useToggle(true);
@@ -31,7 +31,7 @@ function CreateBlogForm({
         }
         errors={errors}
         name="name"
-        placeholder="Give it a name like 'Programming with John'"
+        placeholder="Give it a name"
         classnames="border border-gray-400"
         value={name}
         handleChange={handleChange}
@@ -57,6 +57,7 @@ function CreateBlogForm({
         <ImgUploadInput
           handleChange={handlePhotoChange}
           label="Background Image"
+          photoFile={photoFile}
         />
       ) : (
         <InputGroup
@@ -73,15 +74,15 @@ function CreateBlogForm({
 
       <button
         type="button"
-        className="inline-block bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+        className="inline-block bg-white shadow-xs my-2 px-2 py-1 text-xs font-medium uppercase rounded text-gray-700 tracking-wide border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
         onClick={toggleUploadImg}
       >
-        {uploadImg ? 'Add image URL' : 'Upload img'}
+        {uploadImg ? 'Or Add image URL' : 'Or Upload img'}
       </button>
 
       {photoFile && (
         <button
-          className="inline-block bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+          className="inline-block bg-white shadow-xs my-2 ml-2 px-2 py-1 text-xs font-medium uppercase rounded text-gray-700 tracking-wide border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
           onClick={handlePhotoReset}
         >
           Remove Photo

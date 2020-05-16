@@ -17,7 +17,7 @@ function addBlogPost(blogId, data) {
 }
 
 function updatePost(postId, data) {
-  return client(`posts/${postId}`, { data, method: 'PUT' });
+  return client(`posts/${postId}`, { ...data, method: 'PUT' });
 }
 
 function deletePost(postId) {

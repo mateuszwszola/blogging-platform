@@ -25,7 +25,7 @@ export const blogsReducer = (state, action) => {
     return {
       blogs: [],
       loading: false,
-      error: action.type.error,
+      error: action.payload.error,
     };
   }
   if (action.type === SET_BLOG) {

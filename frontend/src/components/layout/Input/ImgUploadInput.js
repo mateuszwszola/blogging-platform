@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { UploadIcon } from 'icons/UploadIcon';
 
-const ImgUploadInput = ({ handleChange, label }) => {
+const ImgUploadInput = ({ handleChange, label, photoFile }) => {
   return (
     <div className="w-full">
       {label && (
@@ -14,7 +14,7 @@ const ImgUploadInput = ({ handleChange, label }) => {
       >
         <UploadIcon className="w-8 h-8 fill-current" />
         <span className="mt-2 text-base leading-normal">
-          Select Image (jpg, jpeg, png)
+          {!photoFile ? 'Select Image (jpg, jpeg, png)' : 'Image Selected'}
         </span>
         <input
           className="sr-only"

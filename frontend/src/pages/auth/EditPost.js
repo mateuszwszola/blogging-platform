@@ -19,7 +19,7 @@ function EditPost({ post, onUpdatePost }) {
     setErrors,
   } = useForm(
     {
-      title: post.title,
+      title: post.title || '',
       tags: post.tags.join(',') || '',
       bgImgUrl: post.bgImgUrl || '',
       imgAttribution: post.imgAttribution || '',
@@ -27,21 +27,23 @@ function EditPost({ post, onUpdatePost }) {
     handleUpdateBlogPost,
     validate
   );
-  const { editorState, updateEditorState } = useEditorState(post.body);
-  const editorStatePlainText = editorState.getCurrentContent().getPlainText();
-
-  const { photo, handlePhotoChange } = useImgUpload();
+  const {
+    editorState,
+    updateEditorState,
+    editorStatePlainText,
+  } = useEditorState(post.body);
+  const { photoFile, handlePhotoChange, handlePhotoReset } = useImgUpload();
 
   function handleUpdateBlogPost() {
     if (!editorStatePlainText.trim()) {
-      return setErrors({ body: 'post content is required' });
+      return setErrors({ ...errors, body: 'post content is required' });
     }
 
     const formData = formatBlogPostData({
       title,
       editorState,
       tags,
-      photo,
+      photo: photoFile,
       bgImgUrl,
       imgAttribution,
     });
@@ -76,6 +78,7 @@ function EditPost({ post, onUpdatePost }) {
         bgImgUrl={bgImgUrl}
         imgAttribution={imgAttribution}
         handlePhotoChange={handlePhotoChange}
+        handlePhotoReset={handlePhotoReset}
         editorState={editorState}
         updateEditorState={updateEditorState}
         handleSubmit={handleSubmit}

@@ -35,6 +35,10 @@ function init(initialState) {
 function useEditorState(initialState) {
   const [state, dispatch] = useReducer(reducer, initialState, init);
 
+  const editorStatePlainText = state.editorState
+    .getCurrentContent()
+    .getPlainText();
+
   const updateEditorState = (editorState) => {
     dispatch({
       type: UPDATE_EDITOR_STATE,
@@ -53,6 +57,7 @@ function useEditorState(initialState) {
     editorState: state.editorState,
     updateEditorState,
     resetEditorState,
+    editorStatePlainText,
   };
 }
 

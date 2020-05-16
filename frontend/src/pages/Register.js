@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
 import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from 'icons';
 import useForm from 'hooks/useForm';
+import useStatus from 'hooks/useStatus';
 import { useAuth } from 'context/AuthContext';
 import validate from 'utils/RegisterFormValidationRules';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
-import Loading from 'components/Loading';
+import { LoadingWithOverlay } from 'components/Loading';
 
 function Register({
   name,
@@ -16,18 +17,13 @@ function Register({
   handleSubmit,
   handleChange,
   errors,
-  status,
+  loading,
   ...props
 }) {
-  const loading = status === 'loading';
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
       <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full relative">
-        {loading && (
-          <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
-            <Loading />
-          </div>
-        )}
+        {loading && <LoadingWithOverlay />}
         <div className={`${loading ? 'opacity-50 ' : ''}text-red-500 z-20`}>
           <LockClosedIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
@@ -125,7 +121,7 @@ Register.propTypes = {
   password: PropTypes.string.isRequired,
   password2: PropTypes.string.isRequired,
   errors: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 function RegisterContainer() {
@@ -147,24 +143,22 @@ function RegisterContainer() {
   );
 
   const auth = useAuth();
-  const [status, setStatus] = useState('idle');
+  const { requestStarted, requestFailed, loading } = useStatus();
   const history = useHistory();
 
   async function register() {
     const data = { name, email, password };
-    setStatus('loading');
+    requestStarted();
     try {
       await auth.register(data);
       history.push('/dashboard');
     } catch (err) {
-      setStatus('error');
+      requestFailed();
       if (err.errors) {
         setErrors(err.errors);
       } else {
         setErrors({
-          message:
-            err.message ||
-            'There is a problem with the server. Try again later.',
+          message: err.message || 'There is a problem with the server',
         });
       }
     }
@@ -179,7 +173,7 @@ function RegisterContainer() {
       password={password}
       password2={password2}
       errors={errors}
-      status={status}
+      loading={loading}
     />
   );
 }

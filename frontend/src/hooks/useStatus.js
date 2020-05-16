@@ -22,6 +22,7 @@ function useStatus(initialStatus = 'idle') {
   const requestSuccessful = () => dispatch({ type: 'success' });
 
   return {
+    status,
     loading: status === 'pending',
     success: status === 'resolved',
     error: status === 'rejected',

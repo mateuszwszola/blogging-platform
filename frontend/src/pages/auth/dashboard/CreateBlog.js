@@ -26,7 +26,7 @@ function CreateBlog({ addBlog }) {
   const {
     handleChange,
     handleSubmit,
-    handleReset,
+    handleReset: handleFormReset,
     values: { name, description, bgImgUrl, imgAttribution },
     errors,
     setErrors,
@@ -49,14 +49,15 @@ function CreateBlog({ addBlog }) {
       description,
       bgImgUrl,
       imgAttribution,
-      photoFile,
+      photo: photoFile,
     });
 
     requestStarted();
+
     createBlog({ formData })
       .then((response) => {
         requestSuccessful();
-        handleReset();
+        handleFormReset();
         addBlog(response.blog);
         setAlert('success', 'Blog created');
       })

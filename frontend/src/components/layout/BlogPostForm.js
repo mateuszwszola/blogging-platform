@@ -19,6 +19,8 @@ function BlogPostForm({
   errors,
   loading,
   update,
+  photoFile,
+  handlePhotoReset,
 }) {
   const filteredTagsArr = tags.split(',').filter((t) => t.trim());
   const [uploadImg, setUploadImg] = useState(true);
@@ -51,6 +53,7 @@ function BlogPostForm({
           <ImgUploadInput
             handleChange={handlePhotoChange}
             label="Background Image"
+            photoFile={photoFile}
           />
         ) : (
           <InputGroup
@@ -67,11 +70,20 @@ function BlogPostForm({
 
         <button
           type="button"
-          className="bg-gray-100 mt-1 mb-2 px-2 py-1 text-sm uppercase rounded text-gray-700 font-normal border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+          className="inline-block bg-white shadow-xs my-2 px-2 py-1 text-xs font-medium uppercase rounded text-gray-700 tracking-wide border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
           onClick={toggleSetUploadImg}
         >
-          {uploadImg ? 'Add image URL' : 'Upload img'}
+          {uploadImg ? 'Or Add image URL' : 'Or Upload img'}
         </button>
+
+        {photoFile && (
+          <button
+            className="inline-block bg-white shadow-xs my-2 ml-2 px-2 py-1 text-xs font-medium uppercase rounded text-gray-700 tracking-wide border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
+            onClick={handlePhotoReset}
+          >
+            Remove Photo
+          </button>
+        )}
 
         <InputGroup
           name="imgAttribution"
@@ -143,6 +155,7 @@ BlogPostForm.propTypes = {
   editorState: PropTypes.object.isRequired,
   updateEditorState: PropTypes.func.isRequired,
   handlePhotoChange: PropTypes.func.isRequired,
+  handlePhotoReset: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,

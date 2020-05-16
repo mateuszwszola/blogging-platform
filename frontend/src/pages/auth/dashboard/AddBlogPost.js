@@ -21,7 +21,7 @@ function AddBlogPost({ blog }) {
   const {
     handleChange,
     handleSubmit,
-    handleReset,
+    handleReset: handleFormReset,
     values: { title, tags, bgImgUrl, imgAttribution },
     errors,
     setErrors,
@@ -35,23 +35,26 @@ function AddBlogPost({ blog }) {
     handleAddBlogPost,
     validate
   );
-  const { editorState, updateEditorState, resetEditorState } = useEditorState();
-  const { photo, handlePhotoChange } = useImgUpload();
+  const {
+    editorState,
+    updateEditorState,
+    resetEditorState,
+    editorStatePlainText,
+  } = useEditorState();
+  const { photoFile, handlePhotoChange, handlePhotoReset } = useImgUpload();
   const { setAlert } = useAlert();
-
-  const editorStatePlainText = editorState.getCurrentContent().getPlainText();
 
   function handleAddBlogPost() {
     if (!blog) return;
     if (!editorStatePlainText.trim()) {
-      return setErrors({ body: 'post content is required' });
+      return setErrors({ ...errors, body: 'post content is required' });
     }
 
     const formData = formatBlogPostData({
       title,
       editorState,
       tags,
-      photo,
+      photo: photoFile,
       bgImgUrl,
       imgAttribution,
     });
@@ -61,7 +64,7 @@ function AddBlogPost({ blog }) {
     addBlogPost(blog._id, { formData })
       .then((res) => {
         requestSuccessful();
-        handleReset();
+        handleFormReset();
         resetEditorState();
         setAlert('success', 'Blog Post Added');
       })
@@ -71,9 +74,7 @@ function AddBlogPost({ blog }) {
           setErrors(err.errors);
         } else {
           setErrors({
-            message:
-              err.message ||
-              'There is a problem with the server. Try again later.',
+            message: err.message || 'There is a problem with the server',
           });
         }
       });
@@ -95,7 +96,9 @@ function AddBlogPost({ blog }) {
         tags={tags}
         bgImgUrl={bgImgUrl}
         imgAttribution={imgAttribution}
+        photoFile={photoFile}
         handlePhotoChange={handlePhotoChange}
+        handlePhotoReset={handlePhotoReset}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}

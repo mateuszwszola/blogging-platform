@@ -3,18 +3,15 @@ import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { useBlogBySlugName } from 'hooks/useBlog';
 import useAsync from 'hooks/useAsync';
-// import { useBlogPosts } from 'hooks/usePost';
 import { getBlogPosts } from 'api/post';
 
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import { API_BASE_URL } from 'api/client';
 
 const formatData = (result) => result.posts;
 
 function Blog({ blog }) {
-  // const [posts, loading, error] = useBlogPosts(blog._id);
   const { loading, error, result: posts } = useAsync({
     promiseFn: getBlogPosts,
     immediate: true,
@@ -22,11 +19,8 @@ function Blog({ blog }) {
     formatData,
   });
 
-  const photoSrc = blog.photo
-    ? `${API_BASE_URL}/photos/${blog.photo}`
-    : blog.bgImgUrl
-    ? blog.bgImgUrl
-    : 'https://picsum.photos/1280/720';
+  const photoSrc =
+    (blog.bgImg && blog.bgImg.photoURL) || 'https://picsum.photos/1280/720';
 
   return (
     <div className="mt-16">

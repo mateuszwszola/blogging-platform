@@ -4,9 +4,10 @@ import profileImg from 'img/undraw_profile.svg';
 import EditorContentPreview from '../Editor/EditorContentPreview';
 import DisplayDate from './DisplayDate';
 
-import { API_BASE_URL } from 'api/client';
-
 function DisplayPost({ post }) {
+  const userAvatar =
+    (post.user && post.user.avatar && post.user.avatar.photoURL) || null;
+
   return (
     <div className="px-2 py-4">
       <div>
@@ -34,24 +35,22 @@ function DisplayPost({ post }) {
           {post.title}
         </h1>
         <div className="flex flex-col md:flex-row mt-2 items-center">
-          <img src={profileImg} alt="profile" className="w-16" />
-          <h3 className="text-base text-gray-700 uppercase font-semibold mt-2 md:ml-4">
+          <img
+            src={userAvatar || profileImg}
+            alt="profile"
+            className="w-16 rounded-full"
+          />
+          <h3 className="text-base text-gray-700 uppercase font-semibold mt-2 md:mt-0 md:ml-4">
             {post.user.name}
           </h3>
         </div>
       </div>
 
       <div className="mt-3">
-        {(post.bgImgUrl || post.photo) && (
+        {post.bgImgUrl && (
           <div className="">
             <img
-              src={
-                post.photo
-                  ? `${API_BASE_URL}/photos/${post.photo}`
-                  : post.bgImgUrl
-                  ? post.bgImgUrl
-                  : 'https://picsum.photos/seed/picsum/600/300'
-              }
+              src={post.bgImgUrl}
               className="max-w-full block mx-auto rounded"
               alt="post-background"
             />

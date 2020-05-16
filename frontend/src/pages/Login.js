@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
 import { EnvelopeIcon, LockOpenIcon, KeyIcon } from 'icons';
 import useForm from 'hooks/useForm';
+import useStatus from 'hooks/useStatus';
 import { useAuth } from 'context/AuthContext';
 import validate from 'utils/LoginFormValidationRules';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
-import Loading from 'components/Loading';
+import { LoadingWithOverlay } from 'components/Loading';
 
 function Login({
   email,
@@ -14,18 +15,13 @@ function Login({
   handleChange,
   handleSubmit,
   errors,
-  status,
+  loading,
   ...props
 }) {
-  const loading = status === 'loading';
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
       <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full relative">
-        {loading && (
-          <div className="z-30 absolute top-0 bottom-0 left-0 right-0">
-            <Loading />
-          </div>
-        )}
+        {loading && <LoadingWithOverlay />}
         <div className={`${loading ? 'opacity-50 ' : ''}text-red-500 z-20`}>
           <LockOpenIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
@@ -109,7 +105,7 @@ Login.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   errors: PropTypes.object.isRequired,
-  status: PropTypes.string.isRequired,
+  loading: PropTypes.bool.isRequired,
 };
 
 function LoginContainer() {
@@ -128,24 +124,22 @@ function LoginContainer() {
     validate
   );
   const auth = useAuth();
-  const [status, setStatus] = useState('idle');
+  const { loading, requestStarted, requestFailed } = useStatus();
   const history = useHistory();
 
   async function login() {
     const data = { email, password };
-    setStatus('loading');
+    requestStarted();
     try {
       await auth.login(data);
       history.push('/dashboard');
     } catch (err) {
-      setStatus('error');
+      requestFailed();
       if (err.errors) {
         setErrors(err.errors);
       } else {
         setErrors({
-          message:
-            err.message ||
-            'There is a problem with the server. Try again later.',
+          message: err.message || 'There is a problem with the server.',
         });
       }
     }
@@ -158,7 +152,7 @@ function LoginContainer() {
       email={email}
       password={password}
       errors={errors}
-      status={status}
+      loading={loading}
     />
   );
 }

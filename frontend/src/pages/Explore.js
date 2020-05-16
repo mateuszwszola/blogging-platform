@@ -14,7 +14,7 @@ function Explore() {
 
       <div className="px-2 py-2 mt-6 w-full">
         {error ? (
-          <DisplayError msg="There was a problem with fetching the blogs" />
+          <DisplayError msg="There was a problem with loading the blogs" />
         ) : loading ? (
           <Loading />
         ) : (
