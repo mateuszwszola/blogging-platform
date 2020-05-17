@@ -22,7 +22,7 @@ const BlogCard = ({ blog }) => {
         alt=""
       />
 
-      <div className="px-4 py-2 h-full flex flex-col justify-between">
+      <div className="py-2 pb-4 px-4 h-full flex flex-col justify-between">
         <div className="py-2">
           <h3 className="mb-2 text-blue-700 hover:text-blue-800 text-2xl font-medium">
             <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
@@ -34,9 +34,13 @@ const BlogCard = ({ blog }) => {
 
         <div className="flex items-center mt-5">
           {userAvatar ? (
-            <img className="w-12 h-12 rounded-full" src={userAvatar} alt="" />
+            <img
+              className="shadow w-12 h-12 rounded-full"
+              src={userAvatar}
+              alt=""
+            />
           ) : (
-            <div className="p-3 bg-gray-300 rounded-full">
+            <div className="shadow p-3 bg-gray-300 rounded-full">
               <UserIcon className="h-8 w-8 text-gray-700 fill-current" />
             </div>
           )}

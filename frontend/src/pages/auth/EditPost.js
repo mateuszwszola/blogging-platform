@@ -21,7 +21,7 @@ function EditPost({ post, onUpdatePost }) {
     {
       title: post.title || '',
       tags: post.tags.join(',') || '',
-      bgImgUrl: post.bgImgUrl || '',
+      bgImgUrl: (!post.photo && post.bgImgUrl) || '',
       imgAttribution: post.imgAttribution || '',
     },
     handleUpdateBlogPost,

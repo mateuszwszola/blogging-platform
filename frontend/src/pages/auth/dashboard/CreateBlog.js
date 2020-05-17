@@ -74,7 +74,7 @@ function CreateBlog({ addBlog }) {
   }
 
   return (
-    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
+    <div className="max-w-screen-md mx-auto bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md">
       {error ? (
         <p className="bg-red-500 text-white text-sm text-center my-2 rounded py-1">
           {errors.message || 'There was a problem with the server'}
@@ -82,7 +82,9 @@ function CreateBlog({ addBlog }) {
       ) : loading ? (
         <LoadingWithOverlay />
       ) : null}
-      <h1 className="text-3xl text-center leading-loose">Create A Blog</h1>
+      <h1 className="text-2xl lg:text-3xl text-center leading-loose">
+        Create A Blog
+      </h1>
 
       <CreateBlogForm
         handleSubmit={handleSubmit}

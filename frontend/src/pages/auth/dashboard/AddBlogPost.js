@@ -81,8 +81,8 @@ function AddBlogPost({ blog }) {
   }
 
   return (
-    <div className="max-w-screen-md mx-auto border-b border-gray-400 mt-6 relative">
-      <h1 className="text-3xl text-center leading-loose">
+    <div className="max-w-screen-md mx-auto mt-6 relative bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md mb-4">
+      <h1 className="text-2xl lg:text-3xl text-center leading-loose">
         Add Blog Post To
         <span className="uppercase text-green-600 hover:text-green-700 pl-4">
           <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>

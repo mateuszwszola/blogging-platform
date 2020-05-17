@@ -23,11 +23,14 @@ function Posts({ posts }) {
             post.bgImgUrl || 'https://picsum.photos/seed/picsum/600/300';
 
           return (
-            <div key={post._id} className="block mx-auto max-w-screen-sm">
+            <div
+              key={post._id}
+              className="shadow-md rounded bg-white block mx-auto max-w-screen-sm"
+            >
               <img
                 src={bgImgUrl}
                 alt=""
-                className="max-w-full rounded mx-auto"
+                className="max-w-full rounded-t mx-auto"
               />
               <div className="px-4">
                 <div className="flex items-center my-2">

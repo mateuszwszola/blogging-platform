@@ -8,8 +8,8 @@ function Homepage() {
   const [posts, loading, error] = useUserPosts();
 
   return (
-    <div className="md:pt-16 pb-16 max-w-screen-xl mx-auto mt-6">
-      <h1 className="text-3xl text-center leading-loose my-4">
+    <div className="py-16">
+      <h1 className="font-serif text-3xl text-center leading-loose my-8">
         Your Blog posts
       </h1>
       {error ? (

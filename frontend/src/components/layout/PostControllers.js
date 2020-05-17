@@ -15,7 +15,7 @@ function PostControllers({ isEditting, setIsEditting, handleDeletePost }) {
           </button> */}
           <button
             onClick={() => setIsEditting(false)}
-            className="bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
+            className="shadow bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
           >
             <CloseIcon className="w-6 h-6 fill-current" />
           </button>
@@ -24,13 +24,13 @@ function PostControllers({ isEditting, setIsEditting, handleDeletePost }) {
         <>
           <button
             onClick={() => setIsEditting(true)}
-            className="bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
+            className="shadow bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
           >
             <EditIcon className="w-6 h-6 fill-current" />
           </button>
           <button
             onClick={handleDeletePost}
-            className="bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
+            className="shadow bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
           >
             <BinIcon className="w-6 h-6 fill-current" />
           </button>

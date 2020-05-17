@@ -15,15 +15,15 @@ function Dashboard() {
   }
 
   return (
-    <div className="flex flex-col md:flex-row flex-auto flex-shrink-0 md:pt-16">
-      <div className="pt-10 md:pt-0 md:w-2/6 md:max-w-sm bg-gray-100 px-4 py-4">
+    <div className="pt-16 flex flex-col lg:flex-row flex-auto flex-shrink-0 px-2 relative">
+      <div className="w-full lg:max-w-xs xl:w-1/6">
         <Sidebar blogs={blogs} loading={loading} />
       </div>
 
-      <div className="w-full flex-auto bg-white py-2 px-4">
+      <div className="w-full xl:w-4/6 py-4">
         <Switch>
           <Route exact path={path}>
-            <h3 className="text-center text-3xl leading-loose mt-6">
+            <h3 className="text-center text-2xl lg:text-3xl leading-loose mt-6">
               Please select a blog, or create new one
             </h3>
           </Route>
@@ -35,6 +35,8 @@ function Dashboard() {
           </Route>
         </Switch>
       </div>
+
+      <div className="hidden xl:block xl:w-1/6" />
     </div>
   );
 }

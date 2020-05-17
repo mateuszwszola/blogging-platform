@@ -8,6 +8,8 @@ function DisplayPost({ post }) {
   const userAvatar =
     (post.user && post.user.avatar && post.user.avatar.photoURL) || null;
 
+  const filteredTags = post.tags && post.tags.filter((t) => t);
+
   return (
     <div className="px-2 py-4">
       <div>
@@ -15,10 +17,10 @@ function DisplayPost({ post }) {
           <p className="text-sm sm:text-base text-gray-600 font-semibold tracking-wide">
             <DisplayDate date={post.createdAt} />
           </p>
-          {post.tags && post.tags.length > 0 && (
+          {filteredTags.length > 0 && (
             <div className="py-2 md:py-0 text-center">
               <span className="hidden md:inline-block mx-2">/</span>
-              {post.tags.map((tag, index) => (
+              {filteredTags.map((tag, index) => (
                 <span
                   key={tag}
                   className={`inline-block text-blue-700 uppercase text-sm md:text-base font-semibold${
@@ -38,7 +40,7 @@ function DisplayPost({ post }) {
           <img
             src={userAvatar || profileImg}
             alt="profile"
-            className="w-16 rounded-full"
+            className="shadow w-16 rounded-full"
           />
           <h3 className="text-base text-gray-700 uppercase font-semibold mt-2 md:mt-0 md:ml-4">
             {post.user.name}
@@ -63,7 +65,7 @@ function DisplayPost({ post }) {
         )}
 
         <div className="mt-8 py-4 px-2 border-t border-solid border-gray-300">
-          <div className="text-gray-800 font-normal text-lg md:text-lg lg:text-xl leading-loose tracking-wide">
+          <div className="text-gray-900 font-normal text-lg md:text-lg lg:text-xl leading-loose tracking-wide">
             <EditorContentPreview body={post.body} />
           </div>
         </div>

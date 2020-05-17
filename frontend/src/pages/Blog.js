@@ -23,7 +23,7 @@ function Blog({ blog }) {
     (blog.bgImg && blog.bgImg.photoURL) || 'https://picsum.photos/1280/720';
 
   return (
-    <div className="mt-16">
+    <div className="py-16">
       <div
         className="w-full h-64 relative bg-cover bg-center"
         style={{

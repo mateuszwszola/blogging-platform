@@ -7,10 +7,10 @@ function Sidebar({ blogs, loading }) {
   let { url } = useRouteMatch();
 
   return (
-    <div className="relative h-full">
+    <div className="relative h-full overflow-hidden py-4 px-2">
       <Link
         to={`${url}/create-blog`}
-        className="shadow-xs block w-4/5 max-w-xs mx-auto my-4 py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
+        className="shadow-xs block w-4/5 max-w-xs mx-auto py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
       >
         Create Blog
       </Link>

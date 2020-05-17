@@ -7,7 +7,6 @@ import useToggle from 'hooks/useToggle';
 import profileImg from 'img/undraw_profile.svg';
 import NavLink from './NavLink';
 import DropdownMenuLink from './DropdownMenuLink';
-import { API_BASE_URL } from 'api/client';
 
 const DesktopNav = () => {
   const { logout } = useAuth();
@@ -24,7 +23,7 @@ const DesktopNav = () => {
 
   const hideNav = () => setIsOpen(false);
 
-  const photoId = (user && user.photo) || null;
+  const userAvatar = user && user.avatar && user.avatar.photoURL;
 
   const authLinks = (
     <>
@@ -41,10 +40,10 @@ const DesktopNav = () => {
             aria-label="Toggle profile menu"
             className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-outline"
           >
-            {photoId ? (
+            {userAvatar ? (
               <img
                 className="h-10 w-10 rounded-full border-2 border-gray-700"
-                src={`${API_BASE_URL}/photos/${photoId}`}
+                src={userAvatar}
                 alt=""
               />
             ) : (
