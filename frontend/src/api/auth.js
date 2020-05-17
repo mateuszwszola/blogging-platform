@@ -39,6 +39,12 @@ async function register({ name, email, username, password }) {
   return handleDataResponse(res);
 }
 
+function sendResetPasswordEmail({ email }) {
+  return client('users/user/email', {
+    body: { email },
+  });
+}
+
 function logout() {
   window.localStorage.removeItem(localStorageKey);
 }
@@ -47,4 +53,4 @@ function getToken() {
   return window.localStorage.getItem(localStorageKey);
 }
 
-export { login, register, logout, getToken, getUser };
+export { login, register, logout, getToken, getUser, sendResetPasswordEmail };

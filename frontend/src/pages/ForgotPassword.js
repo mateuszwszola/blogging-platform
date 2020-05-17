@@ -2,8 +2,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon } from 'icons';
+import useInput from 'hooks/useInput';
+import { sendResetPasswordEmail } from 'api/auth';
+import useStatus from 'hooks/useStatus';
 
-function ForgotPassword({ handleSubmit, ...props }) {
+function ForgotPassword({
+  handleSubmit,
+  handleEmailChange,
+  email,
+  loading,
+  ...props
+}) {
   return (
     <div className="flex-auto flex justify-center items-center bg-gray-900 px-4 py-2 sm:py-4">
       <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full">
@@ -19,6 +28,8 @@ function ForgotPassword({ handleSubmit, ...props }) {
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
           <label className="my-2 sm:my-3 relative">
             <input
+              value={email}
+              onChange={handleEmailChange}
               className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
               name="email"
               type="email"
@@ -39,8 +50,12 @@ function ForgotPassword({ handleSubmit, ...props }) {
 
           <div className="mt-2 text-center">
             <p className="text-gray-100">Do you have an account?</p>
-            <Link to="/login" className="text-red-500 px-4 py-2">
-              Login
+            <Link
+              to="/login"
+              disabled={loading}
+              className="text-red-500 px-4 py-2"
+            >
+              {loading ? 'Loading...' : 'Login'}
             </Link>
           </div>
         </form>
@@ -51,14 +66,45 @@ function ForgotPassword({ handleSubmit, ...props }) {
 
 ForgotPassword.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
+  email: PropTypes.string.isRequired,
+  handleEmailChange: PropTypes.func.isRequired,
 };
 
 function ForgotPasswordContainer(props) {
+  const [email, handleEmailChange, emailInputReset] = useInput('');
+  const {
+    loading,
+    success,
+    error,
+    requestStarted,
+    requestSuccessful,
+    requestFailed,
+  } = useStatus();
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log('the form has been submitted');
+
+    requestStarted();
+
+    sendResetPasswordEmail({ email })
+      .then((response) => {
+        requestSuccessful();
+        console.log(response);
+        emailInputReset();
+      })
+      .catch((err) => {
+        requestFailed();
+        console.error(err);
+      });
   };
-  return <ForgotPassword handleSubmit={handleSubmit} />;
+  return (
+    <ForgotPassword
+      handleSubmit={handleSubmit}
+      email={email}
+      handleEmailChange={handleEmailChange}
+      loading={loading}
+    />
+  );
 }
 
 export default ForgotPasswordContainer;

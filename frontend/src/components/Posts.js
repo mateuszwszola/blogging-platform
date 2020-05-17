@@ -25,14 +25,15 @@ function Posts({ posts }) {
           return (
             <div
               key={post._id}
-              className="shadow-md rounded bg-white block mx-auto max-w-screen-sm"
+              className="shadow-lg rounded bg-white block mx-auto max-w-screen-sm"
             >
               <img
                 src={bgImgUrl}
                 alt=""
-                className="max-w-full rounded-t mx-auto"
+                className="h-56 w-full object-cover object-center rounded-t"
               />
-              <div className="px-4">
+
+              <div className="py-4 px-6">
                 <div className="flex items-center my-2">
                   <CalendarIcon className="w-6 h-6 fill-current text-gray-600" />
                   <span className="text-gray-600 ml-2">
@@ -47,12 +48,12 @@ function Posts({ posts }) {
                   #{post.blog.name}
                 </p>
                 {post.description && <p className="my-2">{post.description}</p>}
-                <div className="flex items-center my-2">
+                {/* <div className="flex items-center my-2">
                   <StarFullIcon className="w-6 h-6 fill-current text-green-900 cursor-pointer" />
                   <span className="text-gray-600 ml-2 select-none">
                     {Math.floor(Math.random() * 100)}
                   </span>
-                </div>
+                </div> */}
               </div>
             </div>
           );

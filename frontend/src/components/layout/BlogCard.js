@@ -14,7 +14,7 @@ const BlogCard = ({ blog }) => {
   return (
     <div
       key={blog._id}
-      className="flex flex-col w-full mx-auto max-w-screen-sm bg-white rounded shadow-md overflow-hidden "
+      className="flex flex-col w-full mx-auto max-w-screen-sm bg-white rounded shadow-lg overflow-hidden"
     >
       <img
         className="h-56 w-full object-cover object-center"

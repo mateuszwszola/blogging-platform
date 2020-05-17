@@ -41,15 +41,19 @@ function usePostBySlug(slug) {
     dispatch({ type: SET_POST, payload: { post: updatedPost } });
   };
 
-  useEffect(() => {
-    if (!slug) return;
-
+  const run = useCallback(() => {
     dispatch(() => {
       fetchPostBySlug(dispatch, slug);
     });
   }, [dispatch, slug]);
 
-  return [state.post, state.loading, state.error, setPost];
+  useEffect(() => {
+    if (!slug) return;
+
+    run();
+  }, [run, slug]);
+
+  return [state.post, state.loading, state.error, setPost, run];
 }
 
 function useUserPosts() {

@@ -48,9 +48,9 @@ function DisplayPost({ post }) {
         </div>
       </div>
 
-      <div className="mt-3">
+      <div className="">
         {post.bgImgUrl && (
-          <div className="">
+          <div className="mt-5">
             <img
               src={post.bgImgUrl}
               className="max-w-full block mx-auto rounded"

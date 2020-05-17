@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import { useBlogBySlugName } from 'hooks/useBlog';
 import { deleteBlog } from 'api/blog';
-import Loading, { LoadingWithOverlay } from 'components/Loading';
+import { LoadingWithOverlay } from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import { useAlert } from 'context/AlertContext';
 import AddBlogPost from './AddBlogPost';

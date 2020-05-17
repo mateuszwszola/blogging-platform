@@ -57,6 +57,8 @@ function BlogPostForm({
           />
         ) : (
           <InputGroup
+            isError={!!(Object.keys(errors).length > 0 && errors.bgImgUrl)}
+            errors={errors}
             name="bgImgUrl"
             value={bgImgUrl}
             handleChange={handleChange}
@@ -86,6 +88,8 @@ function BlogPostForm({
         )}
 
         <InputGroup
+          isError={!!(Object.keys(errors).length > 0 && errors.imgAttribution)}
+          errors={errors}
           name="imgAttribution"
           value={imgAttribution}
           handleChange={handleChange}
