@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { useBlogBySlugName } from 'hooks/useBlog';
+import { useBlog } from 'hooks/useBlog';
 import useAsync from 'hooks/useAsync';
 import { getBlogPosts } from 'api/post';
 
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
+import { fetchBlogBySlug } from 'actions/blogActions';
 
 const formatData = (result) => result.posts;
 
@@ -63,7 +64,12 @@ Blog.propTypes = {
 
 function BlogContainer(props) {
   const { blogSlug } = useParams();
-  const [blog, loading, error] = useBlogBySlugName(blogSlug);
+  const { blog, loading, error, dispatch } = useBlog();
+
+  useEffect(() => {
+    if (!blogSlug) return;
+    dispatch(fetchBlogBySlug(blogSlug));
+  }, [blogSlug, dispatch]);
 
   if (loading) {
     return <Loading />;

@@ -1,14 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import ManageBlog from './ManageBlog';
 import CreateBlog from './CreateBlog';
-import { useUserBlogs } from 'hooks/useBlog';
+import { useBlogs } from 'hooks/useBlog';
 import DisplayError from 'components/DisplayError';
+import {
+  fetchUserBlogs,
+  setBlogAction,
+  removeBlogAction,
+} from 'actions/blogActions';
 
 function Dashboard() {
-  const { blogs, loading, error, setBlog, removeBlog } = useUserBlogs();
-  let { path } = useRouteMatch();
+  const { blogs, loading, error, dispatch } = useBlogs();
+  const { path } = useRouteMatch();
+
+  useEffect(() => {
+    dispatch(fetchUserBlogs());
+  }, [dispatch]);
+
+  const setBlog = (blog) => dispatch(setBlogAction(blog));
+  const removeBlog = (blogId) => dispatch(removeBlogAction(blogId));
 
   if (error) {
     return <DisplayError />;

@@ -1,18 +1,23 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { useBlogBySlugName } from 'hooks/useBlog';
+import { useBlog } from 'hooks/useBlog';
 import { deleteBlog } from 'api/blog';
-import { LoadingWithOverlay } from 'components/Loading';
+import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import { useAlert } from 'context/AlertContext';
 import AddBlogPost from './AddBlogPost';
+import { fetchBlogBySlug } from 'actions/blogActions';
 
 function ManageBlog({ removeBlog }) {
   const { blogSlug } = useParams();
-  const [blog, loading, error] = useBlogBySlugName(blogSlug);
+  const { blog, loading, error, dispatch } = useBlog();
   const { setAlert } = useAlert();
-  let history = useHistory();
+  const history = useHistory();
+
+  useEffect(() => {
+    dispatch(fetchBlogBySlug(blogSlug));
+  }, [blogSlug, dispatch]);
 
   function handleDeleteBlog() {
     if (!blog) return;
@@ -33,7 +38,7 @@ function ManageBlog({ removeBlog }) {
       {error ? (
         <DisplayError />
       ) : loading ? (
-        <LoadingWithOverlay />
+        <Loading />
       ) : (
         <>
           <div className="w-full flex justify-end">

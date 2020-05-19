@@ -1,17 +1,26 @@
-import {
-  LOADING,
-  RESPONSE_COMPLETE,
-  ERROR,
-  SET_POST,
-  REMOVE_POST,
-} from 'actions/types';
+import { LOADING, RESPONSE_COMPLETE, ERROR } from 'actions/types';
+
+export const SET_POST = 'SET_POST';
+export const REMOVE_POST = 'REMOVE_POST';
+
+export const initialPostsState = {
+  posts: [],
+  loading: true,
+  error: null,
+};
+
+export const initialPostState = {
+  post: {},
+  loading: true,
+  error: null,
+};
 
 export const postsReducer = (state, action) => {
   if (action.type === LOADING) {
     return {
       posts: [],
-      loading: true,
       error: null,
+      loading: true,
     };
   }
   if (action.type === RESPONSE_COMPLETE) {
@@ -30,7 +39,8 @@ export const postsReducer = (state, action) => {
   }
   if (action.type === SET_POST) {
     return {
-      ...state,
+      loading: false,
+      error: null,
       posts: state.posts.map((post) => {
         if (post._id !== action.payload.postId) return post;
         return {
@@ -41,7 +51,8 @@ export const postsReducer = (state, action) => {
   }
   if (action.type === REMOVE_POST) {
     return {
-      ...state,
+      loading: false,
+      error: null,
       posts: state.posts.filter((post) => post._id !== action.payload.postId),
     };
   }
@@ -72,13 +83,15 @@ export const postReducer = (state, action) => {
   }
   if (action.type === SET_POST) {
     return {
-      ...state,
+      loading: false,
+      error: null,
       post: action.payload.post,
     };
   }
   if (action.type === REMOVE_POST) {
     return {
-      ...state,
+      loading: false,
+      error: null,
       post: {},
     };
   }

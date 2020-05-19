@@ -1,13 +1,14 @@
-import React, { useState, lazy } from 'react';
+import React, { useState, lazy, useEffect } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
-import { usePostBySlug } from 'hooks/usePost';
+import { usePost } from 'hooks/usePost';
 import { deletePost } from 'api/post';
-import { LoadingWithOverlay } from 'components/Loading';
+import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import DisplayPost from 'components/layout/DisplayPost';
 import isUserPostOwner from 'utils/isUserPostOwner';
+import { fetchPostBySlug } from 'actions/postActions';
 
 const PostControllers = lazy(() => import('components/layout/PostControllers'));
 
@@ -18,11 +19,16 @@ function Post(props) {
   const history = useHistory();
   const { user } = useUser();
   const { setAlert } = useAlert();
-  const [post, loading, error, updatePost, fetchPost] = usePostBySlug(postSlug);
+  const { post, loading, error, dispatch } = usePost();
   const [isEditting, setIsEditting] = useState(false);
 
+  useEffect(() => {
+    if (!postSlug) return;
+    dispatch(fetchPostBySlug(postSlug));
+  }, [postSlug, dispatch]);
+
   const onUpdatePost = () => {
-    fetchPost();
+    dispatch(fetchPostBySlug(postSlug));
     setIsEditting(false);
   };
 
@@ -41,7 +47,7 @@ function Post(props) {
   };
 
   if (loading) {
-    return <LoadingWithOverlay />;
+    return <Loading />;
   }
 
   if (error) {
@@ -52,7 +58,7 @@ function Post(props) {
 
   return (
     <div className="mt-16 md:pt-16 pb-16 max-w-screen-md lg:max-w-screen-lg w-full mx-auto">
-      <React.Suspense fallback={<LoadingWithOverlay />}>
+      <React.Suspense fallback={<Loading />}>
         {isOwner ? (
           <PostControllers
             isEditting={isEditting}
