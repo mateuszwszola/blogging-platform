@@ -1,16 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { deleteBlog } from 'api/blog';
+import { useAlert } from 'context/AlertContext';
+import { useBlogBySlug, useDeleteBlog } from 'hooks/useBlog';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import { useAlert } from 'context/AlertContext';
 import AddBlogPost from './AddBlogPost';
-import { useBlogBySlug } from 'hooks/useBlog';
 
 function ManageBlog() {
   const { blogSlug } = useParams();
-  const { status, data: blog, error } = useBlogBySlug(blogSlug);
+  const { status, data: blog, error: blogError } = useBlogBySlug(blogSlug);
+  const [deleteBlog, { error: deleteError }] = useDeleteBlog();
   const { setAlert } = useAlert();
   const history = useHistory();
 
@@ -19,7 +18,6 @@ function ManageBlog() {
 
     deleteBlog(blog._id)
       .then(() => {
-        // removeBlog(blog._id);
         setAlert('success', 'Blog deleted');
         history.push('/dashboard');
       })
@@ -32,8 +30,10 @@ function ManageBlog() {
     <>
       {status === 'loading' ? (
         <Loading />
-      ) : error ? (
-        <DisplayError msg={error.message} />
+      ) : blogError ? (
+        <DisplayError msg={blogError.message} />
+      ) : deleteError ? (
+        <DisplayError msg={deleteError.message} />
       ) : (
         <>
           <div className="w-full flex justify-end">

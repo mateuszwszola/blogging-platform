@@ -6,7 +6,12 @@ import {
   initialBlogState,
   initialBlogsState,
 } from 'reducers/blogReducer';
-import { getUserBlogs, getBlogBySlugName, createBlog } from 'api/blog';
+import {
+  getUserBlogs,
+  getBlogBySlugName,
+  createBlog,
+  deleteBlog,
+} from 'api/blog';
 
 export function useUserBlogs() {
   return useQuery('userBlogs', () => getUserBlogs().then((res) => res.blogs));
@@ -35,6 +40,22 @@ export function useCreateBlog() {
     },
     onError: (error, values, rollback) => rollback(),
     onSuccess: () => queryCache.refetchQueries('userBlogs'),
+  });
+}
+
+export function useDeleteBlog(key = 'userBlogs') {
+  return useMutation((blogId) => deleteBlog(blogId), {
+    onMutate: (blogId) => {
+      const previousBlogs = queryCache.getQueryData(key);
+
+      queryCache.setQueryData(key, (old) =>
+        old.filter((b) => b._id !== blogId)
+      );
+
+      return () => queryCache.setQueryData(key, previousBlogs);
+    },
+    onError: (error, blogId, rollback) => rollback(),
+    onSuccess: () => queryCache.refetchQueries(key),
   });
 }
 

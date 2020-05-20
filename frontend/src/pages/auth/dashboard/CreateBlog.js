@@ -62,9 +62,9 @@ function CreateBlog() {
 
   return (
     <div className="max-w-screen-md mx-auto bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md">
-      {error && errors.message ? (
+      {error ? (
         <p className="bg-red-500 text-white text-sm text-center my-2 rounded py-1">
-          {errors.message || 'There was a problem with the server'}
+          {error.message || 'There was a problem with the server'}
         </p>
       ) : status === 'loading' ? (
         <LoadingWithOverlay />
