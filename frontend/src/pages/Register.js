@@ -5,7 +5,7 @@ import { LockClosedIcon, UserIcon, EnvelopeIcon, KeyIcon } from 'icons';
 import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
 import { useAuth } from 'context/AuthContext';
-import validate from 'utils/RegisterFormValidationRules';
+import validate from 'utils/registerFormValidationRules';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import { LoadingWithOverlay } from 'components/Loading';
 

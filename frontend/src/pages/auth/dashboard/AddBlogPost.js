@@ -9,7 +9,7 @@ import useStatus from 'hooks/useStatus';
 import useForm from 'hooks/useForm';
 import { addBlogPost } from 'api/post';
 import formatBlogPostData from 'utils/formatBlogPostData';
-import validate from 'utils/AddBlogPostValidationRules';
+import validate from 'utils/addBlogPostValidationRules';
 
 function AddBlogPost({ blog }) {
   const {

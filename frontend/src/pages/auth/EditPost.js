@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import validate from 'utils/AddBlogPostValidationRules';
+import validate from 'utils/addBlogPostValidationRules';
 import formatBlogPostData from 'utils/formatBlogPostData';
 import useEditorState from 'hooks/useEditorState';
 import useImgUpload from 'hooks/useImgUpload';

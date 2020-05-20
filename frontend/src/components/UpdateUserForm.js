@@ -4,7 +4,7 @@ import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import { LoadingWithOverlay } from './Loading';
-import updateUserValidationRules from 'utils/UpdateUserValidatoinRules';
+import updateUserValidationRules from 'utils/updateUserValidatoinRules';
 import { updateUser } from 'api/user';
 import { useAlert } from 'context/AlertContext';
 
