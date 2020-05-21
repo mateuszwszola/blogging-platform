@@ -1,24 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { useBlog } from 'hooks/useBlog';
-import useAsync from 'hooks/useAsync';
-import { getBlogPosts } from 'api/post';
-
+import { useBlogBySlug } from 'hooks/useBlog';
+import { useBlogPosts } from 'hooks/usePost';
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import { fetchBlogBySlug } from 'actions/blogActions';
-
-const formatData = (result) => result.posts;
 
 function Blog({ blog }) {
-  const { loading, error, result: posts } = useAsync({
-    promiseFn: getBlogPosts,
-    immediate: true,
-    data: blog._id,
-    formatData,
-  });
+  const { status, error, data: posts } = useBlogPosts(blog._id);
 
   const photoSrc =
     (blog.bgImg && blog.bgImg.photoURL) || 'https://picsum.photos/1280/720';
@@ -45,10 +35,12 @@ function Blog({ blog }) {
         </div>
       </div>
 
-      <div className="py-16">
+      <div className="py-16 max-w-screen-xl mx-auto">
         {error ? (
-          <DisplayError msg="There was a problem with fetching the posts" />
-        ) : loading ? (
+          <DisplayError
+            msg={error.message || 'There was a problem with fetching the posts'}
+          />
+        ) : status === 'loading' ? (
           <Loading />
         ) : (
           <Posts posts={posts} />
@@ -64,19 +56,18 @@ Blog.propTypes = {
 
 function BlogContainer(props) {
   const { blogSlug } = useParams();
-  const { blog, loading, error, dispatch } = useBlog();
+  const { status, data: blog, error } = useBlogBySlug(blogSlug);
 
-  useEffect(() => {
-    if (!blogSlug) return;
-    dispatch(fetchBlogBySlug(blogSlug));
-  }, [blogSlug, dispatch]);
-
-  if (loading) {
+  if (status === 'loading') {
     return <Loading />;
   }
 
   if (error) {
-    return <DisplayError msg="There was a problem fetching a blog" />;
+    return (
+      <DisplayError
+        msg={error.message || 'There was a problem fetching a blog'}
+      />
+    );
   }
 
   return <Blog blog={blog} />;

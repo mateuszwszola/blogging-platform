@@ -11,6 +11,7 @@ import {
   getBlogBySlugName,
   createBlog,
   deleteBlog,
+  getAllBlogs,
 } from 'api/blog';
 
 export function useUserBlogs() {
@@ -21,6 +22,10 @@ export function useBlogBySlug(slug) {
   return useQuery(slug && ['blog', slug], () =>
     getBlogBySlugName(slug).then((res) => res.blog)
   );
+}
+
+export function useAllBlogs() {
+  return useQuery('blogs', () => getAllBlogs().then((res) => res.blogs));
 }
 
 export function useCreateBlog() {
@@ -55,20 +60,20 @@ export function useDeleteBlog(key = 'userBlogs') {
       return () => queryCache.setQueryData(key, previousBlogs);
     },
     onError: (error, blogId, rollback) => rollback(),
-    onSuccess: () => queryCache.refetchQueries(key),
+    onSuccess: () => {
+      queryCache.refetchQueries(key);
+    },
   });
 }
 
-function useBlog() {
+export function useBlog() {
   const [state, dispatch] = useThunkReducer(blogReducer, initialBlogState);
   const { blog, loading, error } = state;
   return { blog, loading, error, dispatch };
 }
 
-function useBlogs() {
+export function useBlogs() {
   const [state, dispatch] = useThunkReducer(blogsReducer, initialBlogsState);
   const { blogs, loading, error } = state;
   return { blogs, loading, error, dispatch };
 }
-
-export { useBlog, useBlogs };

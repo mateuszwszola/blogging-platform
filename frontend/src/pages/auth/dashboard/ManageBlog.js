@@ -31,9 +31,13 @@ function ManageBlog() {
       {status === 'loading' ? (
         <Loading />
       ) : blogError ? (
-        <DisplayError msg={blogError.message} />
+        <DisplayError
+          msg={blogError.message || 'There were a problem loading blog'}
+        />
       ) : deleteError ? (
-        <DisplayError msg={deleteError.message} />
+        <DisplayError
+          msg={deleteError.message || 'There were a problem deleting blog'}
+        />
       ) : (
         <>
           <div className="w-full flex justify-end">

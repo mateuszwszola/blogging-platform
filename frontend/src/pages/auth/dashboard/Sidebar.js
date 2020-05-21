@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link, NavLink, useRouteMatch } from 'react-router-dom';
 
 function Sidebar({ blogs }) {
-  let { url } = useRouteMatch();
+  const { url } = useRouteMatch();
 
   return (
     <div className="relative h-full overflow-hidden py-4 px-2">

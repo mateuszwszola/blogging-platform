@@ -13,9 +13,11 @@ function App() {
     loadAuthenticatedApp();
   }, []);
   return (
-    <React.Suspense fallback={<Loading />}>
-      {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
-    </React.Suspense>
+    <>
+      <React.Suspense fallback={<Loading />}>
+        {user ? <AuthenticatedApp /> : <UnauthenticatedApp />}
+      </React.Suspense>
+    </>
   );
 }
 

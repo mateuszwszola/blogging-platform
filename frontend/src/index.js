@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ReactQueryDevtools } from 'react-query-devtools';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { ReactQueryDevtools } from 'react-query-devtools';
 import './styles/index.css';
 import App from './App';
 import AppProviders from 'context/AppProviders';
@@ -17,7 +17,7 @@ ReactDOM.render(
         </AppProviders>
       </ErrorBoundary>
     </Router>
-    <ReactQueryDevtools initialIsOpen={false} />
+    <ReactQueryDevtools isInitialOpen={false} />
   </>,
   document.getElementById('root')
 );

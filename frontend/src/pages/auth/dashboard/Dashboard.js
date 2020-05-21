@@ -16,7 +16,9 @@ function Dashboard() {
       {status === 'loading' ? (
         <Loading />
       ) : status === 'error' ? (
-        <DisplayError msg={error.message} />
+        <DisplayError
+          msg={error.message || 'There were a problem loading blogs'}
+        />
       ) : (
         <>
           <div className="w-full lg:max-w-xs xl:w-1/6">

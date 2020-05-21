@@ -1,26 +1,23 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import clsx from 'clsx';
-import { useBlogs } from 'hooks/useBlog';
-import { fetchAllBlogs } from 'actions/blogActions';
+import { useAllBlogs } from 'hooks/useBlog';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import BlogCard from 'components/layout/BlogCard';
 
 function Explore() {
-  const { blogs, loading, error, dispatch } = useBlogs();
-
-  useEffect(() => {
-    dispatch(fetchAllBlogs());
-  }, [dispatch]);
+  const { status, error, data: blogs } = useAllBlogs();
 
   return (
-    <div className="py-16">
+    <div className="py-16 max-w-screen-xl mx-auto">
       <h1 className="text-3xl text-center leading-loose my-8">Explore Blogs</h1>
 
       <div className="px-2 py-2 mt-6 w-full">
         {error ? (
-          <DisplayError msg="There was a problem with loading the blogs" />
-        ) : loading ? (
+          <DisplayError
+            msg={error.message || 'There was a problem with loading the blogs'}
+          />
+        ) : status === 'loading' ? (
           <Loading />
         ) : (
           <div className="">

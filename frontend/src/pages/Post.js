@@ -1,34 +1,31 @@
-import React, { useState, lazy, useEffect } from 'react';
+import React, { useState, lazy } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
-import { usePost } from 'hooks/usePost';
-import { deletePost } from 'api/post';
+import { usePostBySlug, useDeletePost } from 'hooks/usePost';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import DisplayPost from 'components/layout/DisplayPost';
 import isUserPostOwner from 'utils/isUserPostOwner';
-import { fetchPostBySlug } from 'actions/postActions';
 
 const PostControllers = lazy(() => import('components/layout/PostControllers'));
 
 const EditPost = lazy(() => import('./auth/EditPost'));
 
-function Post(props) {
+function Post() {
   const { postSlug } = useParams();
+  const { status, error, data: post, refetch } = usePostBySlug(postSlug);
+  const [
+    deletePost,
+    { status: deleteStatus, error: deleteError },
+  ] = useDeletePost();
   const history = useHistory();
   const { user } = useUser();
   const { setAlert } = useAlert();
-  const { post, loading, error, dispatch } = usePost();
   const [isEditting, setIsEditting] = useState(false);
 
-  useEffect(() => {
-    if (!postSlug) return;
-    dispatch(fetchPostBySlug(postSlug));
-  }, [postSlug, dispatch]);
-
   const onUpdatePost = () => {
-    dispatch(fetchPostBySlug(postSlug));
+    refetch();
     setIsEditting(false);
   };
 
@@ -41,17 +38,16 @@ function Post(props) {
         history.push('/');
       })
       .catch((err) => {
-        console.error(err);
         setAlert('error', 'Cannot delete a post');
       });
   };
 
-  if (loading) {
+  if (status === 'loading') {
     return <Loading />;
   }
 
   if (error) {
-    return <DisplayError />;
+    return <DisplayError msg={error.message} />;
   }
 
   const isOwner = isUserPostOwner(user, post);
