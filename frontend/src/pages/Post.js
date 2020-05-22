@@ -14,32 +14,29 @@ const EditPost = lazy(() => import('./auth/EditPost'));
 
 function Post() {
   const { postSlug } = useParams();
-  const { status, error, data: post, refetch } = usePostBySlug(postSlug);
-  const [
-    deletePost,
-    { status: deleteStatus, error: deleteError },
-  ] = useDeletePost();
+  const { status, error, data: post } = usePostBySlug(postSlug);
+  const [deletePost] = useDeletePost();
   const history = useHistory();
   const { user } = useUser();
   const { setAlert } = useAlert();
   const [isEditting, setIsEditting] = useState(false);
 
   const onUpdatePost = () => {
-    refetch();
     setIsEditting(false);
   };
 
   const handleDeletePost = () => {
     if (!isUserPostOwner(user, post)) return;
 
-    deletePost(post._id)
-      .then((res) => {
+    deletePost(post._id, {
+      onSuccess: () => {
         setAlert('success', 'Post Deleted');
         history.push('/');
-      })
-      .catch((err) => {
+      },
+      onError: () => {
         setAlert('error', 'Cannot delete a post');
-      });
+      },
+    });
   };
 
   if (status === 'loading') {

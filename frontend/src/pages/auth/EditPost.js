@@ -5,12 +5,11 @@ import formatBlogPostData from 'utils/formatBlogPostData';
 import useEditorState from 'hooks/useEditorState';
 import useImgUpload from 'hooks/useImgUpload';
 import useForm from 'hooks/useForm';
-import useStatus from 'hooks/useStatus';
-import { updatePost } from 'api/post';
 import BlogPostForm from 'components/layout/BlogPostForm';
+import { useUpdatePost } from 'hooks/usePost';
 
 function EditPost({ post, onUpdatePost }) {
-  const { loading, requestFailed, requestStarted } = useStatus();
+  const [updatePost, { status }] = useUpdatePost();
   const {
     handleChange,
     handleSubmit,
@@ -48,24 +47,25 @@ function EditPost({ post, onUpdatePost }) {
       imgAttribution,
     });
 
-    requestStarted();
-
-    updatePost(post._id, { formData })
-      .then((res) => {
-        onUpdatePost(res.post);
-      })
-      .catch((err) => {
-        requestFailed();
-        if (err.errors) {
-          setErrors(err.errors);
-        } else {
-          setErrors({
-            message:
-              err.message ||
-              'There is a problem with the server. Try again later.',
-          });
-        }
-      });
+    updatePost(
+      { postId: post._id, values: { formData } },
+      {
+        onSuccess: () => {
+          onUpdatePost();
+        },
+        onError: (err) => {
+          if (err.errors) {
+            setErrors(err.errors);
+          } else {
+            setErrors({
+              message:
+                err.message ||
+                'There is a problem with the server. Try again later.',
+            });
+          }
+        },
+      }
+    );
   }
 
   return (
@@ -84,7 +84,7 @@ function EditPost({ post, onUpdatePost }) {
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}
-        loading={loading}
+        loading={status === 'loading'}
         update={true}
       />
     </div>

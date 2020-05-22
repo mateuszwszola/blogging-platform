@@ -1,3 +1,4 @@
+import { queryCache } from 'react-query';
 import client, { localStorageKey } from './client';
 
 function handleDataResponse({ user, token }) {
@@ -46,6 +47,7 @@ function sendResetPasswordEmail({ email }) {
 }
 
 function logout() {
+  queryCache.clear();
   window.localStorage.removeItem(localStorageKey);
 }
 
@@ -53,4 +55,16 @@ function getToken() {
   return window.localStorage.getItem(localStorageKey);
 }
 
-export { login, register, logout, getToken, getUser, sendResetPasswordEmail };
+function isLoggedIn() {
+  return Boolean(getToken());
+}
+
+export {
+  login,
+  register,
+  logout,
+  getToken,
+  getUser,
+  sendResetPasswordEmail,
+  isLoggedIn,
+};

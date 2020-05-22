@@ -12,44 +12,50 @@ import {
   getPostBySlug,
   deletePost,
   addBlogPost,
+  updatePost,
 } from 'api/post';
 
-export function useUserPosts() {
+function useUserPosts() {
   return useQuery('userPosts', () => getUserPosts().then((res) => res.posts));
 }
 
-export function useBlogPosts(blogId) {
+function useBlogPosts(blogId) {
   return useQuery(blogId && ['posts', blogId], () =>
     getBlogPosts(blogId).then((res) => res.posts)
   );
 }
 
-export function usePostBySlug(slug) {
+function usePostBySlug(slug) {
   return useQuery(slug && ['post', slug], () =>
     getPostBySlug(slug).then((res) => res.post)
   );
 }
 
-export function useCreatePost() {
+function useCreatePost() {
   return useMutation(({ blogId, values }) =>
     addBlogPost(blogId, values).then((res) => res.post)
   );
 }
 
-export function useDeletePost() {
-  return useMutation((postId) => deletePost(postId), {
-    onMutate: (postId) => {
-      const previousPosts = queryCache.getQueryData('posts');
+function useUpdatePost() {
+  return useMutation(
+    (data) => updatePost(data.postId, data.values).then((res) => res.post),
+    {
+      onSuccess: (updatedPost) => {
+        queryCache.setQueryData('post', (old) => {
+          const { user, blog, ...newPostContent } = updatedPost;
+          return {
+            ...old,
+            ...newPostContent,
+          };
+        });
+      },
+    }
+  );
+}
 
-      queryCache.setQueryData('posts', (old) =>
-        old.filter((p) => p._id !== postId)
-      );
-
-      return () => queryCache.setQueryData('posts', previousPosts);
-    },
-    onError: (error, postId, rollback) => rollback(),
-    onSuccess: () => queryCache.refetchQueries('posts'),
-  });
+function useDeletePost() {
+  return useMutation((postId) => deletePost(postId));
 }
 
 function usePost() {
@@ -64,4 +70,13 @@ function usePosts() {
   return { posts, loading, error, dispatch };
 }
 
-export { usePosts, usePost };
+export {
+  useUserPosts,
+  useBlogPosts,
+  usePostBySlug,
+  useCreatePost,
+  useUpdatePost,
+  usePosts,
+  useDeletePost,
+  usePost,
+};
