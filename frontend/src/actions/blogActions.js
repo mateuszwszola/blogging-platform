@@ -1,14 +1,10 @@
-import {
-  LOADING,
-  RESPONSE_COMPLETE,
-  ERROR,
-  SET_BLOG,
-  REMOVE_BLOG,
-} from './types';
+import { RESPONSE_COMPLETE } from './types';
+import { SET_BLOG, REMOVE_BLOG } from 'reducers/blogReducer';
 import * as blogAPI from 'api/blog';
+import { setLoading, setError } from './actionsCreators';
 
-export const fetchBlogBySlug = (dispatch, slug) => {
-  dispatch({ type: LOADING });
+export const fetchBlogBySlug = (slug) => (dispatch) => {
+  dispatch(setLoading());
 
   blogAPI
     .getBlogBySlugName(slug)
@@ -16,12 +12,12 @@ export const fetchBlogBySlug = (dispatch, slug) => {
       dispatch({ type: RESPONSE_COMPLETE, payload: { blog: response.blog } });
     })
     .catch((error) => {
-      dispatch({ type: ERROR, payload: { error } });
+      dispatch(setError(error));
     });
 };
 
-export const fetchAllBlogs = (dispatch) => {
-  dispatch({ type: LOADING });
+export const fetchAllBlogs = () => (dispatch) => {
+  dispatch(setLoading());
 
   blogAPI
     .getAllBlogs()
@@ -29,12 +25,12 @@ export const fetchAllBlogs = (dispatch) => {
       dispatch({ type: RESPONSE_COMPLETE, payload: { blogs: response.blogs } });
     })
     .catch((error) => {
-      dispatch({ type: ERROR, payload: { error } });
+      dispatch(setError(error));
     });
 };
 
-export const fetchUserBlogs = (dispatch) => {
-  dispatch({ type: LOADING });
+export const fetchUserBlogs = () => (dispatch) => {
+  dispatch(setLoading());
 
   blogAPI
     .getUserBlogs()
@@ -42,12 +38,12 @@ export const fetchUserBlogs = (dispatch) => {
       dispatch({ type: RESPONSE_COMPLETE, payload: { blogs: response.blogs } });
     })
     .catch((error) => {
-      dispatch({ type: ERROR, payload: { error } });
+      dispatch(setError(error));
     });
 };
 
-export const createBlog = (dispatch, data) => {
-  dispatch({ type: LOADING });
+export const createBlog = (data) => (dispatch) => {
+  dispatch(setLoading());
 
   blogAPI
     .createBlog(data)
@@ -55,12 +51,12 @@ export const createBlog = (dispatch, data) => {
       dispatch({ type: RESPONSE_COMPLETE, payload: { blog: response.blog } });
     })
     .catch((error) => {
-      dispatch({ type: ERROR, payload: { error } });
+      dispatch(setError(error));
     });
 };
 
-export const deleteBlog = (dispatch, blogId) => {
-  dispatch({ type: LOADING });
+export const deleteBlog = (blogId) => (dispatch) => {
+  dispatch(setLoading());
 
   blogAPI
     .deleteBlog(blogId)
@@ -68,7 +64,7 @@ export const deleteBlog = (dispatch, blogId) => {
       dispatch({ type: RESPONSE_COMPLETE, payload: { blog: response.blog } });
     })
     .catch((error) => {
-      dispatch({ type: ERROR, payload: { error } });
+      dispatch(setError(error));
     });
 };
 

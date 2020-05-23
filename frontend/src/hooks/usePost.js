@@ -1,73 +1,82 @@
-import { useEffect, useCallback } from 'react';
+import { useQuery, useMutation, queryCache } from 'react-query';
 import useThunkReducer from './useThunkReducer';
 import {
-  fetchBlogPosts,
-  fetchPostBySlug,
-  fetchUserPosts,
-} from 'actions/postActions';
-import { postsReducer, postReducer } from 'reducers/postReducer';
-import { SET_POST } from 'actions/types';
+  postsReducer,
+  postReducer,
+  initialPostState,
+  initialPostsState,
+} from 'reducers/postReducer';
+import {
+  getUserPosts,
+  getBlogPosts,
+  getPostBySlug,
+  deletePost,
+  addBlogPost,
+  updatePost,
+} from 'api/post';
 
-const initialPostsState = {
-  posts: [],
-  loading: true,
-  error: null,
-};
-
-const initialPostState = {
-  post: {},
-  loading: true,
-  error: null,
-};
+function useUserPosts() {
+  return useQuery('posts', () => getUserPosts().then((res) => res.posts));
+}
 
 function useBlogPosts(blogId) {
-  const [state, dispatch] = useThunkReducer(postsReducer, initialPostsState);
-
-  useEffect(() => {
-    if (!blogId) return;
-
-    dispatch(() => {
-      fetchBlogPosts(dispatch, blogId);
-    });
-  }, [dispatch, blogId]);
-
-  return [state.posts, state.loading, state.error];
+  return useQuery(blogId && ['posts', blogId], () =>
+    getBlogPosts(blogId).then((res) => res.posts)
+  );
 }
 
 function usePostBySlug(slug) {
+  return useQuery(slug && ['post', slug], () =>
+    getPostBySlug(slug).then((res) => res.post)
+  );
+}
+
+function useCreatePost() {
+  return useMutation(({ blogId, values }) =>
+    addBlogPost(blogId, values).then((res) => res.post)
+  );
+}
+
+function useUpdatePost() {
+  return useMutation(
+    (data) => updatePost(data.postId, data.values).then((res) => res.post),
+    {
+      onSuccess: (updatedPost) => {
+        queryCache.setQueryData(['post', updatedPost.slug], (old) => {
+          const { user, blog, ...newPostContent } = updatedPost;
+          return {
+            ...old,
+            ...newPostContent,
+          };
+        });
+      },
+    }
+  );
+}
+
+function useDeletePost() {
+  return useMutation((postId) => deletePost(postId));
+}
+
+function usePost() {
   const [state, dispatch] = useThunkReducer(postReducer, initialPostState);
-
-  const setPost = (updatedPost) => {
-    dispatch({ type: SET_POST, payload: { post: updatedPost } });
-  };
-
-  const run = useCallback(() => {
-    dispatch(() => {
-      fetchPostBySlug(dispatch, slug);
-    });
-  }, [dispatch, slug]);
-
-  useEffect(() => {
-    if (!slug) return;
-
-    run();
-  }, [run, slug]);
-
-  return [state.post, state.loading, state.error, setPost, run];
+  const { post, loading, error } = state;
+  return { post, loading, error, dispatch };
 }
 
-function useUserPosts() {
+function usePosts() {
   const [state, dispatch] = useThunkReducer(postsReducer, initialPostsState);
-
-  const getPosts = useCallback(() => {
-    fetchUserPosts(dispatch);
-  }, [dispatch]);
-
-  useEffect(() => {
-    getPosts();
-  }, [getPosts]);
-
-  return [state.posts, state.loading, state.error];
+  const { posts, loading, error } = state;
+  return { posts, loading, error, dispatch };
 }
 
-export { useBlogPosts, usePostBySlug, useUserPosts };
+export {
+  useUserPosts,
+  useBlogPosts,
+  usePostBySlug,
+  useCreatePost,
+  useUpdatePost,
+  usePosts,
+  useDeletePost,
+  usePost,
+};

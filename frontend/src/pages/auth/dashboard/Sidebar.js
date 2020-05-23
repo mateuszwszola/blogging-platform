@@ -1,10 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, NavLink, useRouteMatch } from 'react-router-dom';
-import Loading from 'components/Loading';
 
-function Sidebar({ blogs, loading }) {
-  let { url } = useRouteMatch();
+function Sidebar({ blogs }) {
+  const { url } = useRouteMatch();
 
   return (
     <div className="relative h-full overflow-hidden py-4 px-2">
@@ -17,14 +16,12 @@ function Sidebar({ blogs, loading }) {
 
       <div className="mt-8">
         <h2 className="text-center text-2xl">Select Blog</h2>
-        {loading ? (
-          <Loading />
-        ) : blogs.length === 0 ? (
+        {blogs.length === 0 ? (
           <p className="text-center mt-8">There is no blogs</p>
         ) : (
           <ul className="mt-8 h-full space-y-4 flex flex-col items-center list-none">
             {blogs.map((blog) => (
-              <li key={blog.slug} className="block w-full max-w-xs">
+              <li key={`blog-${blog._id}`} className="block w-full max-w-xs">
                 <NavLink
                   to={`${url}/${blog.slug}`}
                   className="shadow-xs block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded text-center"
@@ -43,7 +40,6 @@ function Sidebar({ blogs, loading }) {
 
 Sidebar.propTypes = {
   blogs: PropTypes.array,
-  loading: PropTypes.bool.isRequired,
 };
 
 export default Sidebar;

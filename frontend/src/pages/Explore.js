@@ -6,18 +6,18 @@ import DisplayError from 'components/DisplayError';
 import BlogCard from 'components/layout/BlogCard';
 
 function Explore() {
-  const [blogs, loading, error] = useAllBlogs();
+  const { status, error, data: blogs } = useAllBlogs();
 
   return (
-    <div className="py-16">
-      <h1 className="font-serif text-3xl text-center leading-loose my-8">
-        Explore Blogs
-      </h1>
+    <div className="py-16 max-w-screen-xl mx-auto">
+      <h1 className="text-3xl text-center leading-loose my-8">Explore Blogs</h1>
 
       <div className="px-2 py-2 mt-6 w-full">
         {error ? (
-          <DisplayError msg="There was a problem with loading the blogs" />
-        ) : loading ? (
+          <DisplayError
+            msg={error.message || 'There was a problem with loading the blogs'}
+          />
+        ) : status === 'loading' ? (
           <Loading />
         ) : (
           <div className="">

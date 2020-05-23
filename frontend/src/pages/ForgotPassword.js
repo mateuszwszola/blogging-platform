@@ -84,8 +84,8 @@ function ForgotPasswordContainer(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
+    /*
     requestStarted();
-
     sendResetPasswordEmail({ email })
       .then((response) => {
         requestSuccessful();
@@ -96,6 +96,7 @@ function ForgotPasswordContainer(props) {
         requestFailed();
         console.error(err);
       });
+    */
   };
   return (
     <ForgotPassword

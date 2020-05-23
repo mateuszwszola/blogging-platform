@@ -1,10 +1,19 @@
-import {
-  LOADING,
-  RESPONSE_COMPLETE,
-  ERROR,
-  SET_BLOG,
-  REMOVE_BLOG,
-} from 'actions/types';
+import { LOADING, RESPONSE_COMPLETE, ERROR } from 'actions/types';
+
+export const SET_BLOG = 'SET_BLOG';
+export const REMOVE_BLOG = 'REMOVE_BLOG';
+
+export const initialBlogState = {
+  blog: {},
+  loading: true,
+  error: null,
+};
+
+export const initialBlogsState = {
+  blogs: [],
+  loading: true,
+  error: null,
+};
 
 export const blogsReducer = (state, action) => {
   if (action.type === LOADING) {
@@ -31,7 +40,7 @@ export const blogsReducer = (state, action) => {
   if (action.type === SET_BLOG) {
     return {
       ...state,
-      blogs: [action.payload.blog, ...state.blogs],
+      blogs: [...state.blogs, action.payload.blog],
     };
   }
   if (action.type === REMOVE_BLOG) {

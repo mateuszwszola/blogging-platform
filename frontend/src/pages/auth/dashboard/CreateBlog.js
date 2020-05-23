@@ -1,25 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { createBlog } from 'api/blog';
+import validate from 'utils/createBlogValidationRules';
+import { useAlert } from 'context/AlertContext';
+import { useCreateBlog } from 'hooks/useBlog';
 import useImgUpload from 'hooks/useImgUpload';
 import useForm from 'hooks/useForm';
-import useStatus from 'hooks/useStatus';
+import CreateBlogForm from 'components/layout/CreateBlogForm';
 import { LoadingWithOverlay } from 'components/Loading';
-import validate from 'utils/CreateBlogValidationRules';
-import { useAlert } from 'context/AlertContext';
-
 import formatBlogData from 'utils/formatBlogData';
 
-import CreateBlogForm from 'components/layout/CreateBlogForm';
-
-function CreateBlog({ addBlog }) {
-  const {
-    loading,
-    error,
-    requestStarted,
-    requestSuccessful,
-    requestFailed,
-  } = useStatus();
+function CreateBlog() {
+  const [createBlog, { status, error }] = useCreateBlog();
 
   const { setAlert } = useAlert();
 
@@ -52,36 +42,34 @@ function CreateBlog({ addBlog }) {
       photo: photoFile,
     });
 
-    requestStarted();
-
-    createBlog({ formData })
-      .then((response) => {
-        requestSuccessful();
-        handleFormReset();
-        addBlog(response.blog);
-        setAlert('success', 'Blog created');
-      })
-      .catch((err) => {
-        requestFailed();
-        if (err.errors) {
-          setErrors(err.errors);
-        } else {
-          setErrors({
-            message: err.message || 'There was a problem with the server',
-          });
-        }
-      });
+    createBlog(
+      { formData },
+      {
+        onSuccess: () => {
+          handleFormReset();
+          setAlert('success', 'Blog created');
+        },
+        onError: (err) => {
+          if (err.errors) {
+            setErrors(err.errors);
+          } else {
+            setErrors(err);
+          }
+        },
+      }
+    );
   }
 
   return (
     <div className="max-w-screen-md mx-auto bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md">
       {error ? (
         <p className="bg-red-500 text-white text-sm text-center my-2 rounded py-1">
-          {errors.message || 'There was a problem with the server'}
+          {error.message || 'There was a problem with the server'}
         </p>
-      ) : loading ? (
+      ) : status === 'loading' ? (
         <LoadingWithOverlay />
       ) : null}
+
       <h1 className="text-2xl lg:text-3xl text-center leading-loose">
         Create A Blog
       </h1>
@@ -92,7 +80,7 @@ function CreateBlog({ addBlog }) {
         photoFile={photoFile}
         handlePhotoChange={handlePhotoChange}
         handlePhotoReset={handlePhotoReset}
-        loading={loading}
+        loading={status === 'loading'}
         errors={errors}
         name={name}
         description={description}
@@ -102,9 +90,5 @@ function CreateBlog({ addBlog }) {
     </div>
   );
 }
-
-CreateBlog.propTypes = {
-  addBlog: PropTypes.func.isRequired,
-};
 
 export default CreateBlog;

@@ -2,22 +2,16 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { useAlert } from 'context/AlertContext';
-import BlogPostForm from 'components/layout/BlogPostForm';
 import useEditorState from 'hooks/useEditorState';
 import useImgUpload from 'hooks/useImgUpload';
-import useStatus from 'hooks/useStatus';
 import useForm from 'hooks/useForm';
-import { addBlogPost } from 'api/post';
+import { useCreatePost } from 'hooks/usePost';
+import BlogPostForm from 'components/layout/BlogPostForm';
 import formatBlogPostData from 'utils/formatBlogPostData';
-import validate from 'utils/AddBlogPostValidationRules';
+import validate from 'utils/addBlogPostValidationRules';
 
 function AddBlogPost({ blog }) {
-  const {
-    loading,
-    requestStarted,
-    requestSuccessful,
-    requestFailed,
-  } = useStatus();
+  const [createPost, { status }] = useCreatePost();
   const {
     handleChange,
     handleSubmit,
@@ -59,25 +53,25 @@ function AddBlogPost({ blog }) {
       imgAttribution,
     });
 
-    requestStarted();
-
-    addBlogPost(blog._id, { formData })
-      .then((res) => {
-        requestSuccessful();
-        handleFormReset();
-        resetEditorState();
-        setAlert('success', 'Blog Post Added');
-      })
-      .catch((err) => {
-        requestFailed();
-        if (err.errors) {
-          setErrors(err.errors);
-        } else {
-          setErrors({
-            message: err.message || 'There is a problem with the server',
-          });
-        }
-      });
+    createPost(
+      { blogId: blog._id, values: { formData } },
+      {
+        onSuccess() {
+          handleFormReset();
+          resetEditorState();
+          setAlert('success', 'Blog Post Added');
+        },
+        onError(err) {
+          if (err.errors) {
+            setErrors(err.errors);
+          } else {
+            setErrors({
+              message: err.message || 'There is a problem with the server',
+            });
+          }
+        },
+      }
+    );
   }
 
   return (
@@ -102,7 +96,7 @@ function AddBlogPost({ blog }) {
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}
-        loading={loading}
+        loading={status === 'loading'}
       />
     </div>
   );

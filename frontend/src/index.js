@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
+import { ReactQueryDevtools } from 'react-query-devtools';
 import './styles/index.css';
 import App from './App';
 import AppProviders from 'context/AppProviders';
@@ -8,13 +9,16 @@ import ErrorBoundary from 'components/ErrorBoundary';
 // import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(
-  <Router>
-    <ErrorBoundary>
-      <AppProviders>
-        <App />
-      </AppProviders>
-    </ErrorBoundary>
-  </Router>,
+  <>
+    <Router>
+      <ErrorBoundary>
+        <AppProviders>
+          <App />
+        </AppProviders>
+      </ErrorBoundary>
+    </Router>
+    <ReactQueryDevtools isInitialOpen={false} />
+  </>,
   document.getElementById('root')
 );
 

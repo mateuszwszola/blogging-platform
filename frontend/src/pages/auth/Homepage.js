@@ -5,16 +5,16 @@ import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 
 function Homepage() {
-  const [posts, loading, error] = useUserPosts();
+  const { status, data: posts, error } = useUserPosts();
 
   return (
-    <div className="py-16">
-      <h1 className="font-serif text-3xl text-center leading-loose my-8">
+    <div className="py-16 max-w-screen-xl mx-auto">
+      <h1 className="text-3xl text-center leading-loose my-8">
         Your Blog posts
       </h1>
       {error ? (
-        <DisplayError />
-      ) : loading ? (
+        <DisplayError msg={error.msg} />
+      ) : status === 'loading' ? (
         <Loading />
       ) : (
         <Posts posts={posts} />

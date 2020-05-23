@@ -6,18 +6,10 @@ import React, {
 } from 'react';
 import { useAsync } from 'react-async';
 import * as auth from 'api/auth';
-import { updateUser as updateUserAPI } from 'api/user';
 import Loading from 'components/Loading';
+import { bootstrapAppData } from 'utils/bootstrap';
 
 const AuthContext = createContext();
-
-async function getUserData() {
-  const user = await auth.getUser();
-  if (!user) {
-    return Promise.resolve({ user: null });
-  }
-  return Promise.resolve({ user });
-}
 
 function AuthProvider(props) {
   const [firstAttemptFinished, setFirstAttemptFinished] = useState(false);
@@ -29,7 +21,7 @@ function AuthProvider(props) {
     isSeattled,
     reload,
   } = useAsync({
-    promiseFn: getUserData,
+    promiseFn: bootstrapAppData,
   });
 
   useLayoutEffect(() => {
@@ -63,15 +55,6 @@ function AuthProvider(props) {
     reload();
   }, [reload]);
 
-  const updateUser = useCallback(
-    (newUserData) => {
-      return updateUserAPI(newUserData)
-        .then(reload)
-        .catch((err) => Promise.reject(err));
-    },
-    [reload]
-  );
-
   if (!firstAttemptFinished) {
     if (isPending) {
       return <Loading />;
@@ -83,7 +66,7 @@ function AuthProvider(props) {
 
   return (
     <AuthContext.Provider
-      value={{ data, login, register, logout, updateUser }}
+      value={{ data, login, register, logout }}
       {...props}
     />
   );

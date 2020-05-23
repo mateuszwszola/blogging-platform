@@ -1,7 +1,8 @@
-import { LOADING, RESPONSE_COMPLETE, ERROR } from './types';
+import { RESPONSE_COMPLETE } from './types';
+import { setError, setLoading } from './actionsCreators';
 import { getBlogPosts, getPostBySlug, getUserPosts } from 'api/post';
 
-export const fetchBlogPosts = (dispatch, blogId) => {
+export const fetchBlogPosts = (blogId) => (dispatch) => {
   dispatch(setLoading());
 
   getBlogPosts(blogId)
@@ -11,7 +12,7 @@ export const fetchBlogPosts = (dispatch, blogId) => {
     .catch((error) => dispatch(setError(error)));
 };
 
-export const fetchPostBySlug = (dispatch, slug) => {
+export const fetchPostBySlug = (slug) => (dispatch) => {
   dispatch(setLoading());
 
   getPostBySlug(slug)
@@ -21,7 +22,7 @@ export const fetchPostBySlug = (dispatch, slug) => {
     .catch((error) => dispatch(setError(error)));
 };
 
-export const fetchUserPosts = (dispatch) => {
+export const fetchUserPosts = () => (dispatch) => {
   dispatch(setLoading());
 
   getUserPosts()
@@ -30,12 +31,3 @@ export const fetchUserPosts = (dispatch) => {
     })
     .catch((error) => dispatch(setError(error)));
 };
-
-export const setError = (error) => ({
-  type: ERROR,
-  payload: { error },
-});
-
-export const setLoading = () => ({
-  type: LOADING,
-});

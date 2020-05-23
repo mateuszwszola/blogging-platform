@@ -1,25 +1,23 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useParams, useHistory, Link } from 'react-router-dom';
-import { useBlogBySlugName } from 'hooks/useBlog';
-import { deleteBlog } from 'api/blog';
-import { LoadingWithOverlay } from 'components/Loading';
-import DisplayError from 'components/DisplayError';
 import { useAlert } from 'context/AlertContext';
+import { useBlogBySlug, useDeleteBlog } from 'hooks/useBlog';
+import Loading from 'components/Loading';
+import DisplayError from 'components/DisplayError';
 import AddBlogPost from './AddBlogPost';
 
-function ManageBlog({ removeBlog }) {
+function ManageBlog() {
   const { blogSlug } = useParams();
-  const [blog, loading, error] = useBlogBySlugName(blogSlug);
+  const { status, data: blog, error: blogError } = useBlogBySlug(blogSlug);
+  const [deleteBlog, { error: deleteError }] = useDeleteBlog();
   const { setAlert } = useAlert();
-  let history = useHistory();
+  const history = useHistory();
 
   function handleDeleteBlog() {
     if (!blog) return;
 
     deleteBlog(blog._id)
       .then(() => {
-        removeBlog(blog._id);
         setAlert('success', 'Blog deleted');
         history.push('/dashboard');
       })
@@ -30,15 +28,21 @@ function ManageBlog({ removeBlog }) {
 
   return (
     <>
-      {error ? (
-        <DisplayError />
-      ) : loading ? (
-        <LoadingWithOverlay />
+      {status === 'loading' ? (
+        <Loading />
+      ) : blogError ? (
+        <DisplayError
+          msg={blogError.message || 'There were a problem loading blog'}
+        />
+      ) : deleteError ? (
+        <DisplayError
+          msg={deleteError.message || 'There were a problem deleting blog'}
+        />
       ) : (
         <>
           <div className="w-full flex justify-end">
             <Link
-              to={`/blogs/${blog.slug}`}
+              to={`/blogs/${blogSlug}`}
               className="shadow bg-blue-500 rounded py-1 px-2 font-semibold text-blue-100 m-2 hover:bg-blue-600"
             >
               Preview Blog
@@ -56,9 +60,5 @@ function ManageBlog({ removeBlog }) {
     </>
   );
 }
-
-ManageBlog.propTypes = {
-  removeBlog: PropTypes.func.isRequired,
-};
 
 export default ManageBlog;

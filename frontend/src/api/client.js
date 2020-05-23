@@ -44,14 +44,16 @@ async function client(endpoint, { body, formData, ...customConfig } = {}) {
       if (res.status === 401) {
         logout();
         window.location.assign('/login');
-        return;
+        return Promise.reject({ message: 'Please re-authenticate' });
       }
+
       const data = await res.json();
 
-      if (!res.ok) {
+      if (res.ok) {
+        return data;
+      } else {
         return Promise.reject(data);
       }
-      return data;
     });
 }
 

@@ -1,23 +1,31 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
-import { useBlogBySlugName } from 'hooks/useBlog';
-import useAsync from 'hooks/useAsync';
-import { getBlogPosts } from 'api/post';
-
+import { useBlogBySlug } from 'hooks/useBlog';
+import { useBlogPosts } from 'hooks/usePost';
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 
-const formatData = (result) => result.posts;
+function Blog() {
+  const { blogSlug } = useParams();
+  const { status: blogStatus, data: blog, error: blogError } = useBlogBySlug(
+    blogSlug
+  );
+  const { status: postsStatus, data: posts, error: postsError } = useBlogPosts(
+    blog && blog._id
+  );
 
-function Blog({ blog }) {
-  const { loading, error, result: posts } = useAsync({
-    promiseFn: getBlogPosts,
-    immediate: true,
-    data: blog._id,
-    formatData,
-  });
+  if (blogStatus === 'loading') {
+    return <Loading />;
+  }
+
+  if (blogError) {
+    return (
+      <DisplayError
+        msg={blogError.message || 'There was a problem fetching a blog'}
+      />
+    );
+  }
 
   const photoSrc =
     (blog.bgImg && blog.bgImg.photoURL) || 'https://picsum.photos/1280/720';
@@ -44,10 +52,15 @@ function Blog({ blog }) {
         </div>
       </div>
 
-      <div className="py-16">
-        {error ? (
-          <DisplayError msg="There was a problem with fetching the posts" />
-        ) : loading ? (
+      <div className="py-16 max-w-screen-xl mx-auto">
+        {postsError ? (
+          <DisplayError
+            msg={
+              postsError.message ||
+              'There was a problem with fetching the posts'
+            }
+          />
+        ) : postsStatus === 'loading' ? (
           <Loading />
         ) : (
           <Posts posts={posts} />
@@ -57,23 +70,4 @@ function Blog({ blog }) {
   );
 }
 
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-};
-
-function BlogContainer(props) {
-  const { blogSlug } = useParams();
-  const [blog, loading, error] = useBlogBySlugName(blogSlug);
-
-  if (loading) {
-    return <Loading />;
-  }
-
-  if (error) {
-    return <DisplayError msg="There was a problem fetching a blog" />;
-  }
-
-  return <Blog blog={blog} />;
-}
-
-export default BlogContainer;
+export default Blog;

@@ -4,7 +4,6 @@ import { InputGroup, InputSubmit } from './Input';
 import { LoadingWithOverlay } from '../Loading';
 import Editor from '../Editor';
 import ImgUploadInput from './Input/ImgUploadInput';
-// import ProgressBar from 'components/layout/ProgressBar';
 
 function BlogPostForm({
   title,
@@ -29,13 +28,13 @@ function BlogPostForm({
 
   return (
     <div className="relative">
-      {loading && <LoadingWithOverlay />}
-
-      {errors.message && (
+      {loading ? (
+        <LoadingWithOverlay />
+      ) : errors.message ? (
         <p className="text-red-500 text-sm text-center my-4">
           {errors.message}
         </p>
-      )}
+      ) : null}
 
       <form onSubmit={handleSubmit} method="POST" encType="multipart/form-data">
         <InputGroup

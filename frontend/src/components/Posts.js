@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import clsx from 'clsx';
-import { CalendarIcon, StarFullIcon } from 'icons';
+import { CalendarIcon } from 'icons';
 
 function Posts({ posts }) {
   return (
@@ -44,9 +44,11 @@ function Posts({ posts }) {
                 <h3 className="mt-2 text-2xl xl:text-3xl uppercase font-semibold cursor-pointer hover:underline text-gray-800">
                   <Link to={`/posts/${post.slug}`}>{post.title}</Link>
                 </h3>
-                <p className="ml-2 text-gray-700 font-light text-xl">
-                  #{post.blog.name}
-                </p>
+                {post.blog && post.blog.name && (
+                  <p className="ml-2 text-gray-700 font-light text-xl">
+                    #{post.blog.name}
+                  </p>
+                )}
                 {post.description && <p className="my-2">{post.description}</p>}
                 {/* <div className="flex items-center my-2">
                   <StarFullIcon className="w-6 h-6 fill-current text-green-900 cursor-pointer" />
