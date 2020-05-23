@@ -16,7 +16,7 @@ import {
 } from 'api/post';
 
 function useUserPosts() {
-  return useQuery('userPosts', () => getUserPosts().then((res) => res.posts));
+  return useQuery('posts', () => getUserPosts().then((res) => res.posts));
 }
 
 function useBlogPosts(blogId) {
@@ -42,7 +42,7 @@ function useUpdatePost() {
     (data) => updatePost(data.postId, data.values).then((res) => res.post),
     {
       onSuccess: (updatedPost) => {
-        queryCache.setQueryData('post', (old) => {
+        queryCache.setQueryData(['post', updatedPost.slug], (old) => {
           const { user, blog, ...newPostContent } = updatedPost;
           return {
             ...old,

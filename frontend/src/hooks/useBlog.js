@@ -14,26 +14,28 @@ import {
   getAllBlogs,
 } from 'api/blog';
 
-export function useUserBlogs() {
-  return useQuery('userBlogs', () => getUserBlogs().then((res) => res.blogs));
+function useUserBlogs() {
+  return useQuery(['blogs', 'user'], () =>
+    getUserBlogs().then((res) => res.blogs)
+  );
 }
 
-export function useBlogBySlug(slug) {
+function useBlogBySlug(slug) {
   return useQuery(slug && ['blog', slug], () =>
     getBlogBySlugName(slug).then((res) => res.blog)
   );
 }
 
-export function useAllBlogs() {
+function useAllBlogs() {
   return useQuery('blogs', () => getAllBlogs().then((res) => res.blogs));
 }
 
-export function useCreateBlog() {
+function useCreateBlog() {
   return useMutation((values) => createBlog(values).then((res) => res.blog), {
     onMutate: (values) => {
-      const previousBlogs = queryCache.getQueryData('userBlogs');
+      const previousBlogs = queryCache.getQueryData(['blogs', 'user']);
 
-      queryCache.setQueryData('userBlogs', (old) => [
+      queryCache.setQueryData(['blogs', 'user'], (old) => [
         ...old,
         {
           _id: 'temp',
@@ -41,14 +43,14 @@ export function useCreateBlog() {
         },
       ]);
 
-      return () => queryCache.setQueryData('userBlogs', previousBlogs);
+      return () => queryCache.setQueryData(['blogs', 'user'], previousBlogs);
     },
     onError: (error, values, rollback) => rollback(),
-    onSuccess: () => queryCache.refetchQueries('userBlogs'),
+    onSuccess: () => queryCache.refetchQueries(['blogs', 'user']),
   });
 }
 
-export function useDeleteBlog(key = 'userBlogs') {
+function useDeleteBlog(key = ['blogs', 'user']) {
   return useMutation((blogId) => deleteBlog(blogId), {
     onMutate: (blogId) => {
       const previousBlogs = queryCache.getQueryData(key);
@@ -66,14 +68,24 @@ export function useDeleteBlog(key = 'userBlogs') {
   });
 }
 
-export function useBlog() {
+function useBlog() {
   const [state, dispatch] = useThunkReducer(blogReducer, initialBlogState);
   const { blog, loading, error } = state;
   return { blog, loading, error, dispatch };
 }
 
-export function useBlogs() {
+function useBlogs() {
   const [state, dispatch] = useThunkReducer(blogsReducer, initialBlogsState);
   const { blogs, loading, error } = state;
   return { blogs, loading, error, dispatch };
 }
+
+export {
+  useUserBlogs,
+  useBlogBySlug,
+  useAllBlogs,
+  useCreateBlog,
+  useDeleteBlog,
+  useBlog,
+  useBlogs,
+};

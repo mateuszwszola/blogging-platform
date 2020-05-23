@@ -73,6 +73,7 @@ function EditPost({ post, onUpdatePost }) {
       <h1 className="text-center text-2xl md:text-3xl">Edit Post</h1>
 
       <BlogPostForm
+        photoFile={photoFile}
         title={title}
         tags={tags}
         bgImgUrl={bgImgUrl}

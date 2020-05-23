@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { useParams } from 'react-router-dom';
 import { useBlogBySlug } from 'hooks/useBlog';
 import { useBlogPosts } from 'hooks/usePost';
@@ -7,8 +6,26 @@ import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 
-function Blog({ blog }) {
-  const { status, error, data: posts } = useBlogPosts(blog._id);
+function Blog() {
+  const { blogSlug } = useParams();
+  const { status: blogStatus, data: blog, error: blogError } = useBlogBySlug(
+    blogSlug
+  );
+  const { status: postsStatus, data: posts, error: postsError } = useBlogPosts(
+    blog && blog._id
+  );
+
+  if (blogStatus === 'loading') {
+    return <Loading />;
+  }
+
+  if (blogError) {
+    return (
+      <DisplayError
+        msg={blogError.message || 'There was a problem fetching a blog'}
+      />
+    );
+  }
 
   const photoSrc =
     (blog.bgImg && blog.bgImg.photoURL) || 'https://picsum.photos/1280/720';
@@ -36,11 +53,14 @@ function Blog({ blog }) {
       </div>
 
       <div className="py-16 max-w-screen-xl mx-auto">
-        {error ? (
+        {postsError ? (
           <DisplayError
-            msg={error.message || 'There was a problem with fetching the posts'}
+            msg={
+              postsError.message ||
+              'There was a problem with fetching the posts'
+            }
           />
-        ) : status === 'loading' ? (
+        ) : postsStatus === 'loading' ? (
           <Loading />
         ) : (
           <Posts posts={posts} />
@@ -50,27 +70,4 @@ function Blog({ blog }) {
   );
 }
 
-Blog.propTypes = {
-  blog: PropTypes.object.isRequired,
-};
-
-function BlogContainer(props) {
-  const { blogSlug } = useParams();
-  const { status, data: blog, error } = useBlogBySlug(blogSlug);
-
-  if (status === 'loading') {
-    return <Loading />;
-  }
-
-  if (error) {
-    return (
-      <DisplayError
-        msg={error.message || 'There was a problem fetching a blog'}
-      />
-    );
-  }
-
-  return <Blog blog={blog} />;
-}
-
-export default BlogContainer;
+export default Blog;
