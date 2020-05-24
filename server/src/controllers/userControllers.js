@@ -50,13 +50,18 @@ exports.updateUser = async (req, res, next) => {
       newUserData.bio = req.body.bio;
     }
 
-    if (req.body.avatarURL !== 'undefined') {
+    if (typeof req.body.avatarURL !== 'undefined') {
       newUserData.avatar = {};
       newUserData.avatar.photoURL = req.body.avatarURL;
       newUserData.avatar.photoID = null;
     }
 
-    if (newUserData.avatar.photoURL && user.avatar && user.avatar.photoID) {
+    if (
+      newUserData.avatar &&
+      newUserData.avatar.photoURL &&
+      user.avatar &&
+      user.avatar.photoID
+    ) {
       // delete old, uploaded avatar
       await Photo.findByIdAndDelete(user.avatar.photoID);
     }

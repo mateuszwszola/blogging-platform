@@ -1,5 +1,6 @@
 const Blog = require('../models/Blog');
 const Photo = require('../models/Photo');
+const Post = require('../models/Post');
 const createPhotoLink = require('../utils/createPhotoLink');
 const { ErrorHandler } = require('../utils/error');
 
@@ -188,8 +189,19 @@ exports.deleteBlog = async (req, res, next) => {
       throw new ErrorHandler(404, 'Blog not found');
     }
 
-    const deletedBlog = await Blog.findByIdAndDelete(req.params.blogId);
-    res.status(201).json({ message: 'Blog deleted', blog: deletedBlog });
+    await Blog.deleteOne({ _id: req.params.blogId });
+
+    if (blog.bgImg && blog.bgImg.photoID) {
+      await Photo.deleteOne({ _id: blog.bgImg.photoID });
+    }
+    const posts = await Post.find({ blog: blog._id }).exec();
+    posts.forEach(async (post) => {
+      if (post.photo) {
+        await Photo.deleteOne({ _id: post.photo });
+      }
+      await Post.deleteOne({ _id: post._id });
+    });
+    res.status(201).json({ message: 'Blog deleted', blog });
   } catch (err) {
     next(err);
   }

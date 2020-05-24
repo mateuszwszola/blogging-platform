@@ -1,6 +1,7 @@
 const Post = require('../models/Post');
 const Blog = require('../models/Blog');
 const Photo = require('../models/Photo');
+const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
 const createPhotoLink = require('../utils/createPhotoLink');
 
@@ -124,6 +125,16 @@ exports.deletePost = async (req, res, next) => {
     }
 
     const doc = await Post.findByIdAndDelete(postId);
+
+    await Comment.deleteMany({
+      _id: {
+        $in: post.comments,
+      },
+    });
+
+    if (post.photo) {
+      await Photo.deleteOne({ _id: post.photo });
+    }
     res.json({ message: 'Post deleted', post: doc });
   } catch (err) {
     next(err);

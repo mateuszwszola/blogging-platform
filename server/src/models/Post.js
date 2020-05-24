@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
+const Photo = require('./Photo');
 
 const specifiedStringLength = require('../validations/specifiedStringLength');
 
