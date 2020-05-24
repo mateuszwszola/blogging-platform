@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import validate from 'utils/addBlogPostValidationRules';
 import formatBlogPostData from 'utils/formatBlogPostData';
 import useEditorState from 'hooks/useEditorState';
-import useImgUpload from 'hooks/useImgUpload';
+import usePhotoFile from 'hooks/usePhotoFile';
 import useForm from 'hooks/useForm';
 import BlogPostForm from 'components/layout/BlogPostForm';
 import { useUpdatePost } from 'hooks/usePost';
@@ -31,7 +31,7 @@ function EditPost({ post, onUpdatePost }) {
     updateEditorState,
     editorStatePlainText,
   } = useEditorState(post.body);
-  const { photoFile, handlePhotoChange, handlePhotoReset } = useImgUpload();
+  const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
 
   function handleUpdateBlogPost() {
     if (!editorStatePlainText.trim()) {

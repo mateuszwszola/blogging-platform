@@ -14,9 +14,7 @@ function Posts({ posts }) {
       )}
     >
       {posts.length === 0 ? (
-        <h2 className="text-center text-2xl uppercase font-semibold">
-          No Blog Posts
-        </h2>
+        <h2 className="text-center text-2xl">There are no posts</h2>
       ) : (
         posts.map((post) => {
           const bgImgUrl =
@@ -45,9 +43,7 @@ function Posts({ posts }) {
                   <Link to={`/posts/${post.slug}`}>{post.title}</Link>
                 </h3>
                 {post.blog && post.blog.name && (
-                  <p className="ml-2 text-gray-700 font-light text-xl">
-                    #{post.blog.name}
-                  </p>
+                  <p className="pl-2 text-gray-800 text-xl">{post.blog.name}</p>
                 )}
                 {post.description && <p className="my-2">{post.description}</p>}
                 {/* <div className="flex items-center my-2">

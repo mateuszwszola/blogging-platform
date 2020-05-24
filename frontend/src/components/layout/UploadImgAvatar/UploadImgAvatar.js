@@ -2,21 +2,22 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { UploadIcon } from 'icons/UploadIcon';
 import UserAvatarPlaceholder from '../UserAvatarPlaceholder';
+import { useEffect } from 'react';
 
-const UploadImgAvatar = ({ handlePhotoChange, userPhotoSrc }) => {
+const UploadImgAvatar = ({ photoFile, handlePhotoChange, userPhotoSrc }) => {
   const [photo, setPhoto] = useState(null);
 
-  const handleChange = (e) => {
-    handlePhotoChange(e);
-
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-    reader.onloadend = (e) => {
-      setPhoto(e.target.result);
-    };
-    reader.readAsDataURL(file);
-  };
+  useEffect(() => {
+    if (photoFile) {
+      const reader = new FileReader();
+      reader.onloadend = (e) => {
+        setPhoto(e.target.result);
+      };
+      reader.readAsDataURL(photoFile);
+    } else {
+      setPhoto(null);
+    }
+  }, [photoFile]);
 
   return (
     <div className="relative">
@@ -46,7 +47,7 @@ const UploadImgAvatar = ({ handlePhotoChange, userPhotoSrc }) => {
             accept="image/jpeg, image/jpg, image/png"
             name="photo"
             id="user-photo"
-            onChange={handleChange}
+            onChange={handlePhotoChange}
           />
         </div>
       </label>

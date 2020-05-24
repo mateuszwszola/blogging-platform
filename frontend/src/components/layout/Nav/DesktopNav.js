@@ -68,7 +68,7 @@ const DesktopNav = () => {
             </DropdownMenuLink>
             <button
               onClick={handleLogout}
-              className="block text-sm px-4 py-2 font-medium text-gray-700 focus:outline-none focus:shadow-outline"
+              className="block w-full text-left text-sm px-4 py-2 font-medium text-gray-700 focus:outline-none focus:shadow-outline"
             >
               Logout
             </button>

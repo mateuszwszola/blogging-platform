@@ -1,15 +1,15 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useUser } from 'context/UserContext';
 import useForm from 'hooks/useForm';
-import useStatus from 'hooks/useStatus';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import { LoadingWithOverlay } from './Loading';
 import updateUserValidationRules from 'utils/updateUserValidatoinRules';
-import { updateUser } from 'api/user';
 import { useAlert } from 'context/AlertContext';
+import { useUpdateUser } from 'hooks/useUser';
 
 function UpdateUserForm() {
   const { user, setUser } = useUser();
+  const [updateUser, { status, error }] = useUpdateUser();
   const {
     handleChange,
     handleSubmit,
@@ -25,40 +25,27 @@ function UpdateUserForm() {
     handleUpdateUser,
     updateUserValidationRules
   );
+
   const { setAlert } = useAlert();
-
-  const {
-    loading,
-    error,
-    success,
-    requestStarted,
-    requestFailed,
-    requestSuccessful,
-  } = useStatus();
-
-  useEffect(() => {
-    if (success) {
-      setAlert('success', 'Profile updated!');
-    }
-  }, [success, setAlert]);
 
   function handleUpdateUser() {
     const newUserData = { name, bio };
 
-    requestStarted();
-    updateUser(newUserData)
-      .then((response) => {
-        requestSuccessful();
-        setUser(response.user);
-      })
-      .catch((err) => {
-        requestFailed();
+    updateUser(newUserData, {
+      onSuccess: (updatedUser) => {
+        setAlert('success', 'Profile updated!');
+        setUser(updatedUser);
+      },
+      onError: (err) => {
         if (err.errors) {
           setErrors(err.errors);
         } else {
-          setErrors({ message: 'There was the problem with the server' });
+          setErrors({
+            message: err.message || 'There was the problem with the server',
+          });
         }
-      });
+      },
+    });
   }
 
   const handleBlur = (e) => {
@@ -79,10 +66,10 @@ function UpdateUserForm() {
           {errors.message || 'Cannot update the user'}
         </p>
       )}
-      {loading && <LoadingWithOverlay />}
+      {status === 'loading' && <LoadingWithOverlay />}
       <form
         onSubmit={handleSubmit}
-        className={`${loading ? 'opacity-75' : 'opacity-100'}`}
+        className={`${status === 'loading' ? 'opacity-75' : 'opacity-100'}`}
       >
         <InputGroup
           classnames="border border-gray-400"

@@ -9,38 +9,45 @@ import AddBlogPost from './AddBlogPost';
 function ManageBlog() {
   const { blogSlug } = useParams();
   const { status, data: blog, error: blogError } = useBlogBySlug(blogSlug);
-  const [deleteBlog, { error: deleteError }] = useDeleteBlog();
+  const [
+    deleteBlog,
+    { status: deleteStatus, error: deleteError },
+  ] = useDeleteBlog();
   const { setAlert } = useAlert();
   const history = useHistory();
 
   function handleDeleteBlog() {
     if (!blog) return;
 
-    deleteBlog(blog._id)
-      .then(() => {
+    deleteBlog(blog._id, {
+      onSuccess: () => {
         setAlert('success', 'Blog deleted');
         history.push('/dashboard');
-      })
-      .catch((err) => {
+      },
+      onError: () => {
         setAlert('error', 'Cannot delete a blog', 2000);
-      });
+      },
+    });
   }
 
   return (
     <>
-      {status === 'loading' ? (
+      {status === 'loading' || deleteStatus === 'loading' ? (
         <Loading />
       ) : blogError ? (
         <DisplayError
           msg={blogError.message || 'There were a problem loading blog'}
         />
-      ) : deleteError ? (
-        <DisplayError
-          msg={deleteError.message || 'There were a problem deleting blog'}
-        />
       ) : (
         <>
           <div className="w-full flex justify-end">
+            {deleteError && (
+              <DisplayError
+                msg={
+                  deleteError.message || 'There were a problem deleting blog'
+                }
+              />
+            )}
             <Link
               to={`/blogs/${blogSlug}`}
               className="shadow bg-blue-500 rounded py-1 px-2 font-semibold text-blue-100 m-2 hover:bg-blue-600"

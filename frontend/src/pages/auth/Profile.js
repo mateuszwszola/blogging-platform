@@ -1,76 +1,88 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useHistory, Link } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import { useUser } from 'context/UserContext';
-import useImgUpload from 'hooks/useImgUpload';
-import { ArrowLeftIcon } from 'icons/ArrowLeftIcon';
-import { SettingsIcon } from 'icons/SettingsIcon';
+import { useAlert } from 'context/AlertContext';
+import usePhotoFile from 'hooks/usePhotoFile';
+import { useUploadUserAvatar } from 'hooks/useUser';
 import Loading from 'components/Loading';
 import UploadImgAvatar from 'components/layout/UploadImgAvatar';
 import UpdateUserForm from 'components/UpdateUserForm';
-import { useAlert } from 'context/AlertContext';
+import { ArrowLeftIcon } from 'icons/ArrowLeftIcon';
+import { SettingsIcon } from 'icons/SettingsIcon';
 
 function Profile() {
   const { logout } = useAuth();
   const { user, setUser } = useUser();
   const { setAlert } = useAlert();
   const history = useHistory();
+  const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
+  const [
+    uploadUserAvatar,
+    { data: photoURL, status: avatarStatus, error: avatarError },
+  ] = useUploadUserAvatar();
 
   const handleLogout = async () => {
     await logout();
     history.push('/');
   };
 
-  const {
-    photoFile,
-    handlePhotoChange,
-    uploadPhoto,
-    imgLoading,
-    photoUploadError,
-    photoURL,
-  } = useImgUpload('users/photo');
-
-  useEffect(() => {
-    if (photoURL) {
-      setAlert('success', 'Img uploaded');
-    }
-  }, [photoURL, setAlert]);
-
-  useEffect(() => {
-    if (photoURL) {
-      setUser({ avatar: { ...user.avatar, photoURL } });
-    }
-  }, [photoURL]);
+  const handleAvatarUpload = () => {
+    uploadUserAvatar(
+      { photoFile },
+      {
+        onSuccess: (photoURL) => {
+          setAlert('success', 'Img uploaded');
+          setUser({ avatar: { ...user.avatar, photoURL } });
+        },
+        onSettled: () => {
+          handlePhotoReset();
+        },
+      }
+    );
+  };
 
   const userPhotoSrc =
     photoURL || (user.avatar && user.avatar.photoURL) || null;
 
   return (
-    <div className="h-full px-2 pb-2 pt-8 md:pt-20">
+    <div className="w-full py-16 px-2 max-w-screen-xl mx-auto">
       <div className="flex flex-col">
         <div className="mt-8 w-full max-w-xs mx-auto bg-white rounded-t-md shadow-md">
-          <div className="flex flex-col items-center p-2 border-b border-gray-200 relative">
-            {imgLoading ? (
+          <div
+            style={{ minHeight: '14rem' }}
+            className="flex flex-col items-center justify-center p-2 border-b border-gray-200 relative"
+          >
+            {avatarStatus === 'loading' ? (
               <Loading />
             ) : (
               <>
                 <UploadImgAvatar
+                  photoFile={photoFile}
                   handlePhotoChange={handlePhotoChange}
                   userPhotoSrc={userPhotoSrc}
                 />
                 {photoFile && (
-                  <button
-                    onClick={uploadPhoto}
-                    className="mt-2 rounded bg-blue-500 text-blue-100 py-1 px-2"
-                  >
-                    Upload
-                  </button>
+                  <div className="w-full flex flex-wrap justify-around mt-2 mx-2 space-x-4">
+                    <button
+                      onClick={handleAvatarUpload}
+                      className="flex-1 rounded bg-blue-500 text-blue-100 py-1 px-2 shadow"
+                    >
+                      Upload Image
+                    </button>
+                    <button
+                      onClick={handlePhotoReset}
+                      className="flex-1 rounded bg-red-500 text-red-100 py-1 px-2 shadow"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 )}
               </>
             )}
-            {photoUploadError && (
+            {avatarError && (
               <p className="text-red-500 text-sm text-center">
-                {photoUploadError.message}
+                {avatarError.message}
               </p>
             )}
           </div>

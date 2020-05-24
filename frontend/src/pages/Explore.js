@@ -9,10 +9,10 @@ function Explore() {
   const { status, error, data: blogs } = useAllBlogs();
 
   return (
-    <div className="py-16 max-w-screen-xl mx-auto">
+    <div className="py-16 max-w-screen-xl w-full mx-auto">
       <h1 className="text-3xl text-center leading-loose my-8">Explore Blogs</h1>
 
-      <div className="px-2 py-2 mt-6 w-full">
+      <div className="px-2 mt-6 w-full">
         {error ? (
           <DisplayError
             msg={error.message || 'There was a problem with loading the blogs'}
@@ -20,10 +20,13 @@ function Explore() {
         ) : status === 'loading' ? (
           <Loading />
         ) : (
-          <div className="">
+          <div className="w-full">
             {blogs.length === 0 ? (
-              <h2 className="text-center text-2xl uppercase font-semibold">
-                There are no blogs. Be the first one!
+              <h2 className="text-center text-2xl">
+                There are no blogs... Be the first to create!{' '}
+                <span role="img" aria-label="smile-face">
+                  😃
+                </span>
               </h2>
             ) : (
               <div

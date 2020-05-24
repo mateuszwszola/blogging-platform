@@ -4,4 +4,11 @@ async function updateUser(newUserData) {
   return await client('users', { body: newUserData, method: 'PUT' });
 }
 
-export { updateUser };
+async function uploadUserAvatar(photoFile) {
+  const formData = new FormData();
+  formData.append('photo', photoFile);
+
+  return await client('users/photo', { formData });
+}
+
+export { updateUser, uploadUserAvatar };

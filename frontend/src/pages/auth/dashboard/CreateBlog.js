@@ -2,7 +2,7 @@ import React from 'react';
 import validate from 'utils/createBlogValidationRules';
 import { useAlert } from 'context/AlertContext';
 import { useCreateBlog } from 'hooks/useBlog';
-import useImgUpload from 'hooks/useImgUpload';
+import usePhotoFile from 'hooks/usePhotoFile';
 import useForm from 'hooks/useForm';
 import CreateBlogForm from 'components/layout/CreateBlogForm';
 import { LoadingWithOverlay } from 'components/Loading';
@@ -31,7 +31,7 @@ function CreateBlog() {
     validate
   );
 
-  const { photoFile, handlePhotoChange, handlePhotoReset } = useImgUpload();
+  const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
 
   function handleCreateBlog() {
     const formData = formatBlogData({
