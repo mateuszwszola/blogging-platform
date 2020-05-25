@@ -1,5 +1,12 @@
 import React from 'react';
-import { useHistory, Link } from 'react-router-dom';
+import {
+  useHistory,
+  Link,
+  Route,
+  Switch,
+  useRouteMatch,
+  useParams,
+} from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
@@ -7,15 +14,19 @@ import usePhotoFile from 'hooks/usePhotoFile';
 import { useUploadUserAvatar } from 'hooks/useUser';
 import Loading from 'components/Loading';
 import UploadImgAvatar from 'components/layout/UploadImgAvatar';
-import UpdateUserForm from 'components/UpdateUserForm';
-import { ArrowLeftIcon } from 'icons/ArrowLeftIcon';
-import { SettingsIcon } from 'icons/SettingsIcon';
+import { ArrowLeftIcon, SettingsIcon } from 'icons';
+import ProfilePosts from 'components/Profile/Posts';
+import ProfileBlogs from 'components/Profile/Blogs';
+import ProfileFavorites from 'components/Profile/Favorites';
+import ProfileNav from 'components/Profile/Nav';
 
 function Profile() {
+  const { userId } = useParams();
   const { logout } = useAuth();
   const { user, setUser } = useUser();
   const { setAlert } = useAlert();
   const history = useHistory();
+  const { path, url } = useRouteMatch();
   const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
   const [
     uploadUserAvatar,
@@ -86,9 +97,15 @@ function Profile() {
               </p>
             )}
           </div>
-          <h1 className="text-2xl text-center py-4 text-gray-800">
-            {user.name}
-          </h1>
+
+          <div className="py-4">
+            <h3 className="text-2xl text-center font-semibold text-gray-800">
+              {user.name}
+            </h3>
+            {user.bio && (
+              <p className="text-lg text-gray-700 text-center">{user.bio}</p>
+            )}
+          </div>
 
           <div className="flex flex-col w-full">
             <Link
@@ -109,8 +126,22 @@ function Profile() {
           </div>
         </div>
 
-        <div className="w-full max-w-md mx-auto mt-4">
-          <UpdateUserForm />
+        <div className="mt-10 border-t border-solid border-gray-400 pt-4">
+          <ProfileNav />
+
+          <div className="mt-8 relative">
+            <Switch>
+              <Route exact path={path}>
+                <ProfilePosts userId={userId} />
+              </Route>
+              <Route path={`${path}/blogs`}>
+                <ProfileBlogs userId={userId} />
+              </Route>
+              <Route path={`${path}/favorites`}>
+                <ProfileFavorites userId={userId} />
+              </Route>
+            </Switch>
+          </div>
         </div>
       </div>
     </div>

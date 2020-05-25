@@ -38,7 +38,11 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
             >
               Dashboard
             </MobileNavLink>
-            <MobileNavLink onClick={hideNav} to="/profile" tabIndex={tabIndex}>
+            <MobileNavLink
+              onClick={hideNav}
+              to={`/profile/${user._id}`}
+              tabIndex={tabIndex}
+            >
               Profile
             </MobileNavLink>
           </>

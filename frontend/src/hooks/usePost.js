@@ -15,8 +15,10 @@ import {
   updatePost,
 } from 'api/post';
 
-function useUserPosts() {
-  return useQuery('posts', () => getUserPosts().then((res) => res.posts));
+function useUserPosts(userId) {
+  return useQuery(userId && ['posts', userId], () =>
+    getUserPosts(userId).then((res) => res.posts)
+  );
 }
 
 function useBlogPosts(blogId) {

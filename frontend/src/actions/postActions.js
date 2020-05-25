@@ -1,6 +1,6 @@
 import { RESPONSE_COMPLETE } from './types';
 import { setError, setLoading } from './actionsCreators';
-import { getBlogPosts, getPostBySlug, getUserPosts } from 'api/post';
+import { getBlogPosts, getPostBySlug, getAuthUserPosts } from 'api/post';
 
 export const fetchBlogPosts = (blogId) => (dispatch) => {
   dispatch(setLoading());
@@ -25,7 +25,7 @@ export const fetchPostBySlug = (slug) => (dispatch) => {
 export const fetchUserPosts = () => (dispatch) => {
   dispatch(setLoading());
 
-  getUserPosts()
+  getAuthUserPosts()
     .then((response) => {
       dispatch({ type: RESPONSE_COMPLETE, payload: { posts: response.posts } });
     })

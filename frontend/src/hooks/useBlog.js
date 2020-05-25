@@ -14,9 +14,9 @@ import {
   getAllBlogs,
 } from 'api/blog';
 
-function useUserBlogs() {
-  return useQuery(['blogs', 'user'], () =>
-    getUserBlogs().then((res) => res.blogs)
+function useUserBlogs(userId) {
+  return useQuery(userId && ['blogs', userId], () =>
+    getUserBlogs(userId).then((res) => res.blogs)
   );
 }
 
@@ -32,38 +32,14 @@ function useAllBlogs() {
 
 function useCreateBlog() {
   return useMutation((values) => createBlog(values).then((res) => res.blog), {
-    onMutate: (values) => {
-      const previousBlogs = queryCache.getQueryData(['blogs', 'user']);
-
-      queryCache.setQueryData(['blogs', 'user'], (old) => [
-        ...old,
-        {
-          _id: 'temp',
-          ...values,
-        },
-      ]);
-
-      return () => queryCache.setQueryData(['blogs', 'user'], previousBlogs);
-    },
-    onError: (error, values, rollback) => rollback(),
-    onSuccess: () => queryCache.refetchQueries(['blogs', 'user']),
+    onSuccess: () => queryCache.refetchQueries('blogs'),
   });
 }
 
-function useDeleteBlog(key = ['blogs', 'user']) {
+function useDeleteBlog() {
   return useMutation((blogId) => deleteBlog(blogId), {
-    onMutate: (blogId) => {
-      const previousBlogs = queryCache.getQueryData(key);
-
-      queryCache.setQueryData(key, (old) =>
-        old.filter((b) => b._id !== blogId)
-      );
-
-      return () => queryCache.setQueryData(key, previousBlogs);
-    },
-    onError: (error, blogId, rollback) => rollback(),
     onSuccess: () => {
-      queryCache.refetchQueries(key);
+      queryCache.refetchQueries('blogs');
     },
   });
 }

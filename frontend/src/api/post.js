@@ -8,8 +8,8 @@ function getPostBySlug(slug) {
   return client(`posts/slug/${slug}`);
 }
 
-function getUserPosts() {
-  return client('posts');
+function getUserPosts(userId) {
+  return client(`posts/user/${userId}`);
 }
 
 function addBlogPost(blogId, data) {

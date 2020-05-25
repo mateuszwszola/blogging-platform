@@ -19,9 +19,9 @@ function Sidebar({ blogs }) {
         {blogs.length === 0 ? (
           <p className="text-center mt-8">There is no blogs</p>
         ) : (
-          <ul className="mt-8 h-full space-y-4 flex flex-col items-center list-none">
+          <ul className="mt-8 h-full space-y-4 flex flex-col items-center list-none max-w-xs mx-auto">
             {blogs.map((blog) => (
-              <li key={`blog-${blog._id}`} className="block w-full max-w-xs">
+              <li key={`blog-${blog._id}`} className="block w-4/5 mx-auto">
                 <NavLink
                   to={`${url}/${blog.slug}`}
                   className="shadow-xs block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded text-center"

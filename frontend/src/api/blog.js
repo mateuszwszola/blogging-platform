@@ -8,8 +8,8 @@ function getAllBlogs() {
   return client('blogs/all');
 }
 
-function getUserBlogs() {
-  return client('blogs');
+function getUserBlogs(userId) {
+  return client(`blogs/user/${userId}`);
 }
 
 function createBlog(data) {

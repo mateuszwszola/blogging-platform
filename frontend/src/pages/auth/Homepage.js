@@ -3,9 +3,11 @@ import { useUserPosts } from 'hooks/usePost';
 import Posts from 'components/Posts';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
+import { useUser } from 'context/UserContext';
 
 function Homepage() {
-  const { status, data: posts, error } = useUserPosts();
+  const { user } = useUser();
+  const { status, data: posts, error } = useUserPosts(user._id);
 
   return (
     <div className="py-16 max-w-screen-xl mx-auto">

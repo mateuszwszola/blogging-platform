@@ -6,9 +6,11 @@ import CreateBlog from './CreateBlog';
 import { useUserBlogs } from 'hooks/useBlog';
 import DisplayError from 'components/DisplayError';
 import Loading from 'components/Loading';
+import { useUser } from 'context/UserContext';
 
 function Dashboard() {
-  const { status, data: blogs, error } = useUserBlogs();
+  const { user } = useUser();
+  const { status, data: blogs, error } = useUserBlogs(user && user._id);
   const { path } = useRouteMatch();
 
   return (

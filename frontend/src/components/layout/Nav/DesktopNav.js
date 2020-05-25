@@ -60,7 +60,10 @@ const DesktopNav = () => {
           className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg"
         >
           <div className="py-1 rounded-md bg-white shadow-xs">
-            <DropdownMenuLink onClick={hideNav} to="/profile">
+            <DropdownMenuLink
+              onClick={hideNav}
+              to={`/profile/${user && user._id}`}
+            >
               Your Profile
             </DropdownMenuLink>
             <DropdownMenuLink onClick={hideNav} to="/settings">
