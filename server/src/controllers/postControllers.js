@@ -187,9 +187,24 @@ exports.getPostBySlug = async (req, res, next) => {
   }
 };
 
-exports.getUserPosts = async (req, res, next) => {
+exports.getAuthUserPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({ user: req.user._id })
+      .populate('user', ['name', 'bio', 'avatar'])
+      .populate('blog', ['name', 'slug', 'description', 'bgImg'])
+      .sort({
+        createdAt: -1,
+      });
+
+    res.json({ posts });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getUserPosts = async (req, res, next) => {
+  try {
+    const posts = await Post.find({ user: req.params.userId })
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({

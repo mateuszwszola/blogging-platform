@@ -50,10 +50,10 @@ router.delete(
 
 /*
   @route   GET api/posts
-  @desc    Get user posts
+  @desc    Get auth user posts
   @access  Private
  */
-router.get('/', auth, postControllers.getUserPosts);
+router.get('/', auth, postControllers.getAuthUserPosts);
 
 /*
   @route   GET api/posts/all
@@ -61,6 +61,18 @@ router.get('/', auth, postControllers.getUserPosts);
   @access  Public
  */
 router.get('/all', postControllers.getAllPosts);
+
+/*
+  @route   GET api/posts/user/:userId
+  @desc    Get userId posts
+  @access  Public
+ */
+router.get(
+  '/user/:userId',
+  postControllers.getAllPosts,
+  validateParamObjectId('userId'),
+  postControllers.getUserPosts
+);
 
 /*
   @route   GET api/posts/blog/:blogId
