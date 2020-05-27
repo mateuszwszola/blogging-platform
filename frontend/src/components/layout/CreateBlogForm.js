@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
+import { InputGroup } from 'components/layout/Input';
 import ImgUploadInput from 'components/layout/Input/ImgUploadInput';
 import useToggle from 'hooks/useToggle';
+import { Button } from 'components/layout/Button';
 
 function CreateBlogForm({
   handleSubmit,
@@ -98,11 +99,18 @@ function CreateBlogForm({
         label="Image Attribution (optional)"
       />
 
-      <InputSubmit
-        disabled={loading}
-        value="Create A Blog"
-        classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
-      />
+      <div className="w-1/2 max-w-sm mx-auto my-6">
+        <Button
+          type="submit"
+          disabled={loading}
+          size="base"
+          version="primary"
+          fullWidth
+          fullRounded
+        >
+          <span className="uppercase font-bold">Create blog</span>
+        </Button>
+      </div>
     </form>
   );
 }

@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, NavLink, useRouteMatch } from 'react-router-dom';
+import { Button } from 'components/layout/Button';
 
 function Sidebar({ blogs }) {
   const { url } = useRouteMatch();
 
   return (
     <div className="relative h-full overflow-hidden py-4 px-2">
-      <Link
-        to={`${url}/create-blog`}
-        className="shadow-xs block w-4/5 max-w-xs mx-auto py-2 px-4 bg-green-300 hover:bg-green-400 mb-4 rounded transition duration-100 font-bold uppercase text-sm text-center"
-      >
-        Create Blog
-      </Link>
+      <div className="block w-4/5 max-w-xs mx-auto">
+        <Link to={`${url}/create-blog`} className="no-underline">
+          <Button size="base" version="primary" fullWidth>
+            <span className="uppercase font-bold">Create a blog</span>
+          </Button>
+        </Link>
+      </div>
 
       <div className="mt-8">
         <h2 className="text-center text-2xl">Select Blog</h2>
@@ -21,7 +23,10 @@ function Sidebar({ blogs }) {
         ) : (
           <ul className="mt-8 h-full space-y-4 flex flex-col items-center list-none max-w-xs mx-auto">
             {blogs.map((blog) => (
-              <li key={`blog-${blog._id}`} className="block w-4/5 mx-auto">
+              <li
+                key={`blog-${blog._id}`}
+                className="block w-4/5 mx-auto space-y-4"
+              >
                 <NavLink
                   to={`${url}/${blog.slug}`}
                   className="shadow-xs block py-2 px-4 bg-gray-300 hover:bg-gray-400 mb-4 rounded text-center"

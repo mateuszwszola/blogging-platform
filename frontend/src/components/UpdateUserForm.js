@@ -13,7 +13,6 @@ function UpdateUserForm() {
   const {
     handleChange,
     handleSubmit,
-    setValues,
     values: { name, bio },
     errors,
     setErrors,
@@ -48,15 +47,6 @@ function UpdateUserForm() {
     });
   }
 
-  const handleBlur = (e) => {
-    if (e.relatedTarget === null) {
-      setValues((values) => ({
-        ...values,
-        [e.target.name]: (user && user[e.target.name]) || values[e.target.name],
-      }));
-    }
-  };
-
   const buttonDisabled = user && user.name === name && user.bio === bio;
 
   return (
@@ -77,7 +67,6 @@ function UpdateUserForm() {
           errors={errors}
           value={name}
           handleChange={handleChange}
-          onBlur={handleBlur}
           name="name"
           label="User Name"
         />
@@ -87,7 +76,6 @@ function UpdateUserForm() {
           errors={errors}
           value={bio}
           handleChange={handleChange}
-          onBlur={handleBlur}
           name="bio"
           label="User Bio"
         />

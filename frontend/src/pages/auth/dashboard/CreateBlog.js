@@ -71,7 +71,7 @@ function CreateBlog() {
       ) : null}
 
       <h1 className="text-2xl lg:text-3xl text-center leading-loose">
-        Create A Blog
+        Create Blog
       </h1>
 
       <CreateBlogForm

@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, useHistory } from 'react-router-dom';
-import { EnvelopeIcon, LockOpenIcon, KeyIcon } from 'icons';
 import useForm from 'hooks/useForm';
 import useStatus from 'hooks/useStatus';
 import { useAuth } from 'context/AuthContext';
 import validate from 'utils/loginFormValidationRules';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import { LoadingWithOverlay } from 'components/Loading';
+import { EnvelopeIcon, LockOpenIcon, KeyIcon } from 'icons';
 
 function Login({
   email,
@@ -84,7 +84,7 @@ function Login({
           </div>
 
           <div className="w-11/12 mx-auto mt-2 sm:mt-4">
-            <InputSubmit value="Login" />
+            <InputSubmit value="Login" disabled={loading} />
           </div>
 
           <div className="mt-2 sm:mt-4 text-center">

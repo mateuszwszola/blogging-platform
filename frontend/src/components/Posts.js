@@ -23,7 +23,7 @@ function Posts({ posts }) {
           return (
             <div
               key={post._id}
-              className="shadow-lg rounded bg-white block mx-auto max-w-screen-sm"
+              className="shadow-lg rounded bg-white block mx-auto w-full max-w-screen-sm"
             >
               <img
                 src={bgImgUrl}

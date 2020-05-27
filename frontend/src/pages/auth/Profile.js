@@ -33,6 +33,8 @@ function Profile() {
     { data: photoURL, status: avatarStatus, error: avatarError },
   ] = useUploadUserAvatar();
 
+  const isOwner = user && user._id === userId;
+
   const handleLogout = async () => {
     await logout();
     history.push('/');
@@ -107,23 +109,27 @@ function Profile() {
             )}
           </div>
 
-          <div className="flex flex-col w-full">
-            <Link
-              className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
-              to="/settings"
-            >
-              <span className="font-medium">Settings</span>
-              <SettingsIcon className="fill-current w-5 h-5" />
-            </Link>
+          {isOwner ? (
+            <div className="flex flex-col w-full">
+              <Link
+                className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
+                to="/settings"
+              >
+                <span className="font-medium">Settings</span>
+                <SettingsIcon className="fill-current w-5 h-5" />
+              </Link>
 
-            <button
-              className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
-              onClick={handleLogout}
-            >
-              <span className="font-medium">Log Out</span>
-              <ArrowLeftIcon className="fill-current w-5 h-5" />
-            </button>
-          </div>
+              <button
+                className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
+                onClick={handleLogout}
+              >
+                <span className="font-medium">Log Out</span>
+                <ArrowLeftIcon className="fill-current w-5 h-5" />
+              </button>
+            </div>
+          ) : (
+            ''
+          )}
         </div>
 
         <div className="mt-10 border-t border-solid border-gray-400 pt-4">

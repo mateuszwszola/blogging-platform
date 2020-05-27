@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowDownIcon } from 'icons';
 import landingBg from 'img/landing-bg.jpg';
+import { Button } from './Button';
 
 const LandingPage = () => (
   <div
@@ -20,11 +21,10 @@ const LandingPage = () => (
             Create and manage your personal blog
           </p>
         </div>
-        <Link
-          to="/login"
-          className="mt-2 bg-green-600 text-white border border-green-700 py-2 px-4 rounded-lg uppercase shadow focus:outline-none focus:shadow-outline hover:bg-green-700"
-        >
-          Create a blog
+        <Link to="/login" className="mt-2 no-underline">
+          <Button version="primary" size="base">
+            <span className="uppercase">Create a blog</span>
+          </Button>
         </Link>
       </div>
       <div className="absolute bottom-0 left-0 text-center w-full flex justify-center mb-4">

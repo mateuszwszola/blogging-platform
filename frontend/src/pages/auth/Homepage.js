@@ -10,7 +10,7 @@ function Homepage() {
   const { status, data: posts, error } = useUserPosts(user._id);
 
   return (
-    <div className="py-16 max-w-screen-xl mx-auto">
+    <div className="py-16 w-full max-w-screen-xl mx-auto">
       <h1 className="text-3xl text-center leading-loose my-8">
         Your Blog posts
       </h1>

@@ -52,7 +52,7 @@ function Blog() {
         </div>
       </div>
 
-      <div className="py-16 max-w-screen-xl mx-auto">
+      <div className="py-16 w-full max-w-screen-xl mx-auto">
         {postsError ? (
           <DisplayError
             msg={

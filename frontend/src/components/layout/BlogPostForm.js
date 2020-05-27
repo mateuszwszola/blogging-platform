@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { InputGroup, InputSubmit } from './Input';
+import { InputGroup } from './Input';
 import { LoadingWithOverlay } from '../Loading';
 import Editor from '../Editor';
 import ImgUploadInput from './Input/ImgUploadInput';
+import { Button } from './Button';
 
 function BlogPostForm({
   title,
@@ -136,11 +137,20 @@ function BlogPostForm({
           {errors.body && <p className="text-red-500 text-sm">{errors.body}</p>}
         </div>
 
-        <InputSubmit
-          onClick={handleSubmit}
-          value={update ? 'Update Post' : 'Create Post'}
-          classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
-        />
+        <div className="w-1/2 max-w-sm mx-auto my-6">
+          <Button
+            type="submit"
+            disabled={loading}
+            size="base"
+            version="primary"
+            fullWidth
+            fullRounded
+          >
+            <span className="uppercase font-bold">
+              {update ? 'Update Post' : 'Create Post'}
+            </span>
+          </Button>
+        </div>
       </form>
     </div>
   );

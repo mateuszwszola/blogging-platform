@@ -10,7 +10,7 @@ function Alert(props) {
   }
 
   return (
-    <div className="z-50 fixed right-0 top-0">
+    <div className="z-50 fixed right-0 top-0 mt-8">
       <div className="flex flex-col space-y-4 w-56 mt-4 mr-4">
         {alerts.map(({ id, alertType, msg }) => (
           <div
