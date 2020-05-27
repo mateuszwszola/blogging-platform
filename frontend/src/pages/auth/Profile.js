@@ -9,29 +9,20 @@ import {
 } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import { useUser } from 'context/UserContext';
-import { useAlert } from 'context/AlertContext';
-import usePhotoFile from 'hooks/usePhotoFile';
-import { useUploadUserAvatar } from 'hooks/useUser';
-import Loading from 'components/Loading';
-import UploadImgAvatar from 'components/layout/UploadImgAvatar';
+import AvatarUpload from 'components/AvatarUpload';
 import { ArrowLeftIcon, SettingsIcon } from 'icons';
 import ProfilePosts from 'components/Profile/Posts';
 import ProfileBlogs from 'components/Profile/Blogs';
 import ProfileFavorites from 'components/Profile/Favorites';
 import ProfileNav from 'components/Profile/Nav';
+import UserAvatarPlaceholder from 'components/layout/UserAvatarPlaceholder';
 
 function Profile() {
   const { userId } = useParams();
   const { logout } = useAuth();
-  const { user, setUser } = useUser();
-  const { setAlert } = useAlert();
+  const { user } = useUser();
   const history = useHistory();
-  const { path, url } = useRouteMatch();
-  const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
-  const [
-    uploadUserAvatar,
-    { data: photoURL, status: avatarStatus, error: avatarError },
-  ] = useUploadUserAvatar();
+  const { path } = useRouteMatch();
 
   const isOwner = user && user._id === userId;
 
@@ -40,67 +31,13 @@ function Profile() {
     history.push('/');
   };
 
-  const handleAvatarUpload = () => {
-    uploadUserAvatar(
-      { photoFile },
-      {
-        onSuccess: (photoURL) => {
-          setAlert('success', 'Img uploaded');
-          setUser({ avatar: { ...user.avatar, photoURL } });
-        },
-        onSettled: () => {
-          handlePhotoReset();
-        },
-      }
-    );
-  };
-
-  const userPhotoSrc =
-    photoURL || (user.avatar && user.avatar.photoURL) || null;
-
   return (
     <div className="w-full py-16 px-2 max-w-screen-xl mx-auto">
       <div className="flex flex-col">
         <div className="mt-8 w-full max-w-xs mx-auto bg-white rounded-t-md shadow-md">
-          <div
-            style={{ minHeight: '14rem' }}
-            className="flex flex-col items-center justify-center p-2 border-b border-gray-200 relative"
-          >
-            {avatarStatus === 'loading' ? (
-              <Loading />
-            ) : (
-              <>
-                <UploadImgAvatar
-                  photoFile={photoFile}
-                  handlePhotoChange={handlePhotoChange}
-                  userPhotoSrc={userPhotoSrc}
-                />
-                {photoFile && (
-                  <div className="w-full flex flex-wrap justify-around mt-2 mx-2 space-x-4">
-                    <button
-                      onClick={handleAvatarUpload}
-                      className="flex-1 rounded bg-blue-500 text-blue-100 py-1 px-2 shadow"
-                    >
-                      Upload Image
-                    </button>
-                    <button
-                      onClick={handlePhotoReset}
-                      className="flex-1 rounded bg-red-500 text-red-100 py-1 px-2 shadow"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-              </>
-            )}
-            {avatarError && (
-              <p className="text-red-500 text-sm text-center">
-                {avatarError.message}
-              </p>
-            )}
-          </div>
+          {isOwner ? <AvatarUpload /> : <div></div>}
 
-          <div className="py-4">
+          <div className="border-t py-4">
             <h3 className="text-2xl text-center font-semibold text-gray-800">
               {user.name}
             </h3>
@@ -109,7 +46,7 @@ function Profile() {
             )}
           </div>
 
-          {isOwner ? (
+          {isOwner && (
             <div className="flex flex-col w-full">
               <Link
                 className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
@@ -127,8 +64,6 @@ function Profile() {
                 <ArrowLeftIcon className="fill-current w-5 h-5" />
               </button>
             </div>
-          ) : (
-            ''
           )}
         </div>
 

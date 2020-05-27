@@ -8,7 +8,7 @@ export const ButtonVersion = {
   basic:
     'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 rounded-lg shadow focus:outline-none focus:shadow-outline font-semibold transition duration-100',
   delete:
-    'bg-red-500 hover:bg-red-600 text-white rounded shadow focus:outline-none focus:shadow-outline hover:bg-green-700 font-semibold',
+    'bg-red-500 hover:bg-red-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline hover:bg-green-700 font-semibold',
   disabled: 'opacity-75 cursor-not-allowed transition duration-100',
 };
 
