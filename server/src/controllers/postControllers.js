@@ -93,7 +93,6 @@ exports.updatePost = async (req, res, next) => {
 
     if (post.photo && postData.bgImgUrl) {
       // delete old photo
-      postData.photo = null;
       await Photo.findByIdAndDelete(post.photo);
     }
 

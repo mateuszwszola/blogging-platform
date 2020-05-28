@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const emailRouter = require('./email');
+const profileRouter = require('./profile');
 const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
 const photoUpload = require('../middleware/photoUpload');
@@ -7,6 +8,7 @@ const { auth } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
 
 router.use('/user', emailRouter);
+router.use('/profile', profileRouter);
 
 /*
   @route   POST api/users

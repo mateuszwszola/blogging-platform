@@ -111,3 +111,17 @@ exports.uploadPhoto = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getUserById = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ErrorHandler(404, 'User not found');
+    }
+    res.json({ user });
+  } catch (err) {
+    next(err);
+  }
+};
