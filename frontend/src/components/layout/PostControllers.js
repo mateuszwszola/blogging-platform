@@ -1,39 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { EditIcon, CloseIcon, BinIcon } from 'icons';
+import { Button } from './Button';
 
 function PostControllers({ isEditting, setIsEditting, handleDeletePost }) {
   return (
-    <div className="w-full flex justify-center md:justify-end">
+    <div className="w-full flex justify-center md:justify-end space-x-4">
       {isEditting ? (
-        <>
-          {/* <button
-            onClick={() => setIsEditting(false)}
-            className="bg-green-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-green-100 m-2 hover:bg-green-600"
-          >
-            <SaveIcon className="w-6 h-6 fill-current" />
-          </button> */}
-          <button
-            onClick={() => setIsEditting(false)}
-            className="shadow bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
-          >
-            <CloseIcon className="w-6 h-6 fill-current" />
-          </button>
-        </>
+        <Button onClick={() => setIsEditting(false)} version="edit" size="sm">
+          <CloseIcon className="w-6 h-6 fill-current" />
+        </Button>
       ) : (
         <>
-          <button
-            onClick={() => setIsEditting(true)}
-            className="shadow bg-gray-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-gray-100 m-2 hover:bg-gray-600"
-          >
+          <Button onClick={() => setIsEditting(true)} version="edit" size="sm">
             <EditIcon className="w-6 h-6 fill-current" />
-          </button>
-          <button
-            onClick={handleDeletePost}
-            className="shadow bg-red-500 rounded py-1 px-2 text-sm md:text-base font-semibold text-red-100 m-2 hover:bg-red-600"
-          >
+          </Button>
+          <Button onClick={handleDeletePost} version="delete" size="sm">
             <BinIcon className="w-6 h-6 fill-current" />
-          </button>
+          </Button>
         </>
       )}
     </div>

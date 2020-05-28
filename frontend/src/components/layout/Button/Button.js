@@ -42,9 +42,17 @@ Button.defaultProps = {
 
 Button.propTypes = {
   size: PropTypes.oneOf(['sm', 'base', 'lg']),
-  version: PropTypes.oneOf(['primary', 'secondary', 'auth', 'basic', 'delete']),
+  version: PropTypes.oneOf([
+    'primary',
+    'secondary',
+    'auth',
+    'basic',
+    'delete',
+    'edit',
+  ]),
   fullWidth: PropTypes.bool,
   fullRounded: PropTypes.bool,
+  disabled: PropTypes.bool,
 };
 
 export default Button;

@@ -73,22 +73,16 @@ function CreateBlogForm({
         />
       )}
 
-      <button
-        type="button"
-        className="inline-block bg-white shadow-xs my-2 px-2 py-1 text-xs font-medium uppercase rounded text-gray-700 tracking-wide border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-        onClick={toggleUploadImg}
-      >
-        {uploadImg ? 'Or Add image URL' : 'Or Upload img'}
-      </button>
-
-      {photoFile && (
-        <button
-          className="inline-block bg-white shadow-xs my-2 ml-2 px-2 py-1 text-xs font-medium uppercase rounded text-gray-700 tracking-wide border border-solid border-gray-500 focus:outline-none focus:shadow-outline"
-          onClick={handlePhotoReset}
-        >
-          Remove Photo
-        </button>
-      )}
+      <div className="my-2 space-x-2">
+        <Button onClick={toggleUploadImg} version="basic" size="sm">
+          {uploadImg ? 'Or Add image URL' : 'Or Upload img'}
+        </Button>
+        {photoFile && (
+          <Button onClick={handlePhotoReset} version="basic" size="sm">
+            Remove Photo
+          </Button>
+        )}
+      </div>
 
       <InputGroup
         name="imgAttribution"

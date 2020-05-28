@@ -10,7 +10,7 @@ function Alert(props) {
   }
 
   return (
-    <div className="z-50 fixed right-0 top-0 mt-8">
+    <div className="z-50 fixed right-0 top-0 mt-16">
       <div className="flex flex-col space-y-4 w-56 mt-4 mr-4">
         {alerts.map(({ id, alertType, msg }) => (
           <div
@@ -42,22 +42,6 @@ function Alert(props) {
         ))}
       </div>
     </div>
-    /* <div key={alert.id} className={styles.container}>
-          <div className={styles.alert}>
-            <div className={styles.content}>
-              {alert.alertType === 'success' ? (
-                <LikeIcon className="block mx-auto w-24 h-24 fill-current text-green-400" />
-              ) : (
-                <InfoIcon className="block mx-auto w-24 h-24 fill-current text-red-400" />
-              )}
-              <span className={styles.message}>{alert.msg}</span>
-              <button
-                className={styles.button}
-                onClick={() => removeAlert(alert.id)}
-              />
-            </div>
-          </div>
-        </div> */
   );
 }
 

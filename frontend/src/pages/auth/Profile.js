@@ -15,7 +15,7 @@ import ProfilePosts from 'components/Profile/Posts';
 import ProfileBlogs from 'components/Profile/Blogs';
 import ProfileFavorites from 'components/Profile/Favorites';
 import ProfileNav from 'components/Profile/Nav';
-import UserAvatarPlaceholder from 'components/layout/UserAvatarPlaceholder';
+import { UserAvatar } from 'components/UserAvatar';
 
 function Profile() {
   const { userId } = useParams();
@@ -31,11 +31,22 @@ function Profile() {
     history.push('/');
   };
 
+  const userAvatarSrc = user.avatar && user.avatar.photoURL;
+
   return (
     <div className="w-full py-16 px-2 max-w-screen-xl mx-auto">
       <div className="flex flex-col">
         <div className="mt-8 w-full max-w-xs mx-auto bg-white rounded-t-md shadow-md">
-          {isOwner ? <AvatarUpload /> : <div></div>}
+          <div
+            style={{ minHeight: '14rem' }}
+            className="w-full flex justify-center items-center py-2"
+          >
+            {isOwner ? (
+              <AvatarUpload />
+            ) : (
+              <UserAvatar avatarURL={userAvatarSrc} />
+            )}
+          </div>
 
           <div className="border-t py-4">
             <h3 className="text-2xl text-center font-semibold text-gray-800">

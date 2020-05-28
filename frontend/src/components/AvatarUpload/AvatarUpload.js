@@ -3,32 +3,10 @@ import { useAlert } from 'context/AlertContext';
 import { useUploadUserAvatar } from 'hooks/useUser';
 import usePhotoFile from 'hooks/usePhotoFile';
 import { useUser } from 'context/UserContext';
-import Loading from 'components/Loading';
-import { Button } from 'components/layout/Button';
-import UserAvatarPlaceholder from '../layout/UserAvatarPlaceholder';
+import Loading from '../Loading';
+import { Button } from '../layout/Button';
+import { UserAvatar } from '../UserAvatar';
 import { UploadIcon } from 'icons/UploadIcon';
-import clsx from 'clsx';
-
-const UserAvatar = ({ avatarURL, size }) => {
-  const sizes = {
-    lg: 'w-40 h-40 md:w-48 md:h-48',
-  };
-  return (
-    <div className="rounded-full shadow-md">
-      {avatarURL ? (
-        <div className="relative rounded-full overflow-hidden w-40 h-40 md:w-48 md:h-48 border">
-          <img
-            className="object-cover w-full h-full rounded-full"
-            src={avatarURL}
-            alt=""
-          />
-        </div>
-      ) : (
-        <UserAvatarPlaceholder />
-      )}
-    </div>
-  );
-};
 
 const AvatarUpload = () => {
   const { user, setUser } = useUser();
@@ -70,29 +48,13 @@ const AvatarUpload = () => {
   };
 
   return (
-    <div
-      style={{ minHeight: '14rem' }}
-      className="flex flex-col items-center justify-center relative"
-    >
+    <div className="w-full flex flex-col justify-center items-center relative">
       {avatarStatus === 'loading' ? (
         <Loading />
       ) : (
         <>
           <div className="relative">
             <UserAvatar avatarURL={photo || userAvatarSrc} size="lg" />
-            {/* <div className="rounded-full shadow-md">
-              {userAvatarSrc || photo ? (
-                <div className="relative w-40 h-40 md:w-48 md:h-48 border rounded-full overflow-hidden">
-                  <img
-                    className="object-cover w-full h-full rounded-full"
-                    src={photo || userAvatarSrc}
-                    alt=""
-                  />
-                </div>
-              ) : (
-                <UserAvatarPlaceholder />
-              )}
-            </div> */}
 
             <label className="group absolute top-0 left-0 bottom-0 right-0 text-blue-400 rounded-full hover:bg-gray-100 cursor-pointer focus:outline-none">
               <div className="invisible group-hover:visible h-full flex flex-col items-center justify-center">
