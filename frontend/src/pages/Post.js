@@ -27,24 +27,13 @@ function Post() {
   const { user } = useUser();
   const { setAlert } = useAlert();
   const [isEditting, setIsEditting] = useState(false);
-  const [favorited, setFavorited] = useState(
-    !!(user && post && user.favorites.some((postId) => postId === post._id))
-  );
 
   const onLike = () => {
     if (!post || !user) return;
-    if (favorited) {
-      unfavoritePost(postSlug, {
-        onSuccess: () => {
-          setFavorited(false);
-        },
-      });
+    if (post.favorited) {
+      unfavoritePost(postSlug);
     } else {
-      favoritePost(postSlug, {
-        onSuccess: () => {
-          setFavorited(true);
-        },
-      });
+      favoritePost(postSlug);
     }
   };
 
@@ -90,7 +79,7 @@ function Post() {
         {isEditting && isOwner ? (
           <EditPost post={post} onUpdatePost={onUpdatePost} />
         ) : (
-          <DisplayPost post={post} onLike={onLike} favorited={favorited} />
+          <DisplayPost post={post} onLike={onLike} />
         )}
       </React.Suspense>
     </div>

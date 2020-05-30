@@ -30,9 +30,16 @@ function useBlogPosts(blogId) {
 }
 
 function usePostBySlug(slug) {
-  return useQuery(slug && ['post', slug], () =>
-    getPostBySlug(slug).then((res) => res.post)
-  );
+  // return useQuery(slug && ['post', slug], () =>
+  //   getPostBySlug(slug).then((res) => res.post)
+  // );
+  return useQuery({
+    queryKey: slug && ['post', slug],
+    queryFn: () => getPostBySlug(slug).then((res) => res.post),
+    config: {
+      staleTime: 10000,
+    },
+  });
 }
 
 function useCreatePost() {
@@ -64,23 +71,61 @@ function useDeletePost() {
 
 function useFavoritePost() {
   return useMutation((slug) => favoritePost(slug), {
-    onSuccess: (data, slug) => {
+    onMutate: (slug) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      queryCache.cancelQueries(['post', slug]);
+      // Snapshot the previous value
+      const previousPost = queryCache.getQueryData(['post', slug]);
+      // Optimistically update to the new value
       queryCache.setQueryData(['post', slug], (post) => ({
         ...post,
-        favoritesCount: data.post.favoritesCount,
+        favoritesCount: post.favoritesCount + 1,
+        favorited: true,
       }));
+      // Return a rollback function
+      return () => queryCache.setQueryData(['post', slug], previousPost);
     },
+    onError: (err, slug, rollback) => rollback(),
+    onSeattled: (slug) => {
+      queryCache.refetchQueries(['post', slug]);
+    },
+    // onSuccess: (data, slug) => {
+    //   queryCache.setQueryData(['post', slug], (post) => ({
+    //     ...post,
+    //     favoritesCount: data.post.favoritesCount,
+    //     favorited: data.post.favorited,
+    //   }));
+    // },
   });
 }
 
 function useUnfavoritePost() {
   return useMutation((slug) => unfavoritePost(slug), {
-    onSuccess: (data, slug) => {
+    onMutate: (slug) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      queryCache.cancelQueries(['post', slug]);
+      // Snapshot the previous value
+      const previousPost = queryCache.getQueryData(['post', slug]);
+      // Optimistically update to the new value
       queryCache.setQueryData(['post', slug], (post) => ({
         ...post,
-        favoritesCount: data.post.favoritesCount,
+        favoritesCount: Math.max(0, post.favoritesCount - 1),
+        favorited: false,
       }));
+      // Return a rollback function
+      return () => queryCache.setQueryData(['post', slug], previousPost);
     },
+    onError: (err, slug, rollback) => rollback(),
+    onSeattled: (slug) => {
+      queryCache.refetchQueries(['post', slug]);
+    },
+    // onSuccess: (data, slug) => {
+    //   queryCache.setQueryData(['post', slug], (post) => ({
+    //     ...post,
+    //     favoritesCount: data.post.favoritesCount,
+    //     favorited: data.post.favorited,
+    //   }));
+    // },
   });
 }
 

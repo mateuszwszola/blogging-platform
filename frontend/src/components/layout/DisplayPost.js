@@ -6,7 +6,7 @@ import EditorContentPreview from '../Editor/EditorContentPreview';
 import DisplayDate from './DisplayDate';
 import { HeartIcon } from 'icons';
 
-function DisplayPost({ post, onLike, favorited }) {
+function DisplayPost({ post, onLike }) {
   const userAvatar =
     (post.user && post.user.avatar && post.user.avatar.photoURL) || null;
 
@@ -44,11 +44,13 @@ function DisplayPost({ post, onLike, favorited }) {
             <HeartIcon
               className={clsx(
                 `w-10 h-10 fill-current`,
-                favorited ? 'text-red-500' : 'text-red-300'
+                post.favorited
+                  ? 'text-red-500 hover:text-red-300'
+                  : 'text-red-300 hover:text-red-500'
               )}
             />
           </button>
-          <span className="text-2xl ml-2 text-gray-600">
+          <span className="text-2xl ml-2 text-gray-600 font-semibold">
             {post.favoritesCount}
           </span>
         </div>
@@ -94,7 +96,6 @@ function DisplayPost({ post, onLike, favorited }) {
 DisplayPost.propTypes = {
   post: PropTypes.object.isRequired,
   onLike: PropTypes.func.isRequired,
-  favorited: PropTypes.bool.isRequired,
 };
 
 export default DisplayPost;
