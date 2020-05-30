@@ -7,6 +7,25 @@ const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
 const { validate } = require('../middleware/validate');
+const Post = require('../models/Post');
+const { ErrorHandler } = require('../utils/error');
+
+// Preload post on routes with ':slug'
+router.param('slug', async (req, res, next, slug) => {
+  try {
+    const post = await Post.findOne({ slug });
+
+    if (!post) {
+      throw new ErrorHandler(404, 'Post not found');
+    }
+
+    req.post = post;
+
+    return next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 /*
   @route   POST api/posts/:blogId
@@ -91,5 +110,19 @@ router.get(
   @access  Public
  */
 router.get('/slug/:slug', postControllers.getPostBySlug);
+
+/*
+  @route   POST api/posts/:slug/favorite
+  @desc    Favorite post
+  @access  Private
+ */
+router.post('/:slug/favorite', auth, postControllers.favorite);
+
+/*
+  @route   DELETE api/posts/:slug/favorite
+  @desc    Unfavorite post
+  @access  Private
+ */
+router.delete('/:slug/favorite', auth, postControllers.unfavorite);
 
 module.exports = router;

@@ -3,7 +3,7 @@ const { ErrorHandler } = require('../utils/error');
 
 exports.getUserProfileById = async (req, res, next) => {
   try {
-    res.json({ profile: req.profile.toProfileJSON() });
+    res.json({ profile: req.profile.toProfileJSONFor(null) });
   } catch (err) {
     next(err);
   }
@@ -22,7 +22,7 @@ exports.follow = async (req, res, next) => {
 
     await user.follow(profileId);
 
-    res.json({ profile: req.profile.toProfileJSON() });
+    res.json({ profile: req.profile.toProfileJSONFor(user) });
   } catch (err) {
     next(err);
   }
@@ -37,7 +37,7 @@ exports.unfollow = async (req, res, next) => {
 
     await user.unfollow(profileId);
 
-    res.json({ profile: req.profile.toProfileJSON() });
+    res.json({ profile: req.profile.toProfileJSONFor(user) });
   } catch (err) {
     next(err);
   }

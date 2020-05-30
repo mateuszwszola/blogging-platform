@@ -58,6 +58,19 @@ BlogSchema.methods.slugify = function () {
   ).toString(36)}`;
 };
 
+BlogSchema.methods.toBlogJSON = function () {
+  return {
+    _id: this._id,
+    name: this.name,
+    slug: this.slug,
+    description: this.description,
+    bgImg: this.bgImg,
+    user: this.user,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  };
+};
+
 const Blog = mongoose.model('Blog', BlogSchema);
 
 module.exports = Blog;

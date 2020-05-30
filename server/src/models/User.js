@@ -91,11 +91,10 @@ UserSchema.methods.toAuthJSON = function () {
     email: this.email,
     bio: this.bio,
     avatar: this.avatar,
-    token: this.generateAuthToken(),
   };
 };
 
-UserSchema.methods.toProfileJSON = function () {
+UserSchema.methods.toProfileJSONFor = function (user) {
   return {
     _id: this._id,
     name: this.name,
@@ -103,6 +102,9 @@ UserSchema.methods.toProfileJSON = function () {
     avatar: this.avatar,
     favorites: this.favorites,
     following: this.following,
+    isFollowing: user ? user.isFollowing(this._id) : false,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
   };
 };
 

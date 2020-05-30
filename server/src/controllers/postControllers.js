@@ -1,6 +1,7 @@
 const Post = require('../models/Post');
 const Blog = require('../models/Blog');
 const Photo = require('../models/Photo');
+const User = require('../models/User');
 const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
 const createPhotoLink = require('../utils/createPhotoLink');
@@ -168,24 +169,6 @@ exports.getAllBlogPosts = async (req, res, next) => {
   }
 };
 
-exports.getPostBySlug = async (req, res, next) => {
-  const { slug } = req.params;
-
-  try {
-    const post = await Post.findOne({ slug })
-      .populate('user', ['name', 'bio', 'avatar'])
-      .populate('blog', ['name', 'slug', 'description', 'bgImg']);
-
-    if (!post) {
-      throw new ErrorHandler(404, 'Post Not Found');
-    }
-
-    res.json({ post });
-  } catch (err) {
-    next(err);
-  }
-};
-
 exports.getAuthUserPosts = async (req, res, next) => {
   try {
     const posts = await Post.find({ user: req.user._id })
@@ -211,6 +194,52 @@ exports.getUserPosts = async (req, res, next) => {
       });
 
     res.json({ posts });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getPostBySlug = async (req, res, next) => {
+  try {
+    const post = await Post.findById(req.post._id)
+      .populate('user', ['name', 'bio', 'avatar'])
+      .populate('blog', ['name', 'slug', 'description', 'bgImg']);
+
+    res.json({ post });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.favorite = async (req, res, next) => {
+  const userId = req.user._id;
+  const postId = req.post._id;
+
+  try {
+    const user = await User.findById(userId);
+    const post = await Post.findById(postId);
+
+    await user.favorite(req.post._id);
+    await post.updateFavoriteCount();
+
+    res.json({ post });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.unfavorite = async (req, res, next) => {
+  const userId = req.user._id;
+  const postId = req.post._id;
+
+  try {
+    const user = await User.findById(userId);
+    const post = await Post.findById(postId);
+
+    await user.unfavorite(req.post._id);
+    await post.updateFavoriteCount();
+
+    res.json({ post });
   } catch (err) {
     next(err);
   }

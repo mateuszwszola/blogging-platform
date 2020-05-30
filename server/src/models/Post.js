@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const Photo = require('./Photo');
-
+const User = require('./User');
 const specifiedStringLength = require('../validations/specifiedStringLength');
 
 const requiredString = {
@@ -48,6 +47,10 @@ const PostSchema = new mongoose.Schema(
       },
     ],
     tags: [String],
+    favoritesCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
@@ -67,9 +70,38 @@ PostSchema.methods.slugify = function () {
   ).toString(36)}`;
 };
 
+PostSchema.methods.updateFavoriteCount = async function () {
+  const post = this;
+
+  const count = await User.count({ favorites: { $in: [post._id] } });
+  post.favoritesCount = count;
+
+  return await post.save();
+};
+
 PostSchema.methods.addComment = function (commentId) {
   this.comments = this.comments.concat(commentId);
   this.save();
+};
+
+PostSchema.methods.toPostJSONFor = function (user) {
+  return {
+    _id: this._id,
+    slug: this.slug,
+    title: this.title,
+    body: this.body,
+    bgImgUrl: this.bgImgUrl,
+    photo: this.photo,
+    imgAttribution: this.imgAttribution,
+    tags: this.tags,
+    comments: this.comments,
+    favoritesCount: this.favoritesCount,
+    favorited: user ? user.isFavorite(this._id) : false,
+    user: this.user,
+    blog: this.blog,
+    createdAt: this.createdAt,
+    updatedAt: this.updatedAt,
+  };
 };
 
 const Post = mongoose.model('Post', PostSchema);
