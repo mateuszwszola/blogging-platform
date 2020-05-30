@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import clsx from 'clsx';
 import profileImg from 'img/undraw_profile.svg';
 import EditorContentPreview from '../Editor/EditorContentPreview';
 import DisplayDate from './DisplayDate';
+import { HeartIcon } from 'icons';
 
-function DisplayPost({ post }) {
+function DisplayPost({ post, onLike, favorited }) {
   const userAvatar =
     (post.user && post.user.avatar && post.user.avatar.photoURL) || null;
 
@@ -36,7 +38,22 @@ function DisplayPost({ post }) {
         <h1 className="text-2xl md:text-4xl capitalize text-center md:text-left font-semibold">
           {post.title}
         </h1>
-        <div className="flex flex-col md:flex-row mt-2 items-center">
+
+        <div className="flex items-center">
+          <button onClick={onLike}>
+            <HeartIcon
+              className={clsx(
+                `w-10 h-10 fill-current`,
+                favorited ? 'text-red-500' : 'text-red-300'
+              )}
+            />
+          </button>
+          <span className="text-2xl ml-2 text-gray-600">
+            {post.favoritesCount}
+          </span>
+        </div>
+
+        <div className="flex flex-col md:flex-row mt-4 items-center">
           <img
             src={userAvatar || profileImg}
             alt="profile"
@@ -76,6 +93,8 @@ function DisplayPost({ post }) {
 
 DisplayPost.propTypes = {
   post: PropTypes.object.isRequired,
+  onLike: PropTypes.func.isRequired,
+  favorited: PropTypes.bool.isRequired,
 };
 
 export default DisplayPost;

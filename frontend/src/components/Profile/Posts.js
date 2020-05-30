@@ -5,8 +5,8 @@ import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import Posts from 'components/Posts';
 
-function ProfilePosts({ userId }) {
-  const { status, error, data: posts } = useUserPosts(userId);
+function ProfilePosts({ profileId }) {
+  const { status, error, data: posts } = useUserPosts(profileId);
 
   return (
     <div className="relative">
@@ -22,7 +22,7 @@ function ProfilePosts({ userId }) {
 }
 
 ProfilePosts.propTypes = {
-  userId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
 };
 
 export default ProfilePosts;

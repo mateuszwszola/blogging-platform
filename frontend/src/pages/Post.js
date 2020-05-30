@@ -2,7 +2,12 @@ import React, { useState, lazy } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
-import { usePostBySlug, useDeletePost } from 'hooks/usePost';
+import {
+  usePostBySlug,
+  useDeletePost,
+  useFavoritePost,
+  useUnfavoritePost,
+} from 'hooks/usePost';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import DisplayPost from 'components/layout/DisplayPost';
@@ -16,10 +21,32 @@ function Post() {
   const { postSlug } = useParams();
   const { status, error, data: post } = usePostBySlug(postSlug);
   const [deletePost] = useDeletePost();
+  const [favoritePost] = useFavoritePost();
+  const [unfavoritePost] = useUnfavoritePost();
   const history = useHistory();
   const { user } = useUser();
   const { setAlert } = useAlert();
   const [isEditting, setIsEditting] = useState(false);
+  const [favorited, setFavorited] = useState(
+    !!(user && post && user.favorites.some((postId) => postId === post._id))
+  );
+
+  const onLike = () => {
+    if (!post || !user) return;
+    if (favorited) {
+      unfavoritePost(postSlug, {
+        onSuccess: () => {
+          setFavorited(false);
+        },
+      });
+    } else {
+      favoritePost(postSlug, {
+        onSuccess: () => {
+          setFavorited(true);
+        },
+      });
+    }
+  };
 
   const onUpdatePost = () => {
     setIsEditting(false);
@@ -63,7 +90,7 @@ function Post() {
         {isEditting && isOwner ? (
           <EditPost post={post} onUpdatePost={onUpdatePost} />
         ) : (
-          <DisplayPost post={post} />
+          <DisplayPost post={post} onLike={onLike} favorited={favorited} />
         )}
       </React.Suspense>
     </div>

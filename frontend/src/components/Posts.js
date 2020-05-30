@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import Moment from 'react-moment';
 import clsx from 'clsx';
-import { CalendarIcon } from 'icons';
+import { CalendarIcon, HeartIcon } from 'icons';
 
 function Posts({ posts }) {
   return (
@@ -43,15 +43,20 @@ function Posts({ posts }) {
                   <Link to={`/posts/${post.slug}`}>{post.title}</Link>
                 </h3>
                 {post.blog && post.blog.name && (
-                  <p className="pl-2 text-gray-800 text-xl">{post.blog.name}</p>
+                  <Link
+                    to={`/blogs/${post.blog.slug}`}
+                    className="text-blue-500 text-xl"
+                  >
+                    {post.blog.name}
+                  </Link>
                 )}
                 {post.description && <p className="my-2">{post.description}</p>}
-                {/* <div className="flex items-center my-2">
-                  <StarFullIcon className="w-6 h-6 fill-current text-green-900 cursor-pointer" />
+                <div className="flex items-center mt-2">
+                  <HeartIcon className="w-5 h-5 fill-current text-gray-600" />
                   <span className="text-gray-600 ml-2 select-none">
-                    {Math.floor(Math.random() * 100)}
+                    {post.favoritesCount}
                   </span>
-                </div> */}
+                </div>
               </div>
             </div>
           );

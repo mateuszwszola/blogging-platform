@@ -13,6 +13,8 @@ import {
   deletePost,
   addBlogPost,
   updatePost,
+  favoritePost,
+  unfavoritePost,
 } from 'api/post';
 
 function useUserPosts(userId) {
@@ -60,6 +62,28 @@ function useDeletePost() {
   return useMutation((postId) => deletePost(postId));
 }
 
+function useFavoritePost() {
+  return useMutation((slug) => favoritePost(slug), {
+    onSuccess: (data, slug) => {
+      queryCache.setQueryData(['post', slug], (post) => ({
+        ...post,
+        favoritesCount: data.post.favoritesCount,
+      }));
+    },
+  });
+}
+
+function useUnfavoritePost() {
+  return useMutation((slug) => unfavoritePost(slug), {
+    onSuccess: (data, slug) => {
+      queryCache.setQueryData(['post', slug], (post) => ({
+        ...post,
+        favoritesCount: data.post.favoritesCount,
+      }));
+    },
+  });
+}
+
 function usePost() {
   const [state, dispatch] = useThunkReducer(postReducer, initialPostState);
   const { post, loading, error } = state;
@@ -81,4 +105,6 @@ export {
   usePosts,
   useDeletePost,
   usePost,
+  useFavoritePost,
+  useUnfavoritePost,
 };

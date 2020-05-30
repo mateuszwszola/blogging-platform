@@ -5,8 +5,8 @@ import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import Blogs from 'components/Blogs';
 
-function ProfileBlogs({ userId }) {
-  const { status, error, data: blogs } = useUserBlogs(userId);
+function ProfileBlogs({ profileId }) {
+  const { status, error, data: blogs } = useUserBlogs(profileId);
 
   return (
     <div className="relative">
@@ -22,7 +22,7 @@ function ProfileBlogs({ userId }) {
 }
 
 ProfileBlogs.propTypes = {
-  userId: PropTypes.string.isRequired,
+  profileId: PropTypes.string.isRequired,
 };
 
 export default ProfileBlogs;

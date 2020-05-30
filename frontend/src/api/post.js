@@ -24,6 +24,14 @@ function deletePost(postId) {
   return client(`posts/${postId}`, { method: 'DELETE' });
 }
 
+function favoritePost(slug) {
+  return client(`posts/${slug}/favorite`, { method: 'POST' });
+}
+
+function unfavoritePost(slug) {
+  return client(`posts/${slug}/favorite`, { method: 'DELETE' });
+}
+
 export {
   getBlogPosts,
   getPostBySlug,
@@ -31,4 +39,6 @@ export {
   getUserPosts,
   addBlogPost,
   updatePost,
+  favoritePost,
+  unfavoritePost,
 };
