@@ -34,7 +34,7 @@ router.param('slug', async (req, res, next, slug) => {
  */
 router.post(
   '/:blogId',
-  auth,
+  auth.required,
   validateParamObjectId('blogId'),
   photoUpload.single('photo'),
   validate(postValidation.validatePost),
@@ -48,7 +48,7 @@ router.post(
  */
 router.put(
   '/:postId',
-  auth,
+  auth.required,
   validateParamObjectId('postId'),
   photoUpload.single('photo'),
   validate(postValidation.validatePost),
@@ -62,7 +62,7 @@ router.put(
  */
 router.delete(
   '/:postId',
-  auth,
+  auth.required,
   validateParamObjectId('postId'),
   postControllers.deletePost
 );
@@ -72,7 +72,7 @@ router.delete(
   @desc    Get auth user posts
   @access  Private
  */
-router.get('/', auth, postControllers.getAuthUserPosts);
+router.get('/', auth.required, postControllers.getAuthUserPosts);
 
 /*
   @route   GET api/posts/all
@@ -88,7 +88,7 @@ router.get('/all', postControllers.getAllPosts);
  */
 router.get(
   '/user/:userId',
-  postControllers.getAllPosts,
+  postControllers.getUserPosts,
   validateParamObjectId('userId'),
   postControllers.getUserPosts
 );
@@ -109,20 +109,20 @@ router.get(
   @desc    Get post by slug
   @access  Public
  */
-router.get('/slug/:slug', postControllers.getPostBySlug);
+router.get('/slug/:slug', auth.optional, postControllers.getPostBySlug);
 
 /*
   @route   POST api/posts/:slug/favorite
   @desc    Favorite post
   @access  Private
  */
-router.post('/:slug/favorite', auth, postControllers.favorite);
+router.post('/:slug/favorite', auth.required, postControllers.favorite);
 
 /*
   @route   DELETE api/posts/:slug/favorite
   @desc    Unfavorite post
   @access  Private
  */
-router.delete('/:slug/favorite', auth, postControllers.unfavorite);
+router.delete('/:slug/favorite', auth.required, postControllers.unfavorite);
 
 module.exports = router;

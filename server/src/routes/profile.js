@@ -32,13 +32,13 @@ router.get('/:userId', profileControllers.getUserProfileById);
   @desc    Follow user
   @access  Private
  */
-router.post('/:userId/follow', auth, profileControllers.follow);
+router.post('/:userId/follow', auth.required, profileControllers.follow);
 
 /*
   @route   DELETE api/users/:userId/follow
   @desc    Unfollow user
   @access  Private
  */
-router.delete('/:userId/follow', auth, profileControllers.unfollow);
+router.delete('/:userId/follow', auth.required, profileControllers.unfollow);
 
 module.exports = router;

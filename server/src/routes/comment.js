@@ -14,7 +14,7 @@ const { validate } = require('../middleware/validate');
  */
 router.post(
   '/:postId',
-  auth,
+  auth.required,
   validateParamObjectId('postId'),
   validate(validateComment),
   commentControllers.addComment
@@ -25,7 +25,7 @@ router.post(
   @desc    Delete a comment
   @access  Private
  */
-router.delete('/:commentId', auth, commentControllers.deleteComment);
+router.delete('/:commentId', auth.required, commentControllers.deleteComment);
 
 /*
   @route   GET api/comments/:postId

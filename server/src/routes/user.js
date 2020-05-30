@@ -28,7 +28,7 @@ router.post(
  */
 router.put(
   '/',
-  auth,
+  auth.required,
   validate(userValidation.validateUser),
   userControllers.updateUser
 );
@@ -49,7 +49,7 @@ router.post(
   @desc    Get a user
   @access  Private
  */
-router.get('/me', auth, userControllers.getUser);
+router.get('/me', auth.required, userControllers.getUser);
 
 /*
   @route   POST api/users/photo
@@ -58,7 +58,7 @@ router.get('/me', auth, userControllers.getUser);
  */
 router.post(
   '/photo',
-  auth,
+  auth.required,
   photoUpload.single('photo'),
   userControllers.uploadPhoto
 );

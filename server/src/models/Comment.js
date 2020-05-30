@@ -7,7 +7,7 @@ const requiredString = {
 
 const CommentSchema = new mongoose.Schema(
   {
-    author: {
+    user: {
       type: mongoose.ObjectId,
       ref: 'User',
     },

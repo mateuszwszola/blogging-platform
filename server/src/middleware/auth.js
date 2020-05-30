@@ -17,28 +17,41 @@ const verifyToken = (token, secret = config.secrets.jwt) => {
   });
 };
 
-const auth = async (req, res, next) => {
-  const token = req.header('x-auth-token');
-
-  const errMsg = 'Not authorized to access this resource';
-
-  if (!token) {
-    return res.status(401).json({ message: errMsg });
-  }
-
-  try {
-    const data = await verifyToken(token);
-    const user = await User.findById(data.user.id).select('-password').lean();
-    if (!user) {
+const auth = {
+  required: async (req, res, next) => {
+    const token = req.header('x-auth-token');
+    const errMsg = 'Not authorized to access this resource';
+    if (!token) {
       return res.status(401).json({ message: errMsg });
     }
-    req.user = user;
-    req.token = token;
-  } catch (err) {
-    return res.status(401).json({ message: errMsg });
-  }
+    try {
+      const data = await verifyToken(token);
+      const user = await User.findById(data.user.id).select('-password');
+      if (!user) {
+        return res.status(401).json({ message: errMsg });
+      }
+      req.user = user;
+      req.token = token;
+    } catch (err) {
+      return res.status(401).json({ message: errMsg });
+    }
 
-  next();
+    next();
+  },
+  optional: async (req, res, next) => {
+    const token = req.header('x-auth-token');
+    if (token) {
+      const data = await verifyToken(token);
+      if (data) {
+        const user = await User.findById(data.user.id).select('-password');
+        if (user) {
+          req.user = user;
+        }
+      }
+    }
+
+    next();
+  },
 };
 
 module.exports = {

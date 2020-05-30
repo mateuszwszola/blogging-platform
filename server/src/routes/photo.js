@@ -10,7 +10,7 @@ const photoControllers = require('../controllers/photoControllers');
  */
 router.post(
   '/',
-  auth,
+  auth.required,
   photoUpload.single('photo'),
   photoControllers.uploadPhoto
 );

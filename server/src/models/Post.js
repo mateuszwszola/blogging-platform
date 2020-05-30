@@ -73,7 +73,7 @@ PostSchema.methods.slugify = function () {
 PostSchema.methods.updateFavoriteCount = async function () {
   const post = this;
 
-  const count = await User.count({ favorites: { $in: [post._id] } });
+  const count = await User.countDocuments({ favorites: { $in: [post._id] } });
   post.favoritesCount = count;
 
   return await post.save();
@@ -81,7 +81,7 @@ PostSchema.methods.updateFavoriteCount = async function () {
 
 PostSchema.methods.addComment = function (commentId) {
   this.comments = this.comments.concat(commentId);
-  this.save();
+  return this.save();
 };
 
 PostSchema.methods.toPostJSONFor = function (user) {

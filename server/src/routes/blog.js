@@ -15,7 +15,7 @@ const { validate } = require('../middleware/validate');
  */
 router.post(
   '/',
-  auth,
+  auth.required,
   photoUpload.single('photo'),
   validate(blogValidation.validateBlog),
   blogControllers.createBlog
@@ -28,7 +28,7 @@ router.post(
  */
 router.put(
   '/:blogId',
-  auth,
+  auth.required,
   validateParamObjectId('blogId'),
   photoUpload.single('photo'),
   validate(blogValidation.validateBlog),
@@ -40,7 +40,7 @@ router.put(
   @desc    Get auth user blogs
   @access  Private
  */
-router.get('/', auth, blogControllers.getAuthUserBlogs);
+router.get('/', auth.required, blogControllers.getAuthUserBlogs);
 
 /*
   @route   GET api/blogs/all
@@ -85,7 +85,7 @@ router.get(
  */
 router.delete(
   '/:blogId',
-  auth,
+  auth.required,
   validateParamObjectId('blogId'),
   blogControllers.deleteBlog
 );

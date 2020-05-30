@@ -198,8 +198,6 @@ describe('User API tests', () => {
         .set('x-auth-token', token)
         .send(data);
 
-      console.log(JSON.stringify(res, null, 2));
-
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('user');
       expect(res.body.user.bio).toBe(data.bio);

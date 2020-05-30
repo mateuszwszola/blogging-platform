@@ -205,7 +205,11 @@ exports.getPostBySlug = async (req, res, next) => {
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg']);
 
-    res.json({ post });
+    if (req.user) {
+      res.json({ post: post.toPostJSONFor(req.user) });
+    } else {
+      res.json({ post: post.toPostJSONFor(null) });
+    }
   } catch (err) {
     next(err);
   }
@@ -217,12 +221,13 @@ exports.favorite = async (req, res, next) => {
 
   try {
     const user = await User.findById(userId);
-    const post = await Post.findById(postId);
+    let post = await Post.findById(postId);
 
-    await user.favorite(req.post._id);
-    await post.updateFavoriteCount();
+    await user.favorite(postId);
 
-    res.json({ post });
+    post = await post.updateFavoriteCount();
+
+    res.json({ post: post.toPostJSONFor(user) });
   } catch (err) {
     next(err);
   }
@@ -234,12 +239,13 @@ exports.unfavorite = async (req, res, next) => {
 
   try {
     const user = await User.findById(userId);
-    const post = await Post.findById(postId);
+    let post = await Post.findById(postId);
 
-    await user.unfavorite(req.post._id);
-    await post.updateFavoriteCount();
+    await user.unfavorite(postId);
 
-    res.json({ post });
+    post = await post.updateFavoriteCount();
+
+    res.json({ post: post.toPostJSONFor(user) });
   } catch (err) {
     next(err);
   }

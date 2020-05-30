@@ -51,7 +51,7 @@ describe('Authorization', () => {
 
       const next = () => {};
 
-      await auth(req, res, next);
+      await auth.required(req, res, next);
     });
 
     test('should return error when invalid token provided', async () => {
@@ -79,7 +79,7 @@ describe('Authorization', () => {
 
       const next = () => {};
 
-      await auth(req, res, next);
+      await auth.required(req, res, next);
     });
 
     test('should return error when user from payload does not exists', async () => {
@@ -109,11 +109,11 @@ describe('Authorization', () => {
 
       const next = () => {};
 
-      await auth(req, res, next);
+      await auth.required(req, res, next);
     });
 
     test('should set user and token on request object and call next', async () => {
-      expect.assertions(6);
+      expect.assertions(5);
 
       const user = await User.create(dummyUser);
       const token = generateNewToken(user);
@@ -133,14 +133,13 @@ describe('Authorization', () => {
         expect(true).toBe(true);
       };
 
-      await auth(req, res, next);
+      await auth.required(req, res, next);
 
       expect(req).toHaveProperty('user');
       expect(req).toHaveProperty('token');
       expect(req.token).toBe(token);
 
       expect(req.user._id.toString()).toBe(user._id.toString());
-      expect(req.user).not.toHaveProperty('password');
     });
   });
 });
