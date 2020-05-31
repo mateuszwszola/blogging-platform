@@ -9,7 +9,7 @@ function ProfileBlogs({ profileId }) {
   const { status, error, data: blogs } = useUserBlogs(profileId);
 
   return (
-    <div className="relative">
+    <>
       {error ? (
         <DisplayError msg={error.message} />
       ) : status === 'loading' ? (
@@ -17,7 +17,7 @@ function ProfileBlogs({ profileId }) {
       ) : (
         <Blogs blogs={blogs} />
       )}
-    </div>
+    </>
   );
 }
 

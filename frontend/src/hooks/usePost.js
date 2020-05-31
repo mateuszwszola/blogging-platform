@@ -15,11 +15,18 @@ import {
   updatePost,
   favoritePost,
   unfavoritePost,
+  getUserFavorites,
 } from 'api/post';
 
 function useUserPosts(userId) {
   return useQuery(userId && ['posts', userId], () =>
     getUserPosts(userId).then((res) => res.posts)
+  );
+}
+
+function useUserFavoritePosts(userId) {
+  return useQuery(userId && ['posts', userId, { type: 'favorite' }], () =>
+    getUserFavorites(userId).then((res) => res.posts)
   );
 }
 
@@ -30,14 +37,11 @@ function useBlogPosts(blogId) {
 }
 
 function usePostBySlug(slug) {
-  // return useQuery(slug && ['post', slug], () =>
-  //   getPostBySlug(slug).then((res) => res.post)
-  // );
   return useQuery({
     queryKey: slug && ['post', slug],
     queryFn: () => getPostBySlug(slug).then((res) => res.post),
     config: {
-      staleTime: 10000,
+      // staleTime: 0,
     },
   });
 }
@@ -85,9 +89,11 @@ function useFavoritePost() {
       // Return a rollback function
       return () => queryCache.setQueryData(['post', slug], previousPost);
     },
-    onError: (err, slug, rollback) => rollback(),
-    onSeattled: (slug) => {
-      queryCache.refetchQueries(['post', slug]);
+    onSettled: (slug, error, variables, rollback) => {
+      if (error) {
+        console.log({ slug, error, variables, rollback });
+        rollback();
+      }
     },
     // onSuccess: (data, slug) => {
     //   queryCache.setQueryData(['post', slug], (post) => ({
@@ -115,17 +121,11 @@ function useUnfavoritePost() {
       // Return a rollback function
       return () => queryCache.setQueryData(['post', slug], previousPost);
     },
-    onError: (err, slug, rollback) => rollback(),
-    onSeattled: (slug) => {
-      queryCache.refetchQueries(['post', slug]);
+    onSettled: (slug, error, variables, rollback) => {
+      if (error) {
+        rollback();
+      }
     },
-    // onSuccess: (data, slug) => {
-    //   queryCache.setQueryData(['post', slug], (post) => ({
-    //     ...post,
-    //     favoritesCount: data.post.favoritesCount,
-    //     favorited: data.post.favorited,
-    //   }));
-    // },
   });
 }
 
@@ -152,4 +152,5 @@ export {
   usePost,
   useFavoritePost,
   useUnfavoritePost,
+  useUserFavoritePosts,
 };

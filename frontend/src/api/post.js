@@ -32,6 +32,10 @@ function unfavoritePost(slug) {
   return client(`posts/${slug}/favorite`, { method: 'DELETE' });
 }
 
+function getUserFavorites(userId) {
+  return client(`posts/user/${userId}/favorites`);
+}
+
 export {
   getBlogPosts,
   getPostBySlug,
@@ -41,4 +45,5 @@ export {
   updatePost,
   favoritePost,
   unfavoritePost,
+  getUserFavorites,
 };
