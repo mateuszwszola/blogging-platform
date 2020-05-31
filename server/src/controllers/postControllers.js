@@ -199,6 +199,29 @@ exports.getUserPosts = async (req, res, next) => {
   }
 };
 
+exports.getFavorites = async (req, res, next) => {
+  const { userId } = req.params;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ErrorHandler(404, 'User not found');
+    }
+    const posts = await Post.find()
+      .where('_id')
+      .in(user.favorites)
+      .populate('user', ['name', 'bio', 'avatar'])
+      .populate('blog', ['name', 'slug', 'description', 'bgImg']);
+
+    if (req.user) {
+      res.json({ posts: posts.map((post) => post.toPostJSONFor(req.user)) });
+    } else {
+      res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getPostBySlug = async (req, res, next) => {
   try {
     const post = await Post.findById(req.post._id)

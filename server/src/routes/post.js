@@ -8,6 +8,7 @@ const {
 } = require('../validations/validateParamObjectId');
 const { validate } = require('../middleware/validate');
 const Post = require('../models/Post');
+const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
 
 // Preload post on routes with ':slug'
@@ -88,9 +89,21 @@ router.get('/all', postControllers.getAllPosts);
  */
 router.get(
   '/user/:userId',
-  postControllers.getUserPosts,
   validateParamObjectId('userId'),
+  auth.optional,
   postControllers.getUserPosts
+);
+
+/*
+  @route   GET api/posts/user/:userId/favorites
+  @desc    Get user favorites
+  @access  Public
+ */
+router.get(
+  '/user/:userId/favorites',
+  validateParamObjectId('userId'),
+  auth.optional,
+  postControllers.getFavorites
 );
 
 /*
