@@ -6,13 +6,13 @@ const baseConfig = {
   isDev: env === 'development',
   isTest: env === 'testing',
   isProd: env === 'production',
-  port: 3001,
+  port: process.env.PORT || 3001,
   secrets: {
     jwt: process.env.JWT_KEY,
     jwtExp: process.env.JWT_EXP || 3600,
   },
-  mailgunApiKey: process.env.MAILGUN_API_KEY,
-  mailgunDomain: process.env.MAILGUN_DOMAIN,
+  // mailgunApiKey: process.env.MAILGUN_API_KEY,
+  // mailgunDomain: process.env.MAILGUN_DOMAIN,
 };
 
 let envConfig = {};
