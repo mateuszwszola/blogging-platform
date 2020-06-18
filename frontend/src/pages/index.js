@@ -6,3 +6,4 @@ export { default as NotFound } from './NotFound';
 export { default as Explore } from './Explore';
 export { default as Blog } from './Blog';
 export { default as Post } from './Post';
+export { default as Profile } from './Profile';

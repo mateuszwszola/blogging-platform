@@ -1,10 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
+// import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { EnvelopeIcon } from 'icons';
-import useInput from 'hooks/useInput';
-import { sendResetPasswordEmail } from 'api/auth';
-import useStatus from 'hooks/useStatus';
+// import useInput from 'hooks/useInput';
+// import { sendResetPasswordEmail } from 'api/auth';
+// import useStatus from 'hooks/useStatus';
 
 function ForgotPassword({
   handleSubmit,
@@ -63,7 +63,7 @@ function ForgotPassword({
     </div>
   );
 }
-
+/*
 ForgotPassword.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   email: PropTypes.string.isRequired,
@@ -84,7 +84,6 @@ function ForgotPasswordContainer(props) {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    /*
     requestStarted();
     sendResetPasswordEmail({ email })
       .then((response) => {
@@ -96,7 +95,7 @@ function ForgotPasswordContainer(props) {
         requestFailed();
         console.error(err);
       });
-    */
+    
   };
   return (
     <ForgotPassword
@@ -107,5 +106,5 @@ function ForgotPasswordContainer(props) {
     />
   );
 }
-
-export default ForgotPasswordContainer;
+*/
+export default ForgotPassword;

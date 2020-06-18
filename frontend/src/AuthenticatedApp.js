@@ -1,8 +1,8 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import PageContent from 'components/layout/PageContent';
-import { Blog, Post, NotFound, Explore } from 'pages';
-import { Homepage, Profile, Dashboard, Settings } from 'pages/auth';
+import { Blog, Post, NotFound, Explore, Profile } from 'pages';
+import { Homepage, Dashboard, Settings } from 'pages/auth';
 
 function AuthenticatedApp() {
   return (

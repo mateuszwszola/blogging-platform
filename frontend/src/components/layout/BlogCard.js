@@ -43,8 +43,8 @@ const BlogCard = ({ blog }) => {
               </div>
             )}
             <div className="ml-4">
-              <h4 className="text-md font-medium cursor-pointer text-blue-700 hover:text-blue-800">
-                {blog.user.name}
+              <h4 className="text-md font-medium text-blue-700 hover:text-blue-800">
+                <Link to={`/profile/${blog.user._id}`}>{blog.user.name}</Link>
               </h4>
               {blog.user.bio && (
                 <p className="text-sm text-gray-600">{blog.user.bio}</p>

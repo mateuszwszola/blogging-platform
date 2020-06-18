@@ -10,6 +10,7 @@ import {
   Explore,
   Blog,
   Post,
+  Profile,
 } from 'pages';
 
 function UnauthenticatedApp() {
@@ -36,6 +37,9 @@ function UnauthenticatedApp() {
         </Route>
         <Route path="/blogs/:blogSlug">
           <Blog />
+        </Route>
+        <Route path="/profile/:userId">
+          <Profile />
         </Route>
         <Route>
           <NotFound />
