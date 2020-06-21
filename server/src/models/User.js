@@ -38,13 +38,7 @@ const UserSchema = new mongoose.Schema(
       maxlength: 100,
     },
     avatar: {
-      photoURL: {
-        type: String,
-      },
-      photoID: {
-        type: mongoose.ObjectId,
-        ref: 'Photo',
-      },
+      type: String,
     },
     favorites: [{ type: mongoose.ObjectId, ref: 'Post' }],
     following: [{ type: mongoose.ObjectId, ref: 'User' }],

@@ -13,6 +13,8 @@ const baseConfig = {
   },
   // mailgunApiKey: process.env.MAILGUN_API_KEY,
   // mailgunDomain: process.env.MAILGUN_DOMAIN,
+  awsAccessKeyId: process.env.AWS_ACCCESS_KEY_ID,
+  awsSecretKey: process.env.AWS_SECRET_KEY,
 };
 
 let envConfig = {};

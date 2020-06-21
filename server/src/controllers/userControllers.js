@@ -1,11 +1,7 @@
 const User = require('../models/User');
-const Photo = require('../models/Photo');
-const {
-  convertBufferToJimpImg,
-  resizeAndOptimizeImg,
-} = require('../utils/optimizeImg');
-const createPhotoLink = require('../utils/createPhotoLink');
 const { ErrorHandler } = require('../utils/error');
+const deleteS3Object = require('../utils/s3/deleteS3Object');
+const getObjectKeyFromImageUrl = require('../utils/s3/getObjectKeyFromImageUrl');
 
 exports.registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -50,22 +46,6 @@ exports.updateUser = async (req, res, next) => {
       newUserData.bio = req.body.bio;
     }
 
-    if (typeof req.body.avatarURL !== 'undefined') {
-      newUserData.avatar = {};
-      newUserData.avatar.photoURL = req.body.avatarURL;
-      newUserData.avatar.photoID = null;
-    }
-
-    if (
-      newUserData.avatar &&
-      newUserData.avatar.photoURL &&
-      user.avatar &&
-      user.avatar.photoID
-    ) {
-      // delete old, uploaded avatar
-      await Photo.findByIdAndDelete(user.avatar.photoID);
-    }
-
     const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
       new: true,
     });
@@ -80,33 +60,25 @@ exports.getUser = async (req, res) => {
   res.json({ user: req.user });
 };
 
+// eslint-disable-next-line
 exports.uploadPhoto = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new ErrorHandler(400, 'cannot upload photo');
     }
 
-    const img = await convertBufferToJimpImg(req.file.buffer);
-    const buffer = await resizeAndOptimizeImg(img, 300, undefined, 90);
-
-    const photo = await Photo.create({ photo: buffer });
-
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw new ErrorHandler(404, 'User not found');
+    if (req.user.avatar) {
+      // delete old avatar
+      await deleteS3Object(getObjectKeyFromImageUrl(req.user.avatar));
     }
 
-    if (user.avatar && user.avatar.photoID) {
-      // delete old photo
-      await Photo.findByIdAndDelete(user.avatar.photoID);
-    }
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: req.file.location },
+      { new: true }
+    );
 
-    user.avatar.photoURL = createPhotoLink(photo.id);
-    user.avatar.photoID = photo.id;
-
-    await user.save();
-
-    res.json({ photoURL: user.avatar.photoURL });
+    res.json({ photoURL: user.avatar });
   } catch (err) {
     next(err);
   }
