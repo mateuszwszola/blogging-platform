@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
 const deleteS3Object = require('../utils/s3/deleteS3Object');
-const getObjectKeyFromImageUrl = require('../utils/s3/getObjectKeyFromImageUrl');
 
 exports.registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -30,20 +29,28 @@ exports.loginUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
+  const newUserData = {};
+
+  if (typeof req.body.name !== 'undefined') {
+    newUserData.name = req.body.name;
+  }
+
+  if (typeof req.body.bio !== 'undefined') {
+    newUserData.bio = req.body.bio;
+  }
+
+  if (typeof req.body.avatarURL !== 'undefined') {
+    newUserData.avatar = {};
+    newUserData.avatar.url = req.body.avatarURL;
+  }
+
   try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw new ErrorHandler(404, 'User not found');
-    }
-
-    const newUserData = {};
-
-    if (typeof req.body.name !== 'undefined') {
-      newUserData.name = req.body.name;
-    }
-
-    if (typeof req.body.bio !== 'undefined') {
-      newUserData.bio = req.body.bio;
+    if (
+      typeof newUserData.avatar !== 'undefined' &&
+      req.user.avatar &&
+      req.user.avatar.s3Key
+    ) {
+      await deleteS3Object(req.user.avatar.s3Key);
     }
 
     const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
@@ -67,18 +74,18 @@ exports.uploadPhoto = async (req, res, next) => {
       throw new ErrorHandler(400, 'cannot upload photo');
     }
 
-    if (req.user.avatar) {
-      // delete old avatar
-      await deleteS3Object(getObjectKeyFromImageUrl(req.user.avatar));
+    if (req.user.avatar && req.user.avatar.s3Key) {
+      // delete old avatar from S3
+      await deleteS3Object(req.user.avatar.s3Key);
     }
 
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { avatar: req.file.location },
+      { avatar: { url: req.file.location, s3Key: req.file.key } },
       { new: true }
     );
 
-    res.json({ photoURL: user.avatar });
+    res.json({ photoURL: user.avatar.url });
   } catch (err) {
     next(err);
   }
