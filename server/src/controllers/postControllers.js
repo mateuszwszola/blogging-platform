@@ -1,10 +1,9 @@
 const Post = require('../models/Post');
 const Blog = require('../models/Blog');
-const Photo = require('../models/Photo');
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
-const createPhotoLink = require('../utils/createPhotoLink');
+const deleteS3Object = require('../utils/s3/deleteS3Object');
 
 exports.createPost = async (req, res, next) => {
   const { title, body } = req.body;
@@ -23,32 +22,30 @@ exports.createPost = async (req, res, next) => {
       );
     }
 
-    const postData = { title, body };
-    const optionalFields = ['tags', 'bgImgUrl', 'imgAttribution'];
-    optionalFields.forEach((field) => {
-      if (typeof req.body[field] !== 'undefined') {
-        postData[field] = req.body[field];
-      }
-    });
+    const postData = { title, body, bgImg: {} };
 
-    const post = new Post({
+    if (typeof req.body.bgImgUrl !== 'undefined') {
+      postData.bgImg.url = req.body.bgImgUrl;
+    }
+
+    if (typeof req.body.imgAttribution !== 'undefined') {
+      postData.bgImg.imgAttribution = req.body.imgAttribution;
+    }
+
+    if (typeof req.body.tags !== 'undefined') {
+      postData.tags = req.body.tags;
+    }
+
+    if (req.file) {
+      postData.bgImg.url = req.file.location;
+      postData.bgImg.s3Key = req.file.key;
+    }
+
+    const post = await Post.create({
       user: req.user._id,
       blog: blogId,
       ...postData,
     });
-
-    const file = req.file && req.file.buffer;
-
-    if (file) {
-      const photo = await Photo.create({
-        photo: req.file.buffer,
-      });
-
-      post.photo = photo.id;
-      post.bgImgUrl = createPhotoLink(photo.id);
-    }
-
-    await post.save();
 
     res.json({ post });
   } catch (err) {
@@ -67,34 +64,26 @@ exports.updatePost = async (req, res, next) => {
     }
 
     if (!post.user.equals(req.user._id)) {
-      throw new ErrorHandler(
-        401,
-        'you are not allowed to create post in this blog'
-      );
+      throw new ErrorHandler(401, 'you are not allowed to update the post');
     }
 
-    const postData = { title, body };
-    const optionalFields = ['tags', 'bgImgUrl', 'imgAttribution'];
-    optionalFields.forEach((field) => {
-      if (typeof req.body[field] !== 'undefined') {
-        postData[field] = req.body[field];
-      }
-    });
+    const postData = { title, body, bgImg: { ...post.bgImg } };
 
-    const file = req.file && req.file.buffer;
-
-    if (file) {
-      const photo = await Photo.create({
-        photo: req.file.buffer,
-      });
-
-      postData.photo = photo.id;
-      postData.bgImgUrl = createPhotoLink(photo.id);
+    if (typeof req.body.bgImgUrl !== 'undefined') {
+      postData.bgImg.url = req.body.bgImgUrl;
     }
 
-    if (post.photo && postData.bgImgUrl) {
-      // delete old photo
-      await Photo.findByIdAndDelete(post.photo);
+    if (typeof req.body.imgAttribution !== 'undefined') {
+      postData.bgImg.imgAttribution = req.body.imgAttribution;
+    }
+
+    if (typeof req.body.tags !== 'undefined') {
+      postData.tags = req.body.tags;
+    }
+
+    if (req.file) {
+      postData.bgImg.url = req.file.location;
+      postData.bgImg.s3Key = req.file.key;
     }
 
     const updatedPost = await Post.findByIdAndUpdate(
@@ -102,6 +91,14 @@ exports.updatePost = async (req, res, next) => {
       { ...postData },
       { new: true }
     );
+
+    if (
+      post.bgImg &&
+      post.bgImg.s3Key &&
+      (req.file || typeof req.body.bgImgUrl !== 'undefined')
+    ) {
+      await deleteS3Object(post.bgImg.s3Key);
+    }
 
     res.json({ post: updatedPost });
   } catch (err) {
@@ -117,11 +114,9 @@ exports.deletePost = async (req, res, next) => {
     if (!post) {
       throw new ErrorHandler(404, 'Post Not Found');
     }
+
     if (!post.user.equals(req.user._id)) {
-      throw new ErrorHandler(
-        401,
-        'you are not allowed to create post in this blog'
-      );
+      throw new ErrorHandler(401, 'you are not allowed to delete that post');
     }
 
     const doc = await Post.findByIdAndDelete(postId);
@@ -132,9 +127,10 @@ exports.deletePost = async (req, res, next) => {
       },
     });
 
-    if (post.photo) {
-      await Photo.deleteOne({ _id: post.photo });
+    if (post.bgImg && post.bgImg.s3Key) {
+      await deleteS3Object(post.bgImg.s3Key);
     }
+
     res.json({ message: 'Post deleted', post: doc });
   } catch (err) {
     next(err);

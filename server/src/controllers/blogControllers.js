@@ -1,8 +1,7 @@
 const Blog = require('../models/Blog');
-const Photo = require('../models/Photo');
 const Post = require('../models/Post');
-const createPhotoLink = require('../utils/createPhotoLink');
 const { ErrorHandler } = require('../utils/error');
+const deleteS3Object = require('../utils/s3/deleteS3Object');
 
 exports.createBlog = async (req, res, next) => {
   const { name } = req.body;
@@ -20,22 +19,16 @@ exports.createBlog = async (req, res, next) => {
     }
 
     if (typeof req.body.bgImgUrl !== 'undefined') {
-      blogData.bgImg.photoURL = req.body.bgImgUrl;
-      blogData.bgImg.photoID = null;
+      blogData.bgImg.url = req.body.bgImgUrl;
     }
 
     if (typeof req.body.imgAttribution !== 'undefined') {
       blogData.bgImg.imgAttribution = req.body.imgAttribution;
     }
 
-    const file = req.file && req.file.buffer;
-    if (file && !blogData.bgImg.photoURL) {
-      const photo = await Photo.create({
-        photo: req.file.buffer,
-      });
-
-      blogData.bgImg.photoID = photo.id;
-      blogData.bgImg.photoURL = createPhotoLink(photo.id);
+    if (req.file) {
+      blogData.bgImg.url = req.file.location;
+      blogData.bgImg.s3Key = req.file.key;
     }
 
     const newBlog = await Blog.create({ ...blogData });
@@ -47,9 +40,11 @@ exports.createBlog = async (req, res, next) => {
 };
 
 exports.updateBlog = async (req, res, next) => {
+  const { blogId } = req.params;
+
   try {
     const blog = await Blog.findOne({
-      _id: req.params.blogId,
+      _id: blogId,
       user: req.user._id,
     });
 
@@ -57,46 +52,36 @@ exports.updateBlog = async (req, res, next) => {
       throw new ErrorHandler(404, 'Blog Not Found');
     }
 
-    const blogData = { name: req.body.name, bgImg: {} };
+    const blogData = { name: req.body.name, bgImg: { ...blog.bgImg } };
 
     if (typeof req.body.description !== 'undefined') {
       blogData.description = req.body.description;
     }
 
     if (typeof req.body.bgImgUrl !== 'undefined') {
-      blogData.bgImg.photoURL = req.body.bgImgUrl;
-      blogData.bgImg.photoID = null;
+      blogData.bgImg.url = req.body.bgImgUrl;
     }
 
     if (typeof req.body.imgAttribution !== 'undefined') {
       blogData.bgImg.imgAttribution = req.body.imgAttribution;
     }
 
-    const newPhoto = req.file && req.file.buffer;
+    if (req.file) {
+      blogData.bgImg.url = req.file.location;
+      blogData.bgImg.s3Key = req.file.key;
+    }
+
+    const updatedBlog = await Blog.findByIdAndUpdate(blogId, blogData, {
+      new: true,
+    });
 
     if (
       blog.bgImg &&
-      blog.bgImg.photoID &&
-      (blogData.bgImg.photoURL || newPhoto)
+      blog.bgImg.s3Key &&
+      (req.file || typeof req.body.bgImgUrl !== 'undefined')
     ) {
-      // delete old photo
-      await Photo.findByIdAndDelete(blog.bgImg.photoID);
+      await deleteS3Object(blog.bgImg.s3Key);
     }
-
-    if (newPhoto) {
-      const photo = await Photo.create({
-        photo: newPhoto,
-      });
-
-      blogData.bgImg.photoID = photo.id;
-      blogData.bgImg.photoURL = createPhotoLink(photo.id);
-    }
-
-    const updatedBlog = await Blog.findByIdAndUpdate(
-      req.params.blogId,
-      blogData,
-      { new: true }
-    );
 
     res.status(200).json({ blog: updatedBlog });
   } catch (err) {
@@ -191,13 +176,14 @@ exports.deleteBlog = async (req, res, next) => {
 
     await Blog.deleteOne({ _id: req.params.blogId });
 
-    if (blog.bgImg && blog.bgImg.photoID) {
-      await Photo.deleteOne({ _id: blog.bgImg.photoID });
+    if (blog.bgImg && blog.bgImg.s3Key) {
+      await deleteS3Object(blog.bgImg.s3Key);
     }
+
     const posts = await Post.find({ blog: blog._id }).exec();
     posts.forEach(async (post) => {
-      if (post.photo) {
-        await Photo.deleteOne({ _id: post.photo });
+      if (post.photo.s3Key) {
+        await deleteS3Object(post.photo.s3Key);
       }
       await Post.deleteOne({ _id: post._id });
     });

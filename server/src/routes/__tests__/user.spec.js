@@ -1,12 +1,26 @@
 const supertest = require('supertest');
+const sinon = require('sinon');
+const User = require('../../models/User');
+const middlewares = require('../../middleware');
+const { generateNewToken } = require('../../middleware/auth');
+const dummyUser = require('../../seeds/user.seed.json')[0];
+
+sinon.stub(middlewares, 's3photoUpload').callsFake(() => {
+  return {
+    single() {
+      return (req, res, next) => {
+        req.file = {
+          location: 'https://dummyimage.com/250',
+          key: '250',
+        };
+        return next();
+      };
+    },
+  };
+});
+
 const { app } = require('../../app');
 const request = supertest(app);
-
-const User = require('../../models/User');
-const Photo = require('../../models/Photo');
-const { generateNewToken } = require('../../middleware/auth');
-
-const dummyUser = require('../../seeds/user.seed.json')[0];
 
 describe('User API tests', () => {
   describe('POST api/users - signup', () => {
@@ -111,6 +125,7 @@ describe('User API tests', () => {
 
       expect(res.body.user.email).toBe(dummyUser.email);
       expect(res.body.user.name).toBe(dummyUser.name);
+      expect(res.body).not.toHaveProperty('password');
     });
   });
 
@@ -119,14 +134,14 @@ describe('User API tests', () => {
       const res = await request.get('/api/users/me');
 
       expect(res.statusCode).toBe(401);
-      expect(typeof res.body.message).toBe('string');
+      expect(res.body).toHaveProperty('message');
     });
 
     test('should error when invalid token', async () => {
       const res = await request.get('/api/users/me').set('x-auth-token', '123');
 
       expect(res.statusCode).toBe(401);
-      expect(typeof res.body.message).toBe('string');
+      expect(res.body).toHaveProperty('message');
     });
 
     test('should error when user does not exists', async () => {
@@ -135,7 +150,7 @@ describe('User API tests', () => {
       const res = await request.get('/api/users/me').set('x-auth-token', token);
 
       expect(res.statusCode).toBe(401);
-      expect(typeof res.body.message).toBe('string');
+      expect(res.body).toHaveProperty('message');
     });
 
     test('should GET and return user', async () => {
@@ -145,7 +160,7 @@ describe('User API tests', () => {
       const res = await request.get('/api/users/me').set('x-auth-token', token);
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.user).toBeTruthy();
+      expect(res.body).toHaveProperty('user');
       expect(res.body.user.email).toBe(dummyUser.email);
       expect(res.body.user.name).toBe(dummyUser.name);
     });
@@ -170,7 +185,6 @@ describe('User API tests', () => {
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('errors');
       expect(res.body.errors).toHaveProperty('name');
-      expect(typeof res.body.errors.name).toBe('string');
     });
 
     test('should reset user bio', async () => {
@@ -213,8 +227,17 @@ describe('User API tests', () => {
         .send({ avatarURL });
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.user.avatar.photoURL).toBe(avatarURL);
-      expect(res.body.user.avatar.photoID).toBe(null);
+      expect(res.body.user.avatar.url).toBe(avatarURL);
+    });
+
+    test('should reset user avatar URL', async () => {
+      const res = await request
+        .put('/api/users')
+        .set('x-auth-token', token)
+        .send({ avatarURL: '' });
+
+      expect(res.statusCode).toBe(200);
+      expect(res.body.user.avatar.url).toBe('');
     });
   });
 
@@ -226,26 +249,13 @@ describe('User API tests', () => {
       token = user.generateAuthToken();
     });
 
-    async function uploadAvatar() {
-      return request
-        .post('/api/users/photo')
-        .set('x-auth-token', token)
-        .attach('photo', 'src/fixtures/avatar.png');
-    }
-
     test('should upload user avatar', async () => {
-      const res = await uploadAvatar();
+      const res = await request
+        .post('/api/users/photo')
+        .set('x-auth-token', token);
 
       expect(res.statusCode).toBe(200);
-      expect(res.body.photoURL).toBeTruthy();
-    });
-
-    test('should delete old avatar', async () => {
-      await uploadAvatar();
-      await uploadAvatar();
-
-      const numberOfPhotos = await Photo.countDocuments({}).exec();
-      expect(numberOfPhotos).toBe(1);
+      expect(res.body).toHaveProperty('avatarURL');
     });
   });
 });

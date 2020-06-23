@@ -3,9 +3,9 @@ const router = require('express').Router();
 const profileRouter = require('./profile');
 const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
-const photoUpload = require('../middleware/s3photoUpload');
 const { auth } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
+const { s3photoUpload } = require('../middleware');
 
 // router.use('/user', emailRouter);
 router.use('/profile', profileRouter);
@@ -22,10 +22,10 @@ router.post(
 );
 
 /*
-  @route   PUT api/users
-  @desc    Update user info
-  @access  Private
- */
+@route   PUT api/users
+@desc    Update user info
+@access  Private
+*/
 router.put(
   '/',
   auth.required,
@@ -34,10 +34,10 @@ router.put(
 );
 
 /*
-  @route   POST api/users/login
-  @desc    Login a registered user | Return JWT token
-  @access  Public
- */
+    @route   POST api/users/login
+    @desc    Login a registered user | Return JWT token
+    @access  Public
+   */
 router.post(
   '/login',
   validate(userValidation.validateLogin),
@@ -59,7 +59,7 @@ router.get('/me', auth.required, userControllers.getUser);
 router.post(
   '/photo',
   auth.required,
-  photoUpload.single('photo'),
+  s3photoUpload().single('photo'),
   userControllers.uploadPhoto
 );
 

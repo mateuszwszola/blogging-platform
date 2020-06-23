@@ -2,7 +2,7 @@ const router = require('express').Router();
 const { auth } = require('../middleware/auth');
 const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
-const photoUpload = require('../middleware/photoUpload');
+const { s3photoUpload } = require('../middleware');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
@@ -16,7 +16,7 @@ const { validate } = require('../middleware/validate');
 router.post(
   '/',
   auth.required,
-  photoUpload.single('photo'),
+  s3photoUpload().single('photo'),
   validate(blogValidation.validateBlog),
   blogControllers.createBlog
 );
@@ -30,7 +30,7 @@ router.put(
   '/:blogId',
   auth.required,
   validateParamObjectId('blogId'),
-  photoUpload.single('photo'),
+  s3photoUpload().single('photo'),
   validate(blogValidation.validateBlog),
   blogControllers.updateBlog
 );

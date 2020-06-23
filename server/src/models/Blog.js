@@ -28,16 +28,9 @@ const BlogSchema = new mongoose.Schema(
       ...specifiedStringLength('description', 2, 140),
     },
     bgImg: {
-      photoURL: {
-        type: String,
-      },
-      photoID: {
-        type: mongoose.ObjectId,
-        ref: 'Photo',
-      },
-      imgAttribution: {
-        type: String,
-      },
+      url: String,
+      s3Key: String,
+      imgAttribution: String,
     },
   },
   { timestamps: true }

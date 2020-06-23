@@ -74,18 +74,18 @@ exports.uploadPhoto = async (req, res, next) => {
       throw new ErrorHandler(400, 'cannot upload photo');
     }
 
-    if (req.user.avatar && req.user.avatar.s3Key) {
-      // delete old avatar from S3
-      await deleteS3Object(req.user.avatar.s3Key);
-    }
-
     const user = await User.findByIdAndUpdate(
       req.user._id,
       { avatar: { url: req.file.location, s3Key: req.file.key } },
       { new: true }
     );
 
-    res.json({ photoURL: user.avatar.url });
+    if (req.user.avatar && req.user.avatar.s3Key) {
+      // delete old avatar from S3
+      await deleteS3Object(req.user.avatar.s3Key);
+    }
+
+    res.json({ avatarURL: user.avatar.url });
   } catch (err) {
     next(err);
   }

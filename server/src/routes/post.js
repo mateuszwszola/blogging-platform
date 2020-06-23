@@ -1,14 +1,13 @@
 const router = require('express').Router();
 const postControllers = require('../controllers/postControllers');
 const postValidation = require('../validations/post');
-const photoUpload = require('../middleware/photoUpload');
+const { s3photoUpload } = require('../middleware');
 const { auth } = require('../middleware/auth');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
 const { validate } = require('../middleware/validate');
 const Post = require('../models/Post');
-const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
 
 // Preload post on routes with ':slug'
@@ -37,7 +36,7 @@ router.post(
   '/:blogId',
   auth.required,
   validateParamObjectId('blogId'),
-  photoUpload.single('photo'),
+  s3photoUpload().single('photo'),
   validate(postValidation.validatePost),
   postControllers.createPost
 );
@@ -51,7 +50,7 @@ router.put(
   '/:postId',
   auth.required,
   validateParamObjectId('postId'),
-  photoUpload.single('photo'),
+  s3photoUpload().single('photo'),
   validate(postValidation.validatePost),
   postControllers.updatePost
 );

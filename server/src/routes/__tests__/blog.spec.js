@@ -10,7 +10,7 @@ const dummyBlogs = require('../../seeds/blog.seed.json');
 const dummyUser = dummyUsers[0];
 const dummyPhotoURL = 'https://dummyimage.com/250';
 
-const { testValidationResults } = require('../../utils/tests/helpers');
+const { testValidationResults } = require('../../utils/testsHelpers');
 
 describe('Blog API tests', () => {
   let user;

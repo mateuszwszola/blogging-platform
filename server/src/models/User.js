@@ -69,7 +69,9 @@ UserSchema.methods.generateAuthToken = function () {
       id: user.id,
     },
   };
-  const token = jwt.sign(payload, config.secrets.jwt, { expiresIn: 3600 });
+  const token = jwt.sign(payload, config.secrets.jwt, {
+    expiresIn: config.secrets.jwtExp,
+  });
   return token;
 };
 

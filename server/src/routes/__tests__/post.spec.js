@@ -6,7 +6,7 @@ const Post = require('../../models/Post');
 const {
   testValidationResults,
   checkForValidObjectId,
-} = require('../../utils/tests/helpers');
+} = require('../../utils/testsHelpers');
 const dummyUser = require('../../seeds/user.seed.json')[0];
 const dummyBlogs = require('../../seeds/blog.seed.json');
 const dummyPosts = require('../../seeds/post.seed.json');
