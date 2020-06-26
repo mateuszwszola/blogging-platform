@@ -1,5 +1,5 @@
 const aws = require('aws-sdk');
-const config = require('../config');
+const config = require('../index');
 
 aws.config.update({
   accessKeyId: config.awsAccessKeyId,
@@ -9,4 +9,6 @@ aws.config.update({
 
 const s3 = new aws.S3();
 
-module.exports = s3;
+module.exports = {
+  s3,
+};

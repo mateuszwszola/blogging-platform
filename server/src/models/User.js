@@ -70,7 +70,7 @@ UserSchema.methods.generateAuthToken = function () {
     },
   };
   const token = jwt.sign(payload, config.secrets.jwt, {
-    expiresIn: config.secrets.jwtExp,
+    expiresIn: 3600,
   });
   return token;
 };

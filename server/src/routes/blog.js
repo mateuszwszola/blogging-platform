@@ -1,11 +1,11 @@
 const router = require('express').Router();
-const { auth } = require('../middleware/auth');
 const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
-const { s3photoUpload } = require('../middleware');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
+const { auth } = require('../middleware/auth');
+const { s3photoUpload } = require('../middleware');
 const { validate } = require('../middleware/validate');
 
 /*

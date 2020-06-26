@@ -1,6 +1,6 @@
 const multer = require('multer');
 
-const upload = multer({
+const photoUpload = multer({
   limits: {
     fileSize: 1000000, // max file size 1000000 bytes = 1MB
   },
@@ -12,4 +12,6 @@ const upload = multer({
   },
 });
 
-module.exports = upload;
+module.exports = {
+  photoUpload,
+};

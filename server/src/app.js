@@ -8,7 +8,6 @@ const { connect } = require('./config/db');
 const { handleNotFound, handleError } = require('./utils/error');
 
 const app = express();
-exports.app = app;
 
 app.enable('trust proxy'); // for rate limiting by Client IP
 
@@ -38,9 +37,14 @@ app.use((err, req, res, next) => {
   handleError(err, res);
 });
 
-exports.start = async () => {
+const start = async () => {
   await connect();
   app.listen(config.port, () => {
     console.log(`Server listens on port ${config.port}`);
   });
+};
+
+module.exports = {
+  app,
+  start,
 };

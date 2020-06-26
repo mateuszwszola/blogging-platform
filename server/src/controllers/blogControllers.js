@@ -22,13 +22,13 @@ exports.createBlog = async (req, res, next) => {
       blogData.bgImg.url = req.body.bgImgUrl;
     }
 
-    if (typeof req.body.imgAttribution !== 'undefined') {
-      blogData.bgImg.imgAttribution = req.body.imgAttribution;
-    }
-
     if (req.file) {
       blogData.bgImg.url = req.file.location;
       blogData.bgImg.s3Key = req.file.key;
+    }
+
+    if (blogData.bgImg.url && typeof req.body.imgAttribution !== 'undefined') {
+      blogData.bgImg.imgAttribution = req.body.imgAttribution;
     }
 
     const newBlog = await Blog.create({ ...blogData });
