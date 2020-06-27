@@ -5,8 +5,8 @@ const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
 const { auth } = require('../middleware/auth');
-const { s3photoUpload } = require('../middleware');
 const { validate } = require('../middleware/validate');
+const { multerUploads } = require('../middleware/multer');
 
 /*
   @route   POST api/blogs
@@ -16,7 +16,7 @@ const { validate } = require('../middleware/validate');
 router.post(
   '/',
   auth.required,
-  s3photoUpload().single('photo'),
+  multerUploads,
   validate(blogValidation.validateBlog),
   blogControllers.createBlog
 );
@@ -30,7 +30,7 @@ router.put(
   '/:blogId',
   auth.required,
   validateParamObjectId('blogId'),
-  s3photoUpload().single('photo'),
+  multerUploads,
   validate(blogValidation.validateBlog),
   blogControllers.updateBlog
 );

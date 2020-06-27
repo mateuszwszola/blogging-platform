@@ -1,6 +1,3 @@
-const express = require('express');
-const blogRouter = require('../blog');
-const bodyParser = require('body-parser');
 const request = require('supertest');
 const User = require('../../models/User');
 const Blog = require('../../models/Blog');
@@ -8,13 +5,16 @@ const { testValidationResults } = require('../../utils/testsHelpers');
 const dummyUsers = require('../../seeds/user.seed.json');
 const dummyBlogs = require('../../seeds/blog.seed.json');
 const dummyUser = dummyUsers[0];
+const { uploader } = require('../../config/services/cloudinary');
 
-const initApp = () => {
-  const app = express();
-  app.use(bodyParser.json());
-  app.use('/api/blogs', blogRouter);
-  return app;
-};
+jest.spyOn(uploader, 'upload').mockImplementation(() => {
+  return Promise.resolve({
+    image_url: 'image-url',
+    large_image_url: 'large-image-url',
+  });
+});
+
+const { app } = require('../../app');
 
 describe('Blog API tests', () => {
   let user;
@@ -24,29 +24,14 @@ describe('Blog API tests', () => {
     token = user.generateAuthToken();
   });
 
-  afterEach(() => {
-    jest.resetModules();
-  });
-
   describe('POST api/blogs', () => {
     test('should create a blog', async () => {
       const blogData = dummyBlogs[0];
-
-      jest.doMock('../../middleware/s3photoUpload', () => {
-        return {
-          single: () => (req, res, next) => next(),
-        };
-      });
-
-      const s3photoUpload = require('../../middleware/s3photoUpload');
-      const app = initApp();
 
       const res = await request(app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send(blogData);
-
-      console.log(res);
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty('blog');
@@ -54,33 +39,25 @@ describe('Blog API tests', () => {
       expect(res.body.blog.user).toBe(user._id.toString());
       expect(res.body.blog.name).toBe(blogData.name);
       expect(res.body.blog.description).toBe(blogData.description);
-      expect(res.body.blog.bgImg.url).toBe(blogData.bgImgUrl);
-      expect(res.body.blog.bgImg.imgAttribution).toBe(blogData.imgAttribution);
+      expect(res.body.blog.bgImg).toHaveProperty('image_url');
+      expect(res.body.blog.bgImg).toHaveProperty('large_image_url');
+      expect(res.body.blog.bgImg).toHaveProperty('img_attribution');
     });
 
     test('should create a blog with uploaded photo', async () => {
-      const blogData = dummyBlogs[0];
-
-      jest.doMock('../../middleware/s3photoUpload', () => {
-        return {
-          single: () => (req, res, next) => {
-            req.file = { url: 'location', s3Key: 'key' };
-            return next();
-          },
-        };
-      });
-
-      const s3photoUpload = require('../../middleware/s3photoUpload');
-
-      const app = initApp();
-
       const res = await request(app)
         .post('/api/blogs')
         .set('x-auth-token', token)
-        .send(blogData);
+        .attach('photo', 'src/fixtures/background.png')
+        .field('name', 'Blog name');
+
       expect(res.statusCode).toBe(201);
-      expect(res.body.blog.bgImg).toHaveProperty('url');
-      expect(res.body.blog.bgImg).toHaveProperty('s3Key');
+      expect(res.body).toHaveProperty('blog');
+      expect(res.body.blog).toHaveProperty('slug');
+      expect(res.body.blog.user).toBe(user._id.toString());
+      expect(res.body.blog.name).toBe('Blog name');
+      expect(res.body.blog.bgImg).toHaveProperty('image_url');
+      expect(res.body.blog.bgImg).toHaveProperty('large_image_url');
     });
 
     // test('should error when no token', async () => {

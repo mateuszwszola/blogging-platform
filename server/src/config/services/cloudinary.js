@@ -1,4 +1,4 @@
-const { config, uploader } = require('cloudinary');
+const { config, uploader, url } = require('cloudinary').v2;
 const {
   cloudinaryCloudName,
   cloudinaryApiKey,
@@ -15,4 +15,5 @@ const cloudinaryConfig = () =>
 module.exports = {
   cloudinaryConfig,
   uploader,
+  url,
 };

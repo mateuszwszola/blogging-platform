@@ -1,7 +1,8 @@
 const Blog = require('../models/Blog');
 const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
-const deleteS3Object = require('../utils/s3/deleteS3Object');
+const { uploader } = require('../config/services/cloudinary');
+const { dataUri } = require('../middleware/multer');
 
 exports.createBlog = async (req, res, next) => {
   const { name } = req.body;
@@ -9,7 +10,7 @@ exports.createBlog = async (req, res, next) => {
   try {
     const blog = await Blog.findOne({ name });
     if (blog) {
-      throw new ErrorHandler(400, `blog '${name}' already exists`);
+      throw new ErrorHandler(422, 'blog name already in use');
     }
 
     const blogData = { user: req.user._id, name, bgImg: {} };
@@ -18,17 +19,26 @@ exports.createBlog = async (req, res, next) => {
       blogData.description = req.body.description;
     }
 
-    if (typeof req.body.bgImgUrl !== 'undefined') {
-      blogData.bgImg.url = req.body.bgImgUrl;
-    }
-
     if (req.file) {
-      blogData.bgImg.url = req.file.location;
-      blogData.bgImg.s3Key = req.file.key;
+      const file = dataUri(req).content;
+      const result = await uploader.upload(file, {
+        upload_preset: 'bloggingplatform',
+      });
+      blogData.bgImg.image_url = result.secure_url;
+      blogData.bgImg.large_image_url = result.eager[0].secure_url;
+    } else if (req.body.bgImgUrl) {
+      const result = await uploader.upload(req.body.bgImgUrl, {
+        upload_preset: 'bloggingplatform',
+      });
+      blogData.bgImg.image_url = result.secure_url;
+      blogData.bgImg.large_image_url = result.eager[0].secure_url;
     }
 
-    if (blogData.bgImg.url && typeof req.body.imgAttribution !== 'undefined') {
-      blogData.bgImg.imgAttribution = req.body.imgAttribution;
+    if (
+      blogData.bgImg.image_url &&
+      typeof req.body.imgAttribution !== 'undefined'
+    ) {
+      blogData.bgImg.img_attribution = req.body.imgAttribution;
     }
 
     const newBlog = await Blog.create({ ...blogData });
@@ -58,30 +68,33 @@ exports.updateBlog = async (req, res, next) => {
       blogData.description = req.body.description;
     }
 
-    if (typeof req.body.bgImgUrl !== 'undefined') {
-      blogData.bgImg.url = req.body.bgImgUrl;
-    }
-
-    if (typeof req.body.imgAttribution !== 'undefined') {
-      blogData.bgImg.imgAttribution = req.body.imgAttribution;
-    }
-
     if (req.file) {
-      blogData.bgImg.url = req.file.location;
-      blogData.bgImg.s3Key = req.file.key;
+      const file = dataUri(req).content;
+      const result = await uploader.upload(file, {
+        upload_preset: 'bloggingplatform',
+      });
+      blogData.bgImg.image_url = result.secure_url;
+      blogData.bgImg.large_image_url = result.eager[0].secure_url;
+    } else if (req.body.bgImgUrl) {
+      const result = await uploader.upload(req.body.bgImgUrl, {
+        upload_preset: 'bloggingplatform',
+      });
+      blogData.bgImg.image_url = result.secure_url;
+      blogData.bgImg.large_image_url = result.eager[0].secure_url;
     }
+
+    if (
+      blogData.bgImg.image_url &&
+      typeof req.body.imgAttribution !== 'undefined'
+    ) {
+      blogData.bgImg.img_attribution = req.body.imgAttribution;
+    }
+
+    // TODO: Delete old image
 
     const updatedBlog = await Blog.findByIdAndUpdate(blogId, blogData, {
       new: true,
     });
-
-    if (
-      blog.bgImg &&
-      blog.bgImg.s3Key &&
-      (req.file || typeof req.body.bgImgUrl !== 'undefined')
-    ) {
-      await deleteS3Object(blog.bgImg.s3Key);
-    }
 
     res.status(200).json({ blog: updatedBlog });
   } catch (err) {
@@ -176,18 +189,15 @@ exports.deleteBlog = async (req, res, next) => {
 
     await Blog.deleteOne({ _id: req.params.blogId });
 
-    if (blog.bgImg && blog.bgImg.s3Key) {
-      await deleteS3Object(blog.bgImg.s3Key);
-    }
+    // TODO: Delete blog image
 
     const posts = await Post.find({ blog: blog._id }).exec();
     posts.forEach(async (post) => {
-      if (post.photo.s3Key) {
-        await deleteS3Object(post.photo.s3Key);
-      }
+      // TODO: Delete post image
       await Post.deleteOne({ _id: post._id });
     });
-    res.status(201).json({ message: 'Blog deleted', blog });
+
+    res.status(200).json({ message: 'Blog deleted', blog });
   } catch (err) {
     next(err);
   }
