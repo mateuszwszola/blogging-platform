@@ -4,9 +4,9 @@
   "description": "A full stack application to start a blog",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "test": "cross-env NODE_ENV=testing jest --testTimeout=10000",
+    "start": "node index",
+    "dev": "nodemon index",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --forceExit --detectOpenHandles",
     "test:watch": "npm test -- --watch",
     "format": "prettier \"src/\" --write",
     "lint": "eslint src/"

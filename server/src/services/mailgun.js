@@ -1,5 +1,5 @@
 const mailgun = require('mailgun-js');
-const config = require('../index');
+const config = require('../config');
 
 const mailgunConfig = () =>
   mailgun({

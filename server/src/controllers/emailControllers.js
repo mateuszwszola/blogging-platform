@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const { mailgunConfig } = require('../config/services/mailgun');
+const { mailgunConfig } = require('../services/mailgun');
 
 const mg = mailgunConfig();
 

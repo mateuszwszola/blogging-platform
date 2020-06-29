@@ -1,4 +1,4 @@
-const { s3 } = require('../../config/services/s3');
+const { s3 } = require('../../services/s3');
 
 function deleteS3Object(objectKey) {
   const params = {

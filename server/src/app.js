@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const { connect } = require('./config/db');
 const { handleNotFound, handleError } = require('./utils/error');
-const { cloudinaryConfig } = require('./config/services/cloudinary');
+const { cloudinaryConfig } = require('./services/cloudinary');
 
 cloudinaryConfig();
 

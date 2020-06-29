@@ -1,6 +1,6 @@
 const multer = require('multer');
 const multerS3 = require('multer-s3');
-const { s3 } = require('../config/services/s3');
+const { s3 } = require('../services/s3');
 
 const fileFilter = (req, file, cb) => {
   if (!file.mimetype.match(/image\/(jpeg|jpg|png)$/)) {

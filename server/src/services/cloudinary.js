@@ -3,7 +3,7 @@ const {
   cloudinaryCloudName,
   cloudinaryApiKey,
   cloudinaryApiSecret,
-} = require('../index');
+} = require('../config');
 
 const cloudinaryConfig = () =>
   config({

@@ -1,7 +1,7 @@
 const Blog = require('../models/Blog');
 const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
-const { uploader } = require('../config/services/cloudinary');
+const { uploader } = require('../services/cloudinary');
 const { dataUri } = require('../middleware/multer');
 
 exports.createBlog = async (req, res, next) => {
@@ -53,13 +53,20 @@ exports.updateBlog = async (req, res, next) => {
   const { blogId } = req.params;
 
   try {
-    const blog = await Blog.findOne({
-      _id: blogId,
-      user: req.user._id,
-    });
-
+    const blog = await Blog.findById(blogId);
     if (!blog) {
       throw new ErrorHandler(404, 'Blog Not Found');
+    }
+
+    if (!blog.user.equals(req.user._id)) {
+      throw new ErrorHandler(403, 'You are not allowed to update the blog');
+    }
+
+    if (blog.name.toLowerCase() !== req.body.name.toLowerCase()) {
+      const doc = await Blog.findOne({ name: req.body.name });
+      if (doc) {
+        throw new ErrorHandler(422, 'blog name aready in use');
+      }
     }
 
     const blogData = { name: req.body.name, bgImg: { ...blog.bgImg } };
@@ -68,17 +75,19 @@ exports.updateBlog = async (req, res, next) => {
       blogData.description = req.body.description;
     }
 
-    if (req.file) {
-      const file = dataUri(req).content;
-      const result = await uploader.upload(file, {
+    if (req.file || req.body.bgImgUrl) {
+      let image;
+      if (req.file) {
+        const file = dataUri(req).content;
+        image = file;
+      } else {
+        image = req.body.bgImgUrl;
+      }
+
+      const result = await uploader.upload(image, {
         upload_preset: 'bloggingplatform',
       });
-      blogData.bgImg.image_url = result.secure_url;
-      blogData.bgImg.large_image_url = result.eager[0].secure_url;
-    } else if (req.body.bgImgUrl) {
-      const result = await uploader.upload(req.body.bgImgUrl, {
-        upload_preset: 'bloggingplatform',
-      });
+
       blogData.bgImg.image_url = result.secure_url;
       blogData.bgImg.large_image_url = result.eager[0].secure_url;
     }
@@ -178,13 +187,14 @@ exports.getUserBlogs = async (req, res, next) => {
 
 exports.deleteBlog = async (req, res, next) => {
   try {
-    const blog = await Blog.findOne({
-      _id: req.params.blogId,
-      user: req.user._id,
-    });
+    const blog = await Blog.findById(req.params.blogId);
 
     if (!blog) {
       throw new ErrorHandler(404, 'Blog not found');
+    }
+
+    if (!blog.user.equals(req.user._id)) {
+      throw new ErrorHandler(403, 'You are not authorized to delete a blog');
     }
 
     await Blog.deleteOne({ _id: req.params.blogId });

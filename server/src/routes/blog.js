@@ -50,6 +50,17 @@ router.get('/', auth.required, blogControllers.getAuthUserBlogs);
 router.get('/all', blogControllers.getAllBlogs);
 
 /*
+  @route   GET api/blogs/user/:userId
+  @desc    Get user blogs
+  @access  Public
+ */
+router.get(
+  '/user/:userId',
+  validateParamObjectId('userId'),
+  blogControllers.getUserBlogs
+);
+
+/*
   @route   GET api/blogs/:blogId
   @desc    Get blog by ID
   @access  Public
@@ -66,17 +77,6 @@ router.get(
   @access  Public
  */
 router.get('/slug/:slug', blogControllers.getBlogBySlugName);
-
-/*
-  @route   GET api/blogs/user/:userId
-  @desc    Get user blogs
-  @access  Public
- */
-router.get(
-  '/user/:userId',
-  validateParamObjectId('userId'),
-  blogControllers.getUserBlogs
-);
 
 /*
   @route   DELETE api/blogs/:blogId
