@@ -1,5 +1,5 @@
 const { body } = require('express-validator');
-const { isURL, isLength } = require('validator');
+const { isLength } = require('validator');
 const Filter = require('bad-words');
 const filter = new Filter();
 
@@ -13,15 +13,7 @@ exports.validatePost = [
     .isLength({ min: 2, max: 60 })
     .withMessage('title must be between 2 and 60 chars'),
   body('body', 'post body is required').exists().trim().not().isEmpty(),
-  body('bgImgUrl', 'invalid img URL')
-    .optional()
-    .trim()
-    .custom((value) => {
-      if (value && !isURL(value)) {
-        return false;
-      }
-      return true;
-    }),
+  body('bgImgUrl', 'invalid img URL').optional().trim().isURL(),
   body('imgAttribution', 'The img attribution must be between 2 and 60 chars')
     .trim()
     .custom((value) => {

@@ -239,7 +239,7 @@ describe('User API tests', () => {
       const res = await request(app)
         .post('/api/users/photo')
         .set('x-auth-token', token)
-        .attach('photo', 'src/fixtures/background.png');
+        .attach('photo', 'src/fixtures/avatar.png');
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('avatarURL');

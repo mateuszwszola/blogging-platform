@@ -31,9 +31,9 @@ const PostSchema = new mongoose.Schema(
       ...requiredString,
     },
     bgImg: {
-      url: String,
-      s3Key: String,
-      imgAttribution: String,
+      image_url: String,
+      large_image_url: String,
+      img_attribution: String,
     },
     comments: [
       {

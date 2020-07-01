@@ -1,7 +1,6 @@
 const router = require('express').Router();
 const postControllers = require('../controllers/postControllers');
 const postValidation = require('../validations/post');
-const { s3photoUpload } = require('../middleware');
 const { auth } = require('../middleware/auth');
 const {
   validateParamObjectId,
@@ -9,6 +8,7 @@ const {
 const { validate } = require('../middleware/validate');
 const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
+const { multerUploads } = require('../middleware/multer');
 
 // Preload post on routes with ':slug'
 router.param('slug', async (req, res, next, slug) => {
@@ -36,7 +36,7 @@ router.post(
   '/:blogId',
   auth.required,
   validateParamObjectId('blogId'),
-  s3photoUpload().single('photo'),
+  multerUploads,
   validate(postValidation.validatePost),
   postControllers.createPost
 );
@@ -50,7 +50,7 @@ router.put(
   '/:postId',
   auth.required,
   validateParamObjectId('postId'),
-  s3photoUpload().single('photo'),
+  multerUploads,
   validate(postValidation.validatePost),
   postControllers.updatePost
 );
@@ -68,6 +68,13 @@ router.delete(
 );
 
 /*
+  @route   GET api/posts/all
+  @desc    Get all posts
+  @access  Public
+ */
+router.get('/all', auth.optional, postControllers.getAllPosts);
+
+/*
   @route   GET api/posts
   @desc    Get auth user posts
   @access  Private
@@ -75,15 +82,8 @@ router.delete(
 router.get('/', auth.required, postControllers.getAuthUserPosts);
 
 /*
-  @route   GET api/posts/all
-  @desc    Get all posts
-  @access  Public
- */
-router.get('/all', postControllers.getAllPosts);
-
-/*
   @route   GET api/posts/user/:userId
-  @desc    Get userId posts
+  @desc    Get user posts
   @access  Public
  */
 router.get(
@@ -91,6 +91,18 @@ router.get(
   validateParamObjectId('userId'),
   auth.optional,
   postControllers.getUserPosts
+);
+
+/*
+  @route   GET api/posts/blog/:blogId
+  @desc    Get blog posts
+  @access  Public
+ */
+router.get(
+  '/blog/:blogId',
+  validateParamObjectId('blogId'),
+  auth.optional,
+  postControllers.getBlogPosts
 );
 
 /*
@@ -103,17 +115,6 @@ router.get(
   validateParamObjectId('userId'),
   auth.optional,
   postControllers.getFavorites
-);
-
-/*
-  @route   GET api/posts/blog/:blogId
-  @desc    Get all blog posts
-  @access  Public
- */
-router.get(
-  '/blog/:blogId',
-  validateParamObjectId('blogId'),
-  postControllers.getAllBlogPosts
 );
 
 /*

@@ -41,7 +41,7 @@ app.use((err, req, res, next) => {
 });
 
 const start = async () => {
-  await connect();
+  await connect(); // connect DB
   app.listen(config.port, () => {
     console.log(`Server listens on port ${config.port}`);
   });
