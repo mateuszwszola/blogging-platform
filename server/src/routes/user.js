@@ -5,7 +5,7 @@ const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
 const { auth } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
-const { s3photoUpload } = require('../middleware');
+const { multerUploads } = require('../middleware/multer');
 
 // router.use('/user', emailRouter);
 router.use('/profile', profileRouter);
@@ -59,7 +59,7 @@ router.get('/me', auth.required, userControllers.getUser);
 router.post(
   '/photo',
   auth.required,
-  s3photoUpload().single('photo'),
+  multerUploads,
   userControllers.uploadPhoto
 );
 

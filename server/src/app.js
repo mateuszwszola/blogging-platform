@@ -8,9 +8,9 @@ const { connect } = require('./config/db');
 const { handleNotFound, handleError } = require('./utils/error');
 const { cloudinaryConfig } = require('./services/cloudinary');
 
-cloudinaryConfig();
-
 const app = express();
+
+cloudinaryConfig();
 
 app.enable('trust proxy'); // for rate limiting by Client IP
 
@@ -35,7 +35,7 @@ app.use('/api', require('./routes'));
 
 // 404 handler
 app.use(handleNotFound);
-
+// eslint-disable-next-line
 app.use((err, req, res, next) => {
   handleError(err, res);
 });

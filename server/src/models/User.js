@@ -38,8 +38,7 @@ const UserSchema = new mongoose.Schema(
       maxlength: 100,
     },
     avatar: {
-      url: String,
-      s3Key: String,
+      image_url: String,
     },
     favorites: [{ type: mongoose.ObjectId, ref: 'Post' }],
     following: [{ type: mongoose.ObjectId, ref: 'User' }],

@@ -4,7 +4,15 @@ const path = require('path');
 
 const storage = multer.memoryStorage();
 
-const multerUploads = multer({ storage }).single('photo');
+const multerUploads = multer({
+  storage,
+  fileFilter(req, file, cb) {
+    if (!file.originalname.match(/\.(jpeg|jpg|png)$/)) {
+      cb(new Error('Only upload files with jpg, jpeg or png format.'));
+    }
+    cb(null, true);
+  },
+}).single('photo');
 
 const dUri = new DatauriParser();
 /**

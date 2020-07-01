@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
-const deleteS3Object = require('../utils/s3/deleteS3Object');
+const { dataUri } = require('../middleware/multer');
+const { uploader } = require('../services/cloudinary');
 
 exports.registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -39,20 +40,7 @@ exports.updateUser = async (req, res, next) => {
     newUserData.bio = req.body.bio;
   }
 
-  if (typeof req.body.avatarURL !== 'undefined') {
-    newUserData.avatar = {};
-    newUserData.avatar.url = req.body.avatarURL;
-  }
-
   try {
-    if (
-      typeof newUserData.avatar !== 'undefined' &&
-      req.user.avatar &&
-      req.user.avatar.s3Key
-    ) {
-      await deleteS3Object(req.user.avatar.s3Key);
-    }
-
     const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
       new: true,
     });
@@ -74,18 +62,20 @@ exports.uploadPhoto = async (req, res, next) => {
       throw new ErrorHandler(400, 'cannot upload photo');
     }
 
+    const image = dataUri(req).content;
+    const result = await uploader.upload(image, {
+      upload_preset: 'bloggingplatform-avatar',
+    });
+
     const user = await User.findByIdAndUpdate(
       req.user._id,
-      { avatar: { url: req.file.location, s3Key: req.file.key } },
+      { avatar: { image_url: result.secure_url } },
       { new: true }
     );
 
-    if (req.user.avatar && req.user.avatar.s3Key) {
-      // delete old avatar from S3
-      await deleteS3Object(req.user.avatar.s3Key);
-    }
+    // TODO: remove old avatar
 
-    res.json({ avatarURL: user.avatar.url });
+    res.json({ avatarURL: user.avatar.image_url });
   } catch (err) {
     next(err);
   }
