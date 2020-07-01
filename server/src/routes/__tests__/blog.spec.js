@@ -50,7 +50,7 @@ describe('Blog API tests', () => {
         .post('/api/blogs')
         .set('x-auth-token', token);
 
-      expect.assertions(4);
+      expect.assertions(3);
       testValidationResults(expect, res, 'name');
     });
 
@@ -60,7 +60,7 @@ describe('Blog API tests', () => {
         .set('x-auth-token', token)
         .send({ name: 'B' });
 
-      expect.assertions(4);
+      expect.assertions(3);
       testValidationResults(expect, res, 'name');
     });
 
@@ -72,7 +72,7 @@ describe('Blog API tests', () => {
         .set('x-auth-token', token)
         .send({ name: 'Blog name', description });
 
-      expect.assertions(4);
+      expect.assertions(3);
       testValidationResults(expect, res, 'description');
     });
 
@@ -84,7 +84,7 @@ describe('Blog API tests', () => {
         .set('x-auth-token', token)
         .send({ name: 'Blog name', imgAttribution });
 
-      expect.assertions(4);
+      expect.assertions(3);
       testValidationResults(expect, res, 'imgAttribution');
     });
 
@@ -94,7 +94,7 @@ describe('Blog API tests', () => {
         .set('x-auth-token', token)
         .send({ name: 'Blog name', bgImgUrl: 'image-url' });
 
-      expect.assertions(4);
+      expect.assertions(3);
       testValidationResults(expect, res, 'bgImgUrl');
     });
 
@@ -281,7 +281,7 @@ describe('Blog API tests', () => {
 
       user = await User.findByIdAndUpdate(
         user._id,
-        { avatar: { url: 'avatar_url' } },
+        { avatar: { image_url: 'avatar_url' } },
         { new: true }
       );
 
@@ -329,7 +329,7 @@ describe('Blog API tests', () => {
 
       user = await User.findByIdAndUpdate(
         user._id,
-        { avatar: { url: 'avatar_url' } },
+        { avatar: { image_url: 'avatar_url' } },
         { new: true }
       );
 
@@ -440,7 +440,7 @@ describe('Blog API tests', () => {
 
       user = await User.findByIdAndUpdate(
         user._id,
-        { avatar: { url: 'avatar_url' } },
+        { avatar: { image_url: 'avatar_url' } },
         { new: true }
       );
 
