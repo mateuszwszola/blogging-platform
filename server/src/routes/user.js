@@ -3,23 +3,10 @@ const router = require('express').Router();
 const profileRouter = require('./profile');
 const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
-const { auth } = require('../middleware/auth');
-const { validate } = require('../middleware/validate');
-const { multerUploads } = require('../middleware/multer');
+const { auth, multerUploads, validate } = require('../middleware');
 
 // router.use('/user', emailRouter);
 router.use('/profile', profileRouter);
-
-/*
-  @route   POST api/users
-  @desc    Create a new user | Return JWT token
-  @access  Public
- */
-router.post(
-  '/',
-  validate(userValidation.validateRegister),
-  userControllers.registerUser
-);
 
 /*
 @route   PUT api/users
@@ -34,19 +21,8 @@ router.put(
 );
 
 /*
-    @route   POST api/users/login
-    @desc    Login a registered user | Return JWT token
-    @access  Public
-   */
-router.post(
-  '/login',
-  validate(userValidation.validateLogin),
-  userControllers.loginUser
-);
-
-/*
   @route   GET api/users/me
-  @desc    Get a user
+  @desc    Get authorized user
   @access  Private
  */
 router.get('/me', auth.required, userControllers.getUser);
@@ -62,5 +38,12 @@ router.post(
   multerUploads,
   userControllers.uploadPhoto
 );
+
+/*
+  @route   DELETE api/users
+  @desc    Delete user account
+  @access  Private
+ */
+router.delete('/', auth.required, userControllers.deleteUser);
 
 module.exports = router;

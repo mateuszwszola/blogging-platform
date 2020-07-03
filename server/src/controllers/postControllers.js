@@ -3,7 +3,7 @@ const Blog = require('../models/Blog');
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
-const { dataUri } = require('../middleware/multer');
+const { dataUri } = require('../middleware');
 const { uploader } = require('../services/cloudinary');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 

@@ -4,9 +4,7 @@ const blogValidation = require('../validations/blog');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
-const { auth } = require('../middleware/auth');
-const { validate } = require('../middleware/validate');
-const { multerUploads } = require('../middleware/multer');
+const { auth, multerUploads, validate } = require('../middleware');
 
 /*
   @route   POST api/blogs
@@ -36,21 +34,21 @@ router.put(
 );
 
 /*
-  @route   GET api/blogs
+  @route   GET api/blogs?name=[]
   @desc    Get auth user blogs
   @access  Private
  */
 router.get('/', auth.required, blogControllers.getAuthUserBlogs);
 
 /*
-  @route   GET api/blogs/all
+  @route   GET api/blogs/all?name=[]
   @desc    Get all blogs
   @access  Public
  */
 router.get('/all', blogControllers.getAllBlogs);
 
 /*
-  @route   GET api/blogs/user/:userId
+  @route   GET api/blogs/user/:userId?name=[]
   @desc    Get user blogs
   @access  Public
  */

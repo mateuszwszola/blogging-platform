@@ -1,11 +1,10 @@
 const router = require('express').Router();
 const commentControllers = require('../controllers/commentControllers');
 const { validateComment } = require('../validations/comment');
-const { auth } = require('../middleware/auth');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
-const { validate } = require('../middleware/validate');
+const { auth, validate } = require('../middleware');
 
 /*
   @route   POST api/comments/:postId

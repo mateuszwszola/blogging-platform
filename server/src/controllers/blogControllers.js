@@ -3,7 +3,7 @@ const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 const { uploader } = require('../services/cloudinary');
-const { dataUri } = require('../middleware/multer');
+const { dataUri } = require('../middleware');
 
 exports.createBlog = async (req, res, next) => {
   const { name } = req.body;
@@ -161,8 +161,13 @@ exports.getBlogBySlugName = async (req, res, next) => {
 };
 
 exports.getAllBlogs = async (req, res, next) => {
+  const { name } = req.query;
+  const condition = name
+    ? { name: { $regex: new RegExp(name), $options: 'i' } }
+    : {};
+
   try {
-    const blogs = await Blog.find({}).populate('user', [
+    const blogs = await Blog.find(condition).populate('user', [
       'name',
       'bio',
       'avatar',
@@ -175,8 +180,15 @@ exports.getAllBlogs = async (req, res, next) => {
 };
 
 exports.getAuthUserBlogs = async (req, res, next) => {
+  const { name } = req.query;
+  const condition = name
+    ? { name: { $regex: new RegExp(name), $options: 'i' } }
+    : {};
+
+  condition.user = req.user._id;
+
   try {
-    const blogs = await Blog.find({ user: req.user._id }).populate('user', [
+    const blogs = await Blog.find(condition).populate('user', [
       'name',
       'bio',
       'avatar',
@@ -189,11 +201,19 @@ exports.getAuthUserBlogs = async (req, res, next) => {
 };
 
 exports.getUserBlogs = async (req, res, next) => {
+  const { name } = req.query;
+  const condition = name
+    ? { name: { $regex: new RegExp(name), $options: 'i' } }
+    : {};
+
+  condition.user = req.params.userId;
+
   try {
-    const blogs = await Blog.find({ user: req.params.userId }).populate(
-      'user',
-      ['name', 'bio', 'avatar']
-    );
+    const blogs = await Blog.find(condition).populate('user', [
+      'name',
+      'bio',
+      'avatar',
+    ]);
 
     return res.json({ blogs });
   } catch (err) {

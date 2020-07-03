@@ -1,34 +1,11 @@
 const User = require('../models/User');
+const Blog = require('../models/Blog');
+const Post = require('../models/Post');
+const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
-const { dataUri } = require('../middleware/multer');
+const { dataUri } = require('../middleware');
 const { uploader } = require('../services/cloudinary');
-
-exports.registerUser = async (req, res, next) => {
-  const { name, email, password } = req.body;
-
-  try {
-    const user = await User.create({ name, email, password });
-    const token = await user.generateAuthToken();
-
-    res.status(201).json({ user, token });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.loginUser = async (req, res, next) => {
-  const { email, password } = req.body;
-
-  try {
-    const user = await User.findByCredentials(email, password);
-    const token = await user.generateAuthToken();
-
-    res.json({ user, token });
-  } catch (err) {
-    next(err);
-  }
-};
 
 exports.updateUser = async (req, res, next) => {
   const newUserData = {};
@@ -46,17 +23,16 @@ exports.updateUser = async (req, res, next) => {
       new: true,
     });
 
-    res.json({ user: newUser });
+    return res.json({ user: newUser });
   } catch (err) {
     next(err);
   }
 };
 
 exports.getUser = async (req, res) => {
-  res.json({ user: req.user });
+  return res.json({ user: req.user });
 };
 
-// eslint-disable-next-line
 exports.uploadPhoto = async (req, res, next) => {
   try {
     if (!req.file) {
@@ -74,7 +50,7 @@ exports.uploadPhoto = async (req, res, next) => {
       { new: true }
     );
 
-    // TODO: remove old avatar
+    // Remove old avatar from cloudinary
     if (req.user.avatar && req.user.avatar.image_url) {
       await deleteImageFromCloudinary(
         user.avatar.image_url,
@@ -82,21 +58,14 @@ exports.uploadPhoto = async (req, res, next) => {
       );
     }
 
-    res.json({ avatarURL: user.avatar.image_url });
+    return res.json({ avatarURL: user.avatar.image_url });
   } catch (err) {
     next(err);
   }
 };
 
-exports.getUserById = async (req, res, next) => {
-  const { userId } = req.params;
-
+exports.deleteUser = async (req, res, next) => {
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new ErrorHandler(404, 'User not found');
-    }
-    res.json({ user });
   } catch (err) {
     next(err);
   }

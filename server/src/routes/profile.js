@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const profileControllers = require('../controllers/profileControllers');
-const { auth } = require('../middleware/auth');
 const User = require('../models/User');
+const { auth } = require('../middleware');
 const { ErrorHandler } = require('../utils/error');
 
 // Preload user profile on routes with ':userId'

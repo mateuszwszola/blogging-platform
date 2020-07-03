@@ -1,14 +1,12 @@
 const router = require('express').Router();
 const postControllers = require('../controllers/postControllers');
 const postValidation = require('../validations/post');
-const { auth } = require('../middleware/auth');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
-const { validate } = require('../middleware/validate');
 const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
-const { multerUploads } = require('../middleware/multer');
+const { auth, multerUploads, validate } = require('../middleware');
 
 // Preload post on routes with ':slug'
 router.param('slug', async (req, res, next, slug) => {

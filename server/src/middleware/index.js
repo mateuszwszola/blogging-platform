@@ -1,3 +1,10 @@
-const { s3photoUpload } = require('./s3photoUpload');
+const { auth } = require('./auth');
+const { multerUploads, dataUri } = require('./multer');
+const { validate } = require('./validate');
 
-exports.s3photoUpload = () => s3photoUpload;
+module.exports = {
+  auth,
+  multerUploads,
+  dataUri,
+  validate,
+};
