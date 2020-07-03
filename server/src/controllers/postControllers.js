@@ -5,6 +5,7 @@ const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
 const { dataUri } = require('../middleware/multer');
 const { uploader } = require('../services/cloudinary');
+const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 
 exports.createPost = async (req, res, next) => {
   const { blogId } = req.params;
@@ -48,8 +49,8 @@ exports.createPost = async (req, res, next) => {
         upload_preset: 'bloggingplatform',
       });
 
-      postData.bgImg.image_url = result.secure_url;
-      postData.bgImg.large_image_url = result.eager[0].secure_url;
+      postData.bgImg.image_url = result.eager[0].secure_url;
+      postData.bgImg.large_image_url = result.secure_url;
     }
 
     if (
@@ -102,8 +103,8 @@ exports.updatePost = async (req, res, next) => {
         upload_preset: 'bloggingplatform',
       });
 
-      newPostData.bgImg.image_url = result.secure_url;
-      newPostData.bgImg.large_image_url = result.eager[0].secure_url;
+      newPostData.bgImg.image_url = result.eager[0].secure_url;
+      newPostData.bgImg.large_image_url = result.secure_url;
     }
 
     if (
@@ -120,6 +121,15 @@ exports.updatePost = async (req, res, next) => {
     );
 
     // TODO: remove old image
+    if (
+      post.bgImg &&
+      post.bgImg.image_url &&
+      updatedPost.bgImg &&
+      updatedPost.bgImg.image_url &&
+      post.bgImg.image_url !== updatedPost.bgImg.image_url
+    ) {
+      await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
+    }
 
     return res.json({ post: updatedPost.toPostJSONFor(req.user) });
   } catch (err) {
@@ -149,6 +159,9 @@ exports.deletePost = async (req, res, next) => {
     });
 
     // TODO: remove image
+    if (post.bgImg && post.bgImg.image_url) {
+      await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
+    }
 
     return res.json({ message: 'post deleted', post: doc });
   } catch (err) {

@@ -1,6 +1,7 @@
 const Blog = require('../models/Blog');
 const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
+const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 const { uploader } = require('../services/cloudinary');
 const { dataUri } = require('../middleware/multer');
 
@@ -45,7 +46,7 @@ exports.createBlog = async (req, res, next) => {
 
     const newBlog = await Blog.create({ ...blogData });
 
-    res.status(201).json({ blog: newBlog });
+    return res.status(201).json({ blog: newBlog });
   } catch (err) {
     next(err);
   }
@@ -101,13 +102,22 @@ exports.updateBlog = async (req, res, next) => {
       blogData.bgImg.img_attribution = req.body.imgAttribution;
     }
 
-    // TODO: Delete old image
-
     const updatedBlog = await Blog.findByIdAndUpdate(blogId, blogData, {
       new: true,
     });
 
-    res.status(200).json({ blog: updatedBlog });
+    // Delete old image
+    if (
+      blog.bgImg &&
+      blog.bgImg.image_url &&
+      updatedBlog.bgImg &&
+      updatedBlog.bgImg.image_url &&
+      blog.bgImg.image_url !== updatedBlog.bgImg.image_url
+    ) {
+      await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
+    }
+
+    return res.status(200).json({ blog: updatedBlog });
   } catch (err) {
     next(err);
   }
@@ -125,7 +135,7 @@ exports.getBlogById = async (req, res, next) => {
       throw new ErrorHandler(404, 'Blog Not Found');
     }
 
-    res.json({ blog });
+    return res.json({ blog });
   } catch (err) {
     next(err);
   }
@@ -143,7 +153,8 @@ exports.getBlogBySlugName = async (req, res, next) => {
     if (!blog) {
       throw new ErrorHandler(404, 'Blog Not Found');
     }
-    res.json({ blog });
+
+    return res.json({ blog });
   } catch (err) {
     next(err);
   }
@@ -156,7 +167,8 @@ exports.getAllBlogs = async (req, res, next) => {
       'bio',
       'avatar',
     ]);
-    res.json({ blogs });
+
+    return res.json({ blogs });
   } catch (err) {
     next(err);
   }
@@ -169,7 +181,8 @@ exports.getAuthUserBlogs = async (req, res, next) => {
       'bio',
       'avatar',
     ]);
-    res.json({ blogs });
+
+    return res.json({ blogs });
   } catch (err) {
     next(err);
   }
@@ -181,15 +194,18 @@ exports.getUserBlogs = async (req, res, next) => {
       'user',
       ['name', 'bio', 'avatar']
     );
-    res.json({ blogs });
+
+    return res.json({ blogs });
   } catch (err) {
     next(err);
   }
 };
 
 exports.deleteBlog = async (req, res, next) => {
+  const { blogId } = req.params;
+
   try {
-    const blog = await Blog.findById(req.params.blogId);
+    const blog = await Blog.findById(blogId);
 
     if (!blog) {
       throw new ErrorHandler(404, 'Blog not found');
@@ -199,17 +215,24 @@ exports.deleteBlog = async (req, res, next) => {
       throw new ErrorHandler(403, 'You are not authorized to delete a blog');
     }
 
-    await Blog.deleteOne({ _id: req.params.blogId });
+    await Blog.deleteOne({ _id: blogId });
 
-    // TODO: Delete blog image
+    if (blog.bgImg && blog.bgImg.image_url) {
+      await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
+    }
 
     const posts = await Post.find({ blog: blog._id }).exec();
     posts.forEach(async (post) => {
-      // TODO: Delete post image
       await Post.deleteOne({ _id: post._id });
+      if (post.bgImg && post.bgImg.image_url) {
+        await deleteImageFromCloudinary(
+          post.bgImg.image_url,
+          'bloggingplatform'
+        );
+      }
     });
 
-    res.status(200).json({ message: 'Blog deleted', blog });
+    return res.status(200).json({ message: 'Blog deleted', blog });
   } catch (err) {
     next(err);
   }

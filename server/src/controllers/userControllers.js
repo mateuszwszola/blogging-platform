@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
+const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 const { dataUri } = require('../middleware/multer');
 const { uploader } = require('../services/cloudinary');
 
@@ -74,6 +75,12 @@ exports.uploadPhoto = async (req, res, next) => {
     );
 
     // TODO: remove old avatar
+    if (req.user.avatar && req.user.avatar.image_url) {
+      await deleteImageFromCloudinary(
+        user.avatar.image_url,
+        'bloggingplatform-avatar'
+      );
+    }
 
     res.json({ avatarURL: user.avatar.image_url });
   } catch (err) {
