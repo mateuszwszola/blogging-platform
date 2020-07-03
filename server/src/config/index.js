@@ -4,15 +4,23 @@ const env = process.env.NODE_ENV || 'development';
 const baseConfig = {
   env,
   isDev: env === 'development',
-  isTest: env === 'testing',
+  isTest: env === 'test',
   isProd: env === 'production',
   port: process.env.PORT || 3001,
   secrets: {
     jwt: process.env.JWT_KEY,
     jwtExp: process.env.JWT_EXP || 3600,
   },
-  // mailgunApiKey: process.env.MAILGUN_API_KEY,
-  // mailgunDomain: process.env.MAILGUN_DOMAIN,
+};
+
+const servicesConfig = {
+  mailgunApiKey: process.env.MAILGUN_API_KEY,
+  mailgunDomain: process.env.MAILGUN_DOMAIN,
+  awsAccessKeyId: process.env.AWS_ACCCESS_KEY_ID,
+  awsSecretKey: process.env.AWS_SECRET_KEY,
+  cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
+  cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
+  cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,
 };
 
 let envConfig = {};
@@ -34,4 +42,4 @@ switch (env) {
     envConfig = require('./dev').config;
 }
 
-module.exports = merge(baseConfig, envConfig);
+module.exports = merge(baseConfig, envConfig, servicesConfig);

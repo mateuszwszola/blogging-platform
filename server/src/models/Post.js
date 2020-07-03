@@ -30,15 +30,10 @@ const PostSchema = new mongoose.Schema(
     body: {
       ...requiredString,
     },
-    bgImgUrl: {
-      type: String,
-    },
-    photo: {
-      type: mongoose.ObjectId,
-      ref: 'Photo',
-    },
-    imgAttribution: {
-      type: String,
+    bgImg: {
+      image_url: String,
+      large_image_url: String,
+      img_attribution: String,
     },
     comments: [
       {
@@ -90,9 +85,7 @@ PostSchema.methods.toPostJSONFor = function (user) {
     slug: this.slug,
     title: this.title,
     body: this.body,
-    bgImgUrl: this.bgImgUrl,
-    photo: this.photo,
-    imgAttribution: this.imgAttribution,
+    bgImg: this.bgImg,
     tags: this.tags,
     comments: this.comments,
     favoritesCount: this.favoritesCount,

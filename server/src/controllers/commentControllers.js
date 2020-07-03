@@ -20,7 +20,7 @@ exports.addComment = async (req, res, next) => {
 
     await post.addComment(comment._id);
 
-    res.json({ comment });
+    return res.json({ comment });
   } catch (err) {
     next(err);
   }
@@ -30,18 +30,18 @@ exports.deleteComment = async (req, res, next) => {
   const { commentId } = req.params;
 
   try {
-    const comment = await Comment.findOne({
-      _id: commentId,
-      user: req.user._id,
-    });
+    const comment = await Comment.findById(commentId);
+
     if (!comment) {
-      throw new ErrorHandler(
-        401,
-        'You are not authorized to delete this comment'
-      );
+      throw new ErrorHandler(404, 'comment not found');
     }
+
+    if (!req.user._id.equals(comment.user)) {
+      throw new ErrorHandler(403, 'you are not authorized to delete a comment');
+    }
+
     await Comment.findByIdAndDelete(comment._id);
-    res.json({ comment });
+    return res.json({ comment });
   } catch (err) {
     next(err);
   }
@@ -59,7 +59,7 @@ exports.getPostComments = async (req, res, next) => {
       'bio',
       'avatar',
     ]);
-    res.json({ comments });
+    return res.json({ comments });
   } catch (err) {
     next(err);
   }

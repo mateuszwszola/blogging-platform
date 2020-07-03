@@ -35,6 +35,10 @@ exports.unfollow = async (req, res, next) => {
   try {
     const user = await User.findById(userId);
 
+    if (userId.toString() === profileId.toString()) {
+      throw new ErrorHandler(400, 'You cannot follow your own profile');
+    }
+
     await user.unfollow(profileId);
 
     res.json({ profile: req.profile.toProfileJSONFor(user) });

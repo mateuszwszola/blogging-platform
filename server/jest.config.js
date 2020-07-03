@@ -8,4 +8,5 @@ module.exports = {
   testEnvironment: 'node',
   setupFilesAfterEnv: ['<rootDir>/test-db-setup.js'],
   testURL: 'http://localhost/',
+  coveragePathIgnorePatterns: ['/node_modules/'],
 };

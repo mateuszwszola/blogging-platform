@@ -1,14 +1,15 @@
 const Post = require('../models/Post');
 const Blog = require('../models/Blog');
-const Photo = require('../models/Photo');
 const User = require('../models/User');
 const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
-const createPhotoLink = require('../utils/createPhotoLink');
+const { dataUri } = require('../middleware/multer');
+const { uploader } = require('../services/cloudinary');
+const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 
 exports.createPost = async (req, res, next) => {
-  const { title, body } = req.body;
   const { blogId } = req.params;
+  const { title, body } = req.body;
 
   try {
     const blog = await Blog.findById(blogId);
@@ -18,92 +19,119 @@ exports.createPost = async (req, res, next) => {
 
     if (!blog.user.equals(req.user._id)) {
       throw new ErrorHandler(
-        401,
+        403,
         'you are not allowed to create post in this blog'
       );
     }
 
-    const postData = { title, body };
-    const optionalFields = ['tags', 'bgImgUrl', 'imgAttribution'];
-    optionalFields.forEach((field) => {
-      if (typeof req.body[field] !== 'undefined') {
-        postData[field] = req.body[field];
-      }
-    });
-
-    const post = new Post({
+    const postData = {
       user: req.user._id,
       blog: blogId,
+      title,
+      body,
+      bgImg: {},
+    };
+
+    if (typeof req.body.tags !== 'undefined') {
+      postData.tags = req.body.tags;
+    }
+
+    if (req.file || req.body.bgImgUrl) {
+      let image;
+      if (req.file) {
+        const file = dataUri(req).content;
+        image = file;
+      } else {
+        image = req.body.bgImgUrl;
+      }
+
+      const result = await uploader.upload(image, {
+        upload_preset: 'bloggingplatform',
+      });
+
+      postData.bgImg.image_url = result.eager[0].secure_url;
+      postData.bgImg.large_image_url = result.secure_url;
+    }
+
+    if (
+      postData.bgImg.image_url &&
+      typeof req.body.imgAttribution !== 'undefined'
+    ) {
+      postData.bgImg.img_attribution = req.body.imgAttribution;
+    }
+
+    const post = await Post.create({
       ...postData,
     });
 
-    const file = req.file && req.file.buffer;
-
-    if (file) {
-      const photo = await Photo.create({
-        photo: req.file.buffer,
-      });
-
-      post.photo = photo.id;
-      post.bgImgUrl = createPhotoLink(photo.id);
-    }
-
-    await post.save();
-
-    res.json({ post });
+    return res.status(201).json({ post: post.toPostJSONFor(req.user) });
   } catch (err) {
     next(err);
   }
 };
 
 exports.updatePost = async (req, res, next) => {
-  const { title, body } = req.body;
   const { postId } = req.params;
+  const { title, body } = req.body;
 
   try {
     const post = await Post.findById(postId);
     if (!post) {
-      throw new ErrorHandler(404, 'Post Not Found');
+      throw new ErrorHandler(404, 'post not found');
     }
 
     if (!post.user.equals(req.user._id)) {
-      throw new ErrorHandler(
-        401,
-        'you are not allowed to create post in this blog'
-      );
+      throw new ErrorHandler(403, 'you are not allowed to update the post');
     }
 
-    const postData = { title, body };
-    const optionalFields = ['tags', 'bgImgUrl', 'imgAttribution'];
-    optionalFields.forEach((field) => {
-      if (typeof req.body[field] !== 'undefined') {
-        postData[field] = req.body[field];
+    const newPostData = { title, body, bgImg: { ...post.bgImg } };
+
+    if (typeof req.body.tags !== 'undefined') {
+      newPostData.tags = req.body.tags;
+    }
+
+    if (req.file || req.body.bgImgUrl) {
+      let image;
+      if (req.file) {
+        const file = dataUri(req).content;
+        image = file;
+      } else {
+        image = req.body.bgImgUrl;
       }
-    });
 
-    const file = req.file && req.file.buffer;
-
-    if (file) {
-      const photo = await Photo.create({
-        photo: req.file.buffer,
+      const result = await uploader.upload(image, {
+        upload_preset: 'bloggingplatform',
       });
 
-      postData.photo = photo.id;
-      postData.bgImgUrl = createPhotoLink(photo.id);
+      newPostData.bgImg.image_url = result.eager[0].secure_url;
+      newPostData.bgImg.large_image_url = result.secure_url;
     }
 
-    if (post.photo && postData.bgImgUrl) {
-      // delete old photo
-      await Photo.findByIdAndDelete(post.photo);
+    if (
+      newPostData.bgImg.image_url &&
+      typeof req.body.imgAttribution !== 'undefined'
+    ) {
+      newPostData.bgImg.img_attribution = req.body.imgAttribution;
     }
 
     const updatedPost = await Post.findByIdAndUpdate(
       postId,
-      { ...postData },
+      { ...newPostData },
       { new: true }
     );
 
-    res.json({ post: updatedPost });
+    // TODO: remove old image
+    if (
+      post.bgImg &&
+      post.bgImg.image_url &&
+      updatedPost.bgImg &&
+      updatedPost.bgImg.image_url &&
+      post.bgImg.image_url !== updatedPost.bgImg.image_url
+    ) {
+      await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
+    }
+
+    return res.json({ post: updatedPost.toPostJSONFor(req.user) });
   } catch (err) {
     next(err);
   }
@@ -115,13 +143,11 @@ exports.deletePost = async (req, res, next) => {
   try {
     const post = await Post.findById(postId);
     if (!post) {
-      throw new ErrorHandler(404, 'Post Not Found');
+      throw new ErrorHandler(404, 'post not found');
     }
+
     if (!post.user.equals(req.user._id)) {
-      throw new ErrorHandler(
-        401,
-        'you are not allowed to create post in this blog'
-      );
+      throw new ErrorHandler(403, 'you are not allowed to delete that post');
     }
 
     const doc = await Post.findByIdAndDelete(postId);
@@ -132,10 +158,12 @@ exports.deletePost = async (req, res, next) => {
       },
     });
 
-    if (post.photo) {
-      await Photo.deleteOne({ _id: post.photo });
+    // TODO: remove image
+    if (post.bgImg && post.bgImg.image_url) {
+      await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
     }
-    res.json({ message: 'Post deleted', post: doc });
+
+    return res.json({ message: 'post deleted', post: doc });
   } catch (err) {
     next(err);
   }
@@ -148,22 +176,13 @@ exports.getAllPosts = async (req, res, next) => {
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({ createdAt: -1 });
 
-    res.json({ posts });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.getAllBlogPosts = async (req, res, next) => {
-  const { blogId } = req.params;
-
-  try {
-    const posts = await Post.find({ blog: blogId })
-      .populate('user', ['name', 'bio', 'avatar'])
-      .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-      .sort({ createdAt: -1 });
-
-    res.json({ posts });
+    if (req.user) {
+      return res.json({
+        posts: posts.map((post) => post.toPostJSONFor(req.user)),
+      });
+    } else {
+      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+    }
   } catch (err) {
     next(err);
   }
@@ -178,22 +197,63 @@ exports.getAuthUserPosts = async (req, res, next) => {
         createdAt: -1,
       });
 
-    res.json({ posts });
+    return res.json({
+      posts: posts.map((post) => post.toPostJSONFor(req.user)),
+    });
   } catch (err) {
     next(err);
   }
 };
 
 exports.getUserPosts = async (req, res, next) => {
+  const { userId } = req.params;
+
   try {
-    const posts = await Post.find({ user: req.params.userId })
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ErrorHandler(404, 'user not found');
+    }
+
+    const posts = await Post.find({ user: userId })
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({
         createdAt: -1,
       });
 
-    res.json({ posts });
+    if (req.user) {
+      return res.json({
+        posts: posts.map((post) => post.toPostJSONFor(req.user)),
+      });
+    } else {
+      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getBlogPosts = async (req, res, next) => {
+  const { blogId } = req.params;
+
+  try {
+    const blog = await Blog.findById(blogId);
+    if (!blog) {
+      throw new ErrorHandler(404, 'blog not found');
+    }
+
+    const posts = await Post.find({ blog: blogId })
+      .populate('user', ['name', 'bio', 'avatar'])
+      .populate('blog', ['name', 'slug', 'description', 'bgImg'])
+      .sort({ createdAt: -1 });
+
+    if (req.user) {
+      return res.json({
+        posts: posts.map((post) => post.toPostJSONFor(req.user)),
+      });
+    } else {
+      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+    }
   } catch (err) {
     next(err);
   }
@@ -201,11 +261,13 @@ exports.getUserPosts = async (req, res, next) => {
 
 exports.getFavorites = async (req, res, next) => {
   const { userId } = req.params;
+
   try {
     const user = await User.findById(userId);
     if (!user) {
       throw new ErrorHandler(404, 'User not found');
     }
+
     const posts = await Post.find()
       .where('_id')
       .in(user.favorites)
@@ -213,9 +275,11 @@ exports.getFavorites = async (req, res, next) => {
       .populate('blog', ['name', 'slug', 'description', 'bgImg']);
 
     if (req.user) {
-      res.json({ posts: posts.map((post) => post.toPostJSONFor(req.user)) });
+      return res.json({
+        posts: posts.map((post) => post.toPostJSONFor(req.user)),
+      });
     } else {
-      res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
     }
   } catch (err) {
     next(err);
@@ -239,36 +303,28 @@ exports.getPostBySlug = async (req, res, next) => {
 };
 
 exports.favorite = async (req, res, next) => {
-  const userId = req.user._id;
-  const postId = req.post._id;
+  let user = req.user;
+  let post = req.post;
 
   try {
-    const user = await User.findById(userId);
-    let post = await Post.findById(postId);
-
-    await user.favorite(postId);
-
+    user = await user.favorite(post._id);
     post = await post.updateFavoriteCount();
 
-    res.json({ post: post.toPostJSONFor(user) });
+    return res.json({ post: post.toPostJSONFor(user) });
   } catch (err) {
     next(err);
   }
 };
 
 exports.unfavorite = async (req, res, next) => {
-  const userId = req.user._id;
-  const postId = req.post._id;
+  let user = req.user;
+  let post = req.post;
 
   try {
-    const user = await User.findById(userId);
-    let post = await Post.findById(postId);
-
-    await user.unfavorite(postId);
-
+    user = await user.unfavorite(post._id);
     post = await post.updateFavoriteCount();
 
-    res.json({ post: post.toPostJSONFor(user) });
+    return res.json({ post: post.toPostJSONFor(user) });
   } catch (err) {
     next(err);
   }

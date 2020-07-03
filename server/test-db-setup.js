@@ -4,12 +4,10 @@ const _ = require('lodash');
 const User = require('./src/models/User');
 const Post = require('./src/models/Post');
 const Blog = require('./src/models/Blog');
-const Photo = require('./src/models/Photo');
 const Comment = require('./src/models/Comment');
-
-const models = { User, Post, Blog, Photo, Comment };
-
 const { dbUrl } = require('./src/config');
+
+const models = { User, Post, Blog, Comment };
 
 global.newId = () => {
   return mongoose.Types.ObjectId();

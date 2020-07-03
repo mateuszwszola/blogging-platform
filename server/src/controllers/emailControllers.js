@@ -1,7 +1,9 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 const User = require('../models/User');
-const mg = require('../config/mailgun');
+const { mailgunConfig } = require('../services/mailgun');
+
+const mg = mailgunConfig();
 
 /*
   Helpful resource: https://www.smashingmagazine.com/2017/11/safe-password-resets-with-json-web-tokens/

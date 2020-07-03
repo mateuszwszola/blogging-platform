@@ -28,14 +28,14 @@ router.param('userId', async (req, res, next, userId) => {
 router.get('/:userId', profileControllers.getUserProfileById);
 
 /*
-  @route   POST api/users/:userId/follow
+  @route   POST api/users/profile/:userId/follow
   @desc    Follow user
   @access  Private
  */
 router.post('/:userId/follow', auth.required, profileControllers.follow);
 
 /*
-  @route   DELETE api/users/:userId/follow
+  @route   DELETE api/users/profile/:userId/follow
   @desc    Unfollow user
   @access  Private
  */

@@ -1,11 +1,8 @@
 const User = require('../models/User');
-const Photo = require('../models/Photo');
-const {
-  convertBufferToJimpImg,
-  resizeAndOptimizeImg,
-} = require('../utils/optimizeImg');
-const createPhotoLink = require('../utils/createPhotoLink');
 const { ErrorHandler } = require('../utils/error');
+const { deleteImageFromCloudinary } = require('../utils/cloudinary');
+const { dataUri } = require('../middleware/multer');
+const { uploader } = require('../services/cloudinary');
 
 exports.registerUser = async (req, res, next) => {
   const { name, email, password } = req.body;
@@ -34,38 +31,17 @@ exports.loginUser = async (req, res, next) => {
 };
 
 exports.updateUser = async (req, res, next) => {
+  const newUserData = {};
+
+  if (typeof req.body.name !== 'undefined') {
+    newUserData.name = req.body.name;
+  }
+
+  if (typeof req.body.bio !== 'undefined') {
+    newUserData.bio = req.body.bio;
+  }
+
   try {
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw new ErrorHandler(404, 'User not found');
-    }
-
-    const newUserData = {};
-
-    if (typeof req.body.name !== 'undefined') {
-      newUserData.name = req.body.name;
-    }
-
-    if (typeof req.body.bio !== 'undefined') {
-      newUserData.bio = req.body.bio;
-    }
-
-    if (typeof req.body.avatarURL !== 'undefined') {
-      newUserData.avatar = {};
-      newUserData.avatar.photoURL = req.body.avatarURL;
-      newUserData.avatar.photoID = null;
-    }
-
-    if (
-      newUserData.avatar &&
-      newUserData.avatar.photoURL &&
-      user.avatar &&
-      user.avatar.photoID
-    ) {
-      // delete old, uploaded avatar
-      await Photo.findByIdAndDelete(user.avatar.photoID);
-    }
-
     const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
       new: true,
     });
@@ -80,33 +56,33 @@ exports.getUser = async (req, res) => {
   res.json({ user: req.user });
 };
 
+// eslint-disable-next-line
 exports.uploadPhoto = async (req, res, next) => {
   try {
     if (!req.file) {
       throw new ErrorHandler(400, 'cannot upload photo');
     }
 
-    const img = await convertBufferToJimpImg(req.file.buffer);
-    const buffer = await resizeAndOptimizeImg(img, 300, undefined, 90);
+    const image = dataUri(req).content;
+    const result = await uploader.upload(image, {
+      upload_preset: 'bloggingplatform-avatar',
+    });
 
-    const photo = await Photo.create({ photo: buffer });
+    const user = await User.findByIdAndUpdate(
+      req.user._id,
+      { avatar: { image_url: result.secure_url } },
+      { new: true }
+    );
 
-    const user = await User.findById(req.user._id);
-    if (!user) {
-      throw new ErrorHandler(404, 'User not found');
+    // TODO: remove old avatar
+    if (req.user.avatar && req.user.avatar.image_url) {
+      await deleteImageFromCloudinary(
+        user.avatar.image_url,
+        'bloggingplatform-avatar'
+      );
     }
 
-    if (user.avatar && user.avatar.photoID) {
-      // delete old photo
-      await Photo.findByIdAndDelete(user.avatar.photoID);
-    }
-
-    user.avatar.photoURL = createPhotoLink(photo.id);
-    user.avatar.photoID = photo.id;
-
-    await user.save();
-
-    res.json({ photoURL: user.avatar.photoURL });
+    res.json({ avatarURL: user.avatar.image_url });
   } catch (err) {
     next(err);
   }

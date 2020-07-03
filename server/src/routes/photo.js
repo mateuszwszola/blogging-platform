@@ -1,6 +1,6 @@
 const router = require('express').Router();
 const { auth } = require('../middleware/auth');
-const photoUpload = require('../middleware/photoUpload');
+const { photoUpload } = require('../middleware/photoUpload');
 const photoControllers = require('../controllers/photoControllers');
 
 /*

@@ -6,9 +6,11 @@ const bodyParser = require('body-parser');
 const config = require('./config');
 const { connect } = require('./config/db');
 const { handleNotFound, handleError } = require('./utils/error');
+const { cloudinaryConfig } = require('./services/cloudinary');
 
 const app = express();
-exports.app = app;
+
+cloudinaryConfig();
 
 app.enable('trust proxy'); // for rate limiting by Client IP
 
@@ -33,14 +35,19 @@ app.use('/api', require('./routes'));
 
 // 404 handler
 app.use(handleNotFound);
-
+// eslint-disable-next-line
 app.use((err, req, res, next) => {
   handleError(err, res);
 });
 
-exports.start = async () => {
-  await connect();
+const start = async () => {
+  await connect(); // connect DB
   app.listen(config.port, () => {
     console.log(`Server listens on port ${config.port}`);
   });
+};
+
+module.exports = {
+  app,
+  start,
 };

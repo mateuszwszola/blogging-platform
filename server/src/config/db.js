@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const config = require('./index');
+const config = require('./');
 
 exports.connect = async (url = config.dbUrl, opts = {}) => {
   try {

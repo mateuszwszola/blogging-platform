@@ -38,13 +38,7 @@ const UserSchema = new mongoose.Schema(
       maxlength: 100,
     },
     avatar: {
-      photoURL: {
-        type: String,
-      },
-      photoID: {
-        type: mongoose.ObjectId,
-        ref: 'Photo',
-      },
+      image_url: String,
     },
     favorites: [{ type: mongoose.ObjectId, ref: 'Post' }],
     following: [{ type: mongoose.ObjectId, ref: 'User' }],
@@ -74,7 +68,9 @@ UserSchema.methods.generateAuthToken = function () {
       id: user.id,
     },
   };
-  const token = jwt.sign(payload, config.secrets.jwt, { expiresIn: 3600 });
+  const token = jwt.sign(payload, config.secrets.jwt, {
+    expiresIn: 3600,
+  });
   return token;
 };
 

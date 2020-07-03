@@ -1,12 +1,12 @@
 const router = require('express').Router();
-const { auth } = require('../middleware/auth');
 const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
-const photoUpload = require('../middleware/photoUpload');
 const {
   validateParamObjectId,
 } = require('../validations/validateParamObjectId');
+const { auth } = require('../middleware/auth');
 const { validate } = require('../middleware/validate');
+const { multerUploads } = require('../middleware/multer');
 
 /*
   @route   POST api/blogs
@@ -16,7 +16,7 @@ const { validate } = require('../middleware/validate');
 router.post(
   '/',
   auth.required,
-  photoUpload.single('photo'),
+  multerUploads,
   validate(blogValidation.validateBlog),
   blogControllers.createBlog
 );
@@ -30,7 +30,7 @@ router.put(
   '/:blogId',
   auth.required,
   validateParamObjectId('blogId'),
-  photoUpload.single('photo'),
+  multerUploads,
   validate(blogValidation.validateBlog),
   blogControllers.updateBlog
 );
@@ -50,6 +50,17 @@ router.get('/', auth.required, blogControllers.getAuthUserBlogs);
 router.get('/all', blogControllers.getAllBlogs);
 
 /*
+  @route   GET api/blogs/user/:userId
+  @desc    Get user blogs
+  @access  Public
+ */
+router.get(
+  '/user/:userId',
+  validateParamObjectId('userId'),
+  blogControllers.getUserBlogs
+);
+
+/*
   @route   GET api/blogs/:blogId
   @desc    Get blog by ID
   @access  Public
@@ -66,17 +77,6 @@ router.get(
   @access  Public
  */
 router.get('/slug/:slug', blogControllers.getBlogBySlugName);
-
-/*
-  @route   GET api/blogs/user/:userId
-  @desc    Get user blogs
-  @access  Public
- */
-router.get(
-  '/user/:userId',
-  validateParamObjectId('userId'),
-  blogControllers.getUserBlogs
-);
 
 /*
   @route   DELETE api/blogs/:blogId

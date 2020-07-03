@@ -69,7 +69,7 @@ exports.validateUser = [
     .optional()
     .custom((value) => {
       // user can reset avatar URL
-      if (value !== '' && !isURL(value)) {
+      if (value && !isURL(value)) {
         return false;
       }
       return true;
