@@ -54,7 +54,7 @@ function useCreatePost() {
 
 function useUpdatePost() {
   return useMutation(
-    (data) => updatePost(data.postId, data.values).then((res) => res.post),
+    (data) => updatePost(data.postId, data.formData).then((res) => res.post),
     {
       onSuccess: (updatedPost) => {
         queryCache.setQueryData(['post', updatedPost.slug], (old) => {

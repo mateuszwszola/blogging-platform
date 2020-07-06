@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import { useAlert } from 'context/AlertContext';
 import { useBlogBySlug, useDeleteBlog } from 'hooks/useBlog';
@@ -6,6 +6,7 @@ import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import AddBlogPost from './AddBlogPost';
 import { Button } from 'components/layout/Button';
+import UpdateBlog from './UpdateBlog';
 
 function ManageBlog() {
   const { blogSlug } = useParams();
@@ -16,6 +17,7 @@ function ManageBlog() {
   ] = useDeleteBlog();
   const { setAlert } = useAlert();
   const history = useHistory();
+  const [isEditting, setIsEditting] = useState(false);
 
   function handleDeleteBlog() {
     if (!blog) return;
@@ -51,12 +53,28 @@ function ManageBlog() {
               <Button version="secondary">Preview Blog</Button>
             </Link>
             <div className="inline-block m-2">
+              {isEditting ? (
+                <Button version="edit" onClick={() => setIsEditting(false)}>
+                  Cancel Editting
+                </Button>
+              ) : (
+                <Button version="edit" onClick={() => setIsEditting(true)}>
+                  Edit Blog
+                </Button>
+              )}
+            </div>
+            <div className="inline-block m-2">
               <Button version="delete" onClick={handleDeleteBlog}>
                 Delete Blog
               </Button>
             </div>
           </div>
-          <AddBlogPost blog={blog} />
+
+          {isEditting ? (
+            <UpdateBlog blog={blog} onUpdate={() => setIsEditting(false)} />
+          ) : (
+            <AddBlogPost blog={blog} />
+          )}
         </>
       )}
     </>

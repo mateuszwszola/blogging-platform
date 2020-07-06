@@ -1,39 +1,39 @@
 import React from 'react';
-import validate from 'utils/createBlogValidationRules';
-import { useAlert } from 'context/AlertContext';
-import { useCreateBlog } from 'hooks/useBlog';
-import usePhotoFile from 'hooks/usePhotoFile';
+import PropTypes from 'prop-types';
 import useForm from 'hooks/useForm';
+import validate from 'utils/createBlogValidationRules';
+import usePhotoFile from 'hooks/usePhotoFile';
 import BlogForm from 'components/layout/BlogForm';
-import { LoadingWithOverlay } from 'components/Loading';
+import { useUpdateBlog } from 'hooks/useBlog';
 import formatBlogData from 'utils/formatBlogData';
+import { useAlert } from 'context/AlertContext';
+import { LoadingWithOverlay } from 'components/Loading';
 
-function CreateBlog() {
-  const [createBlog, { status, error }] = useCreateBlog();
+function UpdateBlog({ blog, onUpdate }) {
+  const [updateBlog, { status, error }] = useUpdateBlog();
 
   const { setAlert } = useAlert();
 
   const {
     handleChange,
     handleSubmit,
-    handleReset: handleFormReset,
     values: { name, description, bgImgUrl, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
-      name: '',
-      description: '',
+      name: blog.name || '',
+      description: blog.description || '',
       bgImgUrl: '',
-      imgAttribution: '',
+      imgAttribution: (blog.bgImg && blog.bgImg.img_attribution) || '',
     },
-    handleCreateBlog,
+    handleBlogUpdate,
     validate
   );
 
   const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
 
-  function handleCreateBlog() {
+  function handleBlogUpdate() {
     const formData = formatBlogData({
       name,
       description,
@@ -42,12 +42,12 @@ function CreateBlog() {
       photo: photoFile,
     });
 
-    createBlog(
-      { formData },
+    updateBlog(
+      { blogId: blog._id, formData },
       {
         onSuccess: () => {
-          handleFormReset();
-          setAlert('success', 'Blog created');
+          setAlert('success', 'Blog updated');
+          onUpdate();
         },
         onError: (err) => {
           if (err.errors) {
@@ -61,7 +61,7 @@ function CreateBlog() {
   }
 
   return (
-    <div className="max-w-screen-md mx-auto bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md">
+    <div className="max-w-screen-md mx-auto mt-6 relative bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md mb-12">
       {error ? (
         <p className="bg-red-500 text-white text-sm text-center my-2 rounded py-1">
           {error.message || 'There was a problem with the server'}
@@ -69,9 +69,8 @@ function CreateBlog() {
       ) : status === 'loading' ? (
         <LoadingWithOverlay />
       ) : null}
-
       <h1 className="text-2xl lg:text-3xl text-center leading-loose">
-        Create Blog
+        Update Blog
       </h1>
 
       <BlogForm
@@ -86,10 +85,15 @@ function CreateBlog() {
         description={description}
         imgAttribution={imgAttribution}
         bgImgUrl={bgImgUrl}
-        buttonMessage="Create blog"
+        buttonMessage="Update blog"
       />
     </div>
   );
 }
 
-export default CreateBlog;
+UpdateBlog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  onUpdate: PropTypes.func.isRequired,
+};
+
+export default UpdateBlog;

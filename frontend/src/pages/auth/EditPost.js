@@ -48,7 +48,7 @@ function EditPost({ post, onUpdatePost }) {
     });
 
     updatePost(
-      { postId: post._id, values: { formData } },
+      { postId: post._id, formData },
       {
         onSuccess: () => {
           onUpdatePost();

@@ -10,6 +10,7 @@ import {
   getUserBlogs,
   getBlogBySlugName,
   createBlog,
+  updateBlog,
   deleteBlog,
   getAllBlogs,
 } from 'api/blog';
@@ -34,6 +35,18 @@ function useCreateBlog() {
   return useMutation((values) => createBlog(values).then((res) => res.blog), {
     onSuccess: () => queryCache.refetchQueries('blogs'),
   });
+}
+
+function useUpdateBlog() {
+  return useMutation(
+    (data) => updateBlog(data.blogId, data.formData).then((res) => res.blog),
+    {
+      onSuccess: (updatedBlog) => {
+        queryCache.refetchQueries(['blog', updatedBlog.slug]);
+        queryCache.refetchQueries(['blogs', updatedBlog.user]);
+      },
+    }
+  );
 }
 
 function useDeleteBlog() {
@@ -61,6 +74,7 @@ export {
   useBlogBySlug,
   useAllBlogs,
   useCreateBlog,
+  useUpdateBlog,
   useDeleteBlog,
   useBlog,
   useBlogs,

@@ -5,7 +5,7 @@ import ImgUploadInput from 'components/layout/Input/ImgUploadInput';
 import useToggle from 'hooks/useToggle';
 import { Button } from 'components/layout/Button';
 
-function CreateBlogForm({
+function BlogForm({
   handleSubmit,
   handleChange,
   photoFile,
@@ -17,6 +17,7 @@ function CreateBlogForm({
   description,
   imgAttribution,
   bgImgUrl,
+  buttonMessage,
 }) {
   const [uploadImg, toggleUploadImg] = useToggle(true);
 
@@ -102,14 +103,14 @@ function CreateBlogForm({
           fullWidth
           fullRounded
         >
-          <span className="uppercase font-bold">Create blog</span>
+          <span className="uppercase font-bold">{buttonMessage}</span>
         </Button>
       </div>
     </form>
   );
 }
 
-CreateBlogForm.propTypes = {
+BlogForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   handleChange: PropTypes.func.isRequired,
   handlePhotoChange: PropTypes.func.isRequired,
@@ -120,6 +121,7 @@ CreateBlogForm.propTypes = {
   description: PropTypes.string.isRequired,
   imgAttribution: PropTypes.string.isRequired,
   bgImgUrl: PropTypes.string.isRequired,
+  buttonMessage: PropTypes.string.isRequired,
 };
 
-export default CreateBlogForm;
+export default BlogForm;
