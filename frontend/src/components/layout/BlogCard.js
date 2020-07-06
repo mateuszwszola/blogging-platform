@@ -5,11 +5,11 @@ import { UserIcon } from 'icons';
 
 const BlogCard = ({ blog }) => {
   const blogBgImg =
-    (blog.bgImg && blog.bgImg.photoURL) ||
+    (blog.bgImg && blog.bgImg.image_url) ||
     'https://images.unsplash.com/photo-1457282367193-e3b79e38f207?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1654&q=80';
 
   const userAvatar =
-    (blog.user && blog.user.avatar && blog.user.avatar.photoURL) || null;
+    (blog.user && blog.user.avatar && blog.user.avatar.image_url) || null;
 
   return (
     <div className="w-full max-w-screen-sm bg-white rounded shadow-lg overflow-hidden mx-auto">

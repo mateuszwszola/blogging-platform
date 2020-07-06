@@ -7,7 +7,7 @@ function useUpdateUser() {
 
 function useUploadUserAvatar() {
   return useMutation((data) =>
-    uploadUserAvatar(data.photoFile).then((res) => res.photoURL)
+    uploadUserAvatar(data.photoFile).then((res) => res.avatarURL)
   );
 }
 

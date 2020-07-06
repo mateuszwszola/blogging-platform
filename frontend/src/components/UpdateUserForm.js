@@ -1,11 +1,12 @@
 import React from 'react';
 import { useUser } from 'context/UserContext';
-import useForm from 'hooks/useForm';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
-import { LoadingWithOverlay } from './Loading';
-import updateUserValidationRules from 'utils/updateUserValidatoinRules';
 import { useAlert } from 'context/AlertContext';
 import { useUpdateUser } from 'hooks/useUser';
+import useForm from 'hooks/useForm';
+import updateUserValidationRules from 'utils/updateUserValidatoinRules';
+import { InputGroup } from 'components/layout/Input';
+import { Button } from './layout/Button';
+import { LoadingWithOverlay } from './Loading';
 
 function UpdateUserForm() {
   const { user, setUser } = useUser();
@@ -80,11 +81,16 @@ function UpdateUserForm() {
           label="User Bio"
         />
 
-        <InputSubmit
+        <Button
+          type="submit"
           disabled={buttonDisabled}
-          value="Update User"
-          classnames="w-1/2 max-w-sm mx-auto block my-6 bg-green-300 hover:bg-green-400 transition duration-100"
-        />
+          size="base"
+          version="primary"
+          fullWidth
+          fullRounded
+        >
+          <span className="uppercase font-bold text-sm">Update User</span>
+        </Button>
       </form>
     </div>
   );

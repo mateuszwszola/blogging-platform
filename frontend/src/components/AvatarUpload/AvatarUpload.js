@@ -15,7 +15,7 @@ const AvatarUpload = () => {
   const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
   const [uploadUserAvatar, { status: avatarStatus }] = useUploadUserAvatar();
 
-  const userAvatarSrc = user.avatar && user.avatar.photoURL;
+  const userAvatarSrc = user.avatar && user.avatar.image_url;
 
   useEffect(() => {
     if (photoFile) {
@@ -33,9 +33,9 @@ const AvatarUpload = () => {
     uploadUserAvatar(
       { photoFile },
       {
-        onSuccess: (photoURL) => {
+        onSuccess: (avatarURL) => {
           setAlert('success', 'Img uploaded');
-          setUser({ avatar: { ...user.avatar, photoURL } });
+          setUser({ avatar: { ...user.avatar, image_url: avatarURL } });
         },
         onSettled: () => {
           handlePhotoReset();

@@ -30,7 +30,7 @@ async function client(endpoint, { body, formData, ...customConfig } = {}) {
   if (formData) {
     /*
     In the case of sending formData, omit setting content-type,
-    the browser will do it better, automatically
+    the browser will do it, automatically
     
     https://stackoverflow.com/questions/35192841/fetch-post-with-multipart-form-data
 

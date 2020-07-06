@@ -21,6 +21,7 @@ const Button = ({
   return (
     <button
       {...props}
+      disabled={disabled}
       className={clsx(classNames, {
         'w-full': !!fullWidth,
         'rounded-full': !!fullRounded,

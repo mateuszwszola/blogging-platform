@@ -8,7 +8,6 @@ import {
   useParams,
 } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
-import { useUser } from 'context/UserContext';
 import { useUserProfile } from 'hooks/useProfile';
 import AvatarUpload from 'components/AvatarUpload';
 import ProfilePosts from 'components/Profile/Posts';
@@ -25,17 +24,12 @@ function Profile() {
   const { path } = useRouteMatch();
   const { userId } = useParams();
   const { logout } = useAuth();
-  const { user } = useUser();
   const { data: profile, status, error } = useUserProfile(userId);
-
-  const isUserProfileOwner = user && profile && user._id === profile._id;
 
   const handleLogout = async () => {
     await logout();
     history.push('/');
   };
-
-  const userAvatarSrc = profile && profile.avatar && profile.avatar.photoURL;
 
   return (
     <>
@@ -51,10 +45,12 @@ function Profile() {
                 style={{ minHeight: '14rem' }}
                 className="w-full flex justify-center items-center py-2"
               >
-                {isUserProfileOwner ? (
+                {profile.isOwner ? (
                   <AvatarUpload />
                 ) : (
-                  <UserAvatar avatarURL={userAvatarSrc} />
+                  <UserAvatar
+                    avatarURL={profile.avatar ? profile.avatar.image_url : null}
+                  />
                 )}
               </div>
 
@@ -69,7 +65,7 @@ function Profile() {
                 )}
               </div>
 
-              {isUserProfileOwner && (
+              {profile.isOwner && (
                 <div className="flex flex-col w-full">
                   <Link
                     className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"

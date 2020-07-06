@@ -8,7 +8,7 @@ import { HeartIcon } from 'icons';
 
 function DisplayPost({ post, onLike }) {
   const userAvatar =
-    (post.user && post.user.avatar && post.user.avatar.photoURL) || null;
+    (post.user && post.user.avatar && post.user.avatar.image_url) || null;
 
   const filteredTags = post.tags && post.tags.filter((t) => t);
 
@@ -68,16 +68,16 @@ function DisplayPost({ post, onLike }) {
       </div>
 
       <div className="">
-        {post.bgImgUrl && (
+        {post.bgImg && post.bgImg.large_image_url && (
           <div className="mt-5">
             <img
-              src={post.bgImgUrl}
+              src={post.bgImg.large_image_url}
               className="max-w-full block mx-auto rounded"
-              alt="post-background"
+              alt="background"
             />
-            {post.imgAttribution && (
+            {post.bgImg.img_attribution && (
               <p className="text-center text-blue-500 mt-2">
-                {post.imgAttribution}
+                {post.bgImg.img_attribution}
               </p>
             )}
           </div>

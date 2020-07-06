@@ -20,8 +20,8 @@ function EditPost({ post, onUpdatePost }) {
     {
       title: post.title || '',
       tags: post.tags.join(',') || '',
-      bgImgUrl: (!post.photo && post.bgImgUrl) || '',
-      imgAttribution: post.imgAttribution || '',
+      bgImgUrl: '',
+      imgAttribution: (post.bgImg && post.bgImg.img_attribution) || '',
     },
     handleUpdateBlogPost,
     validate

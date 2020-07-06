@@ -22,14 +22,14 @@ async function getUser() {
 }
 
 async function login({ email, password }) {
-  const res = await client('users/login', {
+  const res = await client('auth/signin', {
     body: { email, password },
   });
   return handleDataResponse(res);
 }
 
 async function register({ name, email, username, password }) {
-  const res = await client('users', {
+  const res = await client('auth/signup', {
     body: {
       name,
       email,

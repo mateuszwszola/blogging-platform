@@ -23,7 +23,7 @@ const DesktopNav = () => {
 
   const hideNav = () => setIsOpen(false);
 
-  const userAvatar = user && user.avatar && user.avatar.photoURL;
+  const userAvatar = user && user.avatar && user.avatar.image_url;
 
   const authLinks = (
     <>

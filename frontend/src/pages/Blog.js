@@ -28,7 +28,8 @@ function Blog() {
   }
 
   const photoSrc =
-    (blog.bgImg && blog.bgImg.photoURL) || 'https://picsum.photos/1280/720';
+    (blog.bgImg && blog.bgImg.large_image_url) ||
+    'https://picsum.photos/1280/720';
 
   return (
     <div className="py-16">

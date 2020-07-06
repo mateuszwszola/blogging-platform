@@ -18,7 +18,8 @@ function Posts({ posts }) {
       ) : (
         posts.map((post) => {
           const bgImgUrl =
-            post.bgImgUrl || 'https://picsum.photos/seed/picsum/600/300';
+            (post.bgImg && post.bgImg.image_url) ||
+            'https://picsum.photos/seed/picsum/600/300';
 
           return (
             <div
