@@ -23,21 +23,21 @@ const UpdatePassword = () => {
   return (
     <form onSubmit={handleSubmit}>
       <InputGroup
-        classnames="border border-gray-400 bg-white"
+        classnames="border border-gray-400 bg-gray-100"
         name="oldPassword"
         value={oldPassword}
         handleChange={handleChange}
         label="Old password"
       />
       <InputGroup
-        classnames="border border-gray-400"
+        classnames="border border-gray-400 bg-gray-100"
         name="newPassword"
         value={newPassword}
         handleChange={handleChange}
         label="New password"
       />
       <InputGroup
-        classnames="border border-gray-400"
+        classnames="border border-gray-400 bg-gray-100"
         name="confirmNewPassword"
         value={confirmNewPassword}
         handleChange={handleChange}

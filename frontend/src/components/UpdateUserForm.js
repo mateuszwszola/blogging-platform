@@ -63,7 +63,7 @@ function UpdateUserForm() {
         className={`${status === 'loading' ? 'opacity-75' : 'opacity-100'}`}
       >
         <InputGroup
-          classnames="border border-gray-400 bg-white"
+          classnames="border border-gray-400 bg-gray-100"
           isError={!!(errors.name || errors.message)}
           errors={errors}
           value={name}
@@ -74,7 +74,7 @@ function UpdateUserForm() {
         />
 
         <TextareaGroup
-          classnames="border border-gray-400 bg-white"
+          classnames="border border-gray-400 bg-gray-100"
           isError={!!(errors.bio || errors.message)}
           errors={errors}
           value={bio}

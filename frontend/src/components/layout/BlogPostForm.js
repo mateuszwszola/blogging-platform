@@ -45,7 +45,7 @@ function BlogPostForm({
           value={title}
           handleChange={handleChange}
           placeholder="Post Title"
-          classnames="border border-gray-400"
+          classnames="border border-gray-400 bg-gray-100"
           label="Post Title"
         />
 
@@ -63,7 +63,7 @@ function BlogPostForm({
             value={bgImgUrl}
             handleChange={handleChange}
             placeholder="https://"
-            classnames="border border-gray-400"
+            classnames="border border-gray-400 bg-gray-100"
             label="Background Image"
             type="url"
             pattern="https://.*"
@@ -88,7 +88,7 @@ function BlogPostForm({
           value={imgAttribution}
           handleChange={handleChange}
           placeholder="Photo By ..."
-          classnames="border border-gray-400"
+          classnames="border border-gray-400 bg-gray-100"
           label="Image Attribution (optional)"
         />
 
@@ -97,7 +97,7 @@ function BlogPostForm({
           errors={errors}
           name="tags"
           placeholder="Give a post tags (separate them using comma)"
-          classnames="border border-gray-400"
+          classnames="border border-gray-400 bg-gray-100"
           value={tags}
           handleChange={handleChange}
           label="Tags (what is the post about?)"
