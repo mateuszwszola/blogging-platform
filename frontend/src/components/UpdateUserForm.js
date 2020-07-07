@@ -3,7 +3,7 @@ import { useUser } from 'context/UserContext';
 import { useAlert } from 'context/AlertContext';
 import { useUpdateUser } from 'hooks/useUser';
 import useForm from 'hooks/useForm';
-import updateUserValidationRules from 'utils/updateUserValidatoinRules';
+import updateUserValidationRules from 'utils/updateUserValidationRules';
 import { InputGroup, TextareaGroup } from 'components/layout/Input';
 import { Button } from './layout/Button';
 import { LoadingWithOverlay } from './Loading';

@@ -67,7 +67,7 @@ function Login({
             icon={KeyIcon}
           />
 
-          <div className="flex flex-col sm:flex-row sm:justify-between px-2 py-2 sm:my-1">
+          <div className="flex flex-col sm:flex-row sm:justify-between p-2 sm:my-1">
             <label className="flex items-center py-1 sm:py-0">
               <input
                 className="bg-gray-100 p-2"

@@ -41,8 +41,14 @@ async function register({ name, email, username, password }) {
 }
 
 function sendResetPasswordEmail({ email }) {
-  return client('users/user/email', {
+  return client('auth/user/email', {
     body: { email },
+  });
+}
+
+function receiveNewPassword({ userId, token, password }) {
+  return client(`auth/user/receive_new_password/${userId}/${token}`, {
+    body: { password },
   });
 }
 
@@ -66,5 +72,6 @@ export {
   getToken,
   getUser,
   sendResetPasswordEmail,
+  receiveNewPassword,
   isLoggedIn,
 };

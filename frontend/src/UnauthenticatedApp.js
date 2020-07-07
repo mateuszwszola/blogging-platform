@@ -6,6 +6,7 @@ import {
   Login,
   Register,
   ForgotPassword,
+  ResetPassword,
   NotFound,
   Explore,
   Blog,
@@ -28,6 +29,9 @@ function UnauthenticatedApp() {
         </Route>
         <Route path="/forgot-password">
           <ForgotPassword />
+        </Route>
+        <Route path="/resetpassword/:userId/:token">
+          <ResetPassword />
         </Route>
         <Route path="/explore">
           <Explore />
