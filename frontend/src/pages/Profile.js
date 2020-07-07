@@ -9,7 +9,6 @@ import {
 } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import { useUserProfile } from 'hooks/useProfile';
-import AvatarUpload from 'components/AvatarUpload';
 import ProfilePosts from 'components/Profile/Posts';
 import ProfileBlogs from 'components/Profile/Blogs';
 import ProfileFavorites from 'components/Profile/Favorites';
@@ -45,13 +44,9 @@ function Profile() {
                 style={{ minHeight: '14rem' }}
                 className="w-full flex justify-center items-center py-2"
               >
-                {profile.isOwner ? (
-                  <AvatarUpload />
-                ) : (
-                  <UserAvatar
-                    avatarURL={profile.avatar ? profile.avatar.image_url : null}
-                  />
-                )}
+                <UserAvatar
+                  avatarURL={profile.avatar ? profile.avatar.image_url : null}
+                />
               </div>
 
               <div className="border-t py-4">
@@ -87,7 +82,7 @@ function Profile() {
             </div>
 
             <div className="mt-10 border-t border-solid border-gray-400 pt-4">
-              <ProfileNav />
+              <ProfileNav isOwner={profile.isOwner} />
 
               <div className="mt-8 relative">
                 <Switch>
@@ -97,9 +92,11 @@ function Profile() {
                   <Route path={`${path}/blogs`}>
                     <ProfileBlogs profileId={profile._id} />
                   </Route>
-                  <Route path={`${path}/favorites`}>
-                    <ProfileFavorites profileId={profile._id} />
-                  </Route>
+                  {profile.isOwner && (
+                    <Route path={`${path}/favorites`}>
+                      <ProfileFavorites profileId={profile._id} />
+                    </Route>
+                  )}
                 </Switch>
               </div>
             </div>

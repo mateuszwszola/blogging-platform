@@ -1,8 +1,9 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { NavLink, useRouteMatch } from 'react-router-dom';
 import { GridIcon, HeartIcon, GlobeIcon } from 'icons';
 
-function ProfileNav() {
+function ProfileNav({ isOwner }) {
   const { url } = useRouteMatch();
 
   return (
@@ -27,18 +28,24 @@ function ProfileNav() {
           <span className="uppercase ml-2">Blogs</span>
         </li>
       </NavLink>
-      <NavLink
-        to={`${url}/favorites`}
-        className="text-gray-600"
-        activeClassName="text-gray-900 font-semibold"
-      >
-        <li className="flex items-center p-2">
-          <HeartIcon className="fill-current w-5 h-5" />
-          <span className="uppercase ml-2">Favorite</span>
-        </li>
-      </NavLink>
+      {isOwner && (
+        <NavLink
+          to={`${url}/favorites`}
+          className="text-gray-600"
+          activeClassName="text-gray-900 font-semibold"
+        >
+          <li className="flex items-center p-2">
+            <HeartIcon className="fill-current w-5 h-5" />
+            <span className="uppercase ml-2">Favorite</span>
+          </li>
+        </NavLink>
+      )}
     </ul>
   );
 }
+
+ProfileNav.propTypes = {
+  isOwner: PropTypes.bool.isRequired,
+};
 
 export default ProfileNav;

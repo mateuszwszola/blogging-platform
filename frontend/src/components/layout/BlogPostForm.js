@@ -140,7 +140,7 @@ function BlogPostForm({
             fullWidth
             fullRounded
           >
-            <span className="uppercase font-bold">
+            <span className="uppercase">
               {update ? 'Update Post' : 'Create Post'}
             </span>
           </Button>

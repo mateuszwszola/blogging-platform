@@ -1,12 +1,25 @@
 import React from 'react';
-import UpdateUserForm from 'components/UpdateUserForm';
+import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
+import { Account, Sidebar, Profile } from 'components/Settings';
 
-function Settings(props) {
+function Settings() {
+  const match = useRouteMatch();
+
   return (
-    <div className="md:pt-16">
-      <h1 className="text-2xl text-center py-6">Settings</h1>
-      <div className="w-full max-w-md mx-auto mt-4">
-        <UpdateUserForm />
+    <div className="w-full max-w-screen-xl mx-auto py-16 px-2 relative">
+      <div className="flex flex-col mt-6 items-center">
+        <Sidebar url={match.url} />
+        <Switch>
+          <Route exact path={match.path}>
+            <Redirect to={`${match.path}/profile`} />
+          </Route>
+          <Route path={`${match.path}/profile`}>
+            <Profile />
+          </Route>
+          <Route path={`${match.path}/account`}>
+            <Account />
+          </Route>
+        </Switch>
       </div>
     </div>
   );

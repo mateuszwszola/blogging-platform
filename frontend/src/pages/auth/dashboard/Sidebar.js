@@ -11,7 +11,7 @@ function Sidebar({ blogs }) {
       <div className="block w-4/5 max-w-xs mx-auto">
         <Link to={`${url}/create-blog`} className="no-underline">
           <Button size="base" version="primary" fullWidth>
-            <span className="uppercase font-bold">Create a blog</span>
+            <span className="uppercase">Create a blog</span>
           </Button>
         </Link>
       </div>

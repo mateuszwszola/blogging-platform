@@ -4,7 +4,7 @@ import { useAlert } from 'context/AlertContext';
 import { useUpdateUser } from 'hooks/useUser';
 import useForm from 'hooks/useForm';
 import updateUserValidationRules from 'utils/updateUserValidatoinRules';
-import { InputGroup } from 'components/layout/Input';
+import { InputGroup, TextareaGroup } from 'components/layout/Input';
 import { Button } from './layout/Button';
 import { LoadingWithOverlay } from './Loading';
 
@@ -63,34 +63,38 @@ function UpdateUserForm() {
         className={`${status === 'loading' ? 'opacity-75' : 'opacity-100'}`}
       >
         <InputGroup
-          classnames="border border-gray-400"
+          classnames="border border-gray-400 bg-white"
           isError={!!(errors.name || errors.message)}
           errors={errors}
           value={name}
           handleChange={handleChange}
           name="name"
-          label="User Name"
+          label="Name"
+          placeholder="What's your name?"
         />
-        <InputGroup
-          classnames="border border-gray-400"
+
+        <TextareaGroup
+          classnames="border border-gray-400 bg-white"
           isError={!!(errors.bio || errors.message)}
           errors={errors}
           value={bio}
           handleChange={handleChange}
           name="bio"
-          label="User Bio"
+          label="Bio"
+          placeholder="Tell us a little bit about yourself"
         />
-
-        <Button
-          type="submit"
-          disabled={buttonDisabled}
-          size="base"
-          version="primary"
-          fullWidth
-          fullRounded
-        >
-          <span className="uppercase font-bold text-sm">Update User</span>
-        </Button>
+        <div className="flex justify-center lg:justify-start">
+          <Button
+            className="block"
+            type="submit"
+            disabled={buttonDisabled}
+            size="base"
+            version="primary"
+            fullRounded
+          >
+            Update profile
+          </Button>
+        </div>
       </form>
     </div>
   );

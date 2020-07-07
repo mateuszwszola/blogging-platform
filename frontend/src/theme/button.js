@@ -2,15 +2,15 @@ export const ButtonVersion = {
   primary:
     'bg-green-500 hover:bg-green-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline transition duration-100',
   secondary:
-    'bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline font-semibold transition duration-100',
+    'bg-blue-500 hover:bg-blue-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline transition duration-100',
   auth:
-    'bg-red-500 hover:bg-red-600 text-gray-900 rounded-lg shadow focus:outline-none focus:shadow-outline font-semibold transition duration-100',
+    'bg-red-500 hover:bg-red-600 text-gray-900 rounded-lg shadow focus:outline-none focus:shadow-outline transition duration-100 font-semibold',
   basic:
-    'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 rounded-lg shadow focus:outline-none focus:shadow-outline font-semibold transition duration-100',
+    'bg-white hover:bg-gray-100 text-gray-700 border border-gray-300 rounded-lg shadow focus:outline-none focus:shadow-outline transition duration-100',
   delete:
-    'bg-red-500 hover:bg-red-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline font-semibold',
+    'bg-red-500 hover:bg-red-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline',
   edit:
-    'bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline font-semibold',
+    'bg-gray-500 hover:bg-gray-600 text-white rounded-lg shadow focus:outline-none focus:shadow-outline',
   disabled: 'opacity-75 cursor-not-allowed transition duration-100',
 };
 

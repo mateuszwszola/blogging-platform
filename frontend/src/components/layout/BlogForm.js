@@ -34,7 +34,7 @@ function BlogForm({
         errors={errors}
         name="name"
         placeholder="Give it a name"
-        classnames="border border-gray-400"
+        classnames="border border-gray-400 bg-gray-100"
         value={name}
         handleChange={handleChange}
         label="Blog Name"
@@ -49,7 +49,7 @@ function BlogForm({
         errors={errors}
         name="description"
         placeholder="What is your blog about?"
-        classnames="border border-gray-400"
+        classnames="border border-gray-400 bg-gray-100"
         value={description}
         handleChange={handleChange}
         label="Blog Description"
@@ -67,7 +67,7 @@ function BlogForm({
           value={bgImgUrl}
           handleChange={handleChange}
           placeholder="https://"
-          classnames="border border-gray-400"
+          classnames="border border-gray-400 bg-gray-100"
           label="Background Image"
           type="url"
           pattern="https://.*"
@@ -90,7 +90,7 @@ function BlogForm({
         value={imgAttribution}
         handleChange={handleChange}
         placeholder="Photo By ..."
-        classnames="border border-gray-400"
+        classnames="border border-gray-400 bg-gray-100"
         label="Image Attribution (optional)"
       />
 
@@ -103,7 +103,7 @@ function BlogForm({
           fullWidth
           fullRounded
         >
-          <span className="uppercase font-bold">{buttonMessage}</span>
+          <span className="uppercase">{buttonMessage}</span>
         </Button>
       </div>
     </form>

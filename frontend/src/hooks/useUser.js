@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query';
-import { updateUser, uploadUserAvatar } from 'api/user';
+import { updateUser, uploadUserAvatar, deleteAccount } from 'api/user';
 
 function useUpdateUser() {
   return useMutation((data) => updateUser(data).then((res) => res.user));
@@ -11,4 +11,8 @@ function useUploadUserAvatar() {
   );
 }
 
-export { useUpdateUser, useUploadUserAvatar };
+function useDeleteAccount() {
+  return useMutation(deleteAccount);
+}
+
+export { useUpdateUser, useUploadUserAvatar, useDeleteAccount };

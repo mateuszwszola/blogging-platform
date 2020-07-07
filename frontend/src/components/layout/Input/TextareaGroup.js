@@ -26,7 +26,7 @@ const TextareaGroup = ({
           onChange={handleChange}
           name={name}
           className={clsx(
-            'bg-gray-100 w-full rounded py-2 px-4 outline-none focus:shadow-outline border border-gray-400',
+            'w-full rounded py-2 px-4 outline-none focus:shadow-outline border border-gray-400',
             isError &&
               'border-2 border-red-500 focus:shadow-none focus:border-red-300',
             classnames
