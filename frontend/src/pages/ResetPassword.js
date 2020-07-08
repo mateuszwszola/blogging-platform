@@ -22,15 +22,15 @@ function ResetPassword() {
   );
   const { setAlert } = useAlert();
 
-  function handleSetNewPassword() {
+  async function handleSetNewPassword() {
     setNewPassword(
       { userId, token, password },
       {
         onSuccess: (res) => {
-          setAlert('success', res.message);
+          setAlert('success', res.message, 3000);
         },
         onError: (err) => {
-          setAlert('error', err.message);
+          setAlert('error', 'Unable to change password', 3000);
         },
       }
     );
@@ -82,7 +82,10 @@ function ResetPassword() {
           />
 
           <div className="w-11/12 mx-auto mt-2 sm:mt-4">
-            <InputSubmit value="Set new password" disabled={isLoading} />
+            <InputSubmit
+              value={`${isLoading ? 'Loading...' : 'Set new password'}`}
+              disabled={isLoading}
+            />
           </div>
         </form>
       </div>

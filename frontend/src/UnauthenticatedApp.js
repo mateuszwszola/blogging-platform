@@ -27,7 +27,7 @@ function UnauthenticatedApp() {
         <Route path="/register">
           <Register />
         </Route>
-        <Route path="/forgot-password">
+        <Route path="/forgotpassword">
           <ForgotPassword />
         </Route>
         <Route path="/resetpassword/:userId/:token">

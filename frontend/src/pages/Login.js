@@ -78,7 +78,7 @@ function Login({
                 Remember me
               </span>
             </label>
-            <Link to="/forgot-password" className="text-red-500">
+            <Link to="/forgotpassword" className="text-red-500">
               Forgot your password?
             </Link>
           </div>

@@ -45,7 +45,7 @@ function Profile() {
                 className="w-full flex justify-center items-center py-2"
               >
                 <UserAvatar
-                  avatarURL={profile.avatar ? profile.avatar.image_url : null}
+                  avatarURL={profile.avatar && profile.avatar.image_url}
                 />
               </div>
 

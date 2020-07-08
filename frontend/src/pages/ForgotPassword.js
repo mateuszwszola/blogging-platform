@@ -1,28 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { EnvelopeIcon } from 'icons';
-import useInput from 'hooks/useInput';
-import { sendResetPasswordEmail } from 'api/auth';
 import { useMutation } from 'react-query';
+import { sendResetPasswordEmail } from 'api/auth';
 import { useAlert } from 'context/AlertContext';
+import useInput from 'hooks/useInput';
+import { InputGroup, InputSubmit } from 'components/layout/Input';
+import { EnvelopeIcon } from 'icons';
 
 function ForgotPassword() {
   const [email, handleEmailChange, emailInputReset] = useInput('');
   const [sendEmail, { isLoading }] = useMutation(sendResetPasswordEmail);
   const { setAlert } = useAlert();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     sendEmail(
       { email },
       {
         onSuccess: (res) => {
+          setAlert('success', res.message, 3000);
           emailInputReset();
-          setAlert('success', res.message);
         },
         onError: (err) => {
-          setAlert('error', err.message);
+          setAlert('error', err.message, 3000);
         },
       }
     );
@@ -41,26 +42,18 @@ function ForgotPassword() {
           </svg>
         </div>
         <form onSubmit={handleSubmit} className="flex flex-col w-full mt-2">
-          <label className="my-2 sm:my-3 relative">
-            <input
-              value={email}
-              onChange={handleEmailChange}
-              className="bg-gray-100 w-full rounded py-2 px-4 pl-10 outline-none focus:shadow-outline"
-              name="email"
-              type="email"
-              placeholder="e-mail address"
-            />
-            <div className="absolute top-0 left-0 bottom-0 flex items-center p-2 pl-3 text-gray-500">
-              <EnvelopeIcon className="w-4 h-4 fill-current" />
-            </div>
-          </label>
+          <InputGroup
+            value={email}
+            handleChange={handleEmailChange}
+            name="email"
+            type="email"
+            placeholder="e-mail address"
+            icon={EnvelopeIcon}
+            required
+          />
 
           <div className="w-11/12 mx-auto mt-4">
-            <input
-              className="w-full rounded-full py-2 px-4 uppercase bg-red-500 hover:bg-red-400 text-gray-900 font-semibold cursor-pointer focus:outline-none focus:shadow-outline"
-              type="submit"
-              value="Send Recovery Email"
-            />
+            <InputSubmit value="Send recovery email" disabled={isLoading} />
           </div>
 
           <div className="mt-2 text-center">
