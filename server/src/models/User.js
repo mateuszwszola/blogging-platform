@@ -99,6 +99,7 @@ UserSchema.methods.toProfileJSONFor = function (user) {
     favorites: this.favorites,
     following: this.following,
     isFollowing: user ? user.isFollowing(this._id) : false,
+    isOwner: user ? user._id.toString() === this._id.toString() : false,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,
   };

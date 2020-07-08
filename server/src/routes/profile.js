@@ -25,7 +25,7 @@ router.param('userId', async (req, res, next, userId) => {
   @desc    Get user profile by Id
   @access  Public
  */
-router.get('/:userId', profileControllers.getUserProfileById);
+router.get('/:userId', auth.optional, profileControllers.getUserProfileById);
 
 /*
   @route   POST api/users/profile/:userId/follow

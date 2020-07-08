@@ -44,3 +44,16 @@ exports.validateNewPassword = [
     .isLength({ min: 7 })
     .withMessage('The password must have min 7 characters'),
 ];
+
+exports.validatePasswordUpdate = [
+  body('currentPassword', 'current password is required')
+    .exists()
+    .not()
+    .isEmpty(),
+  body('newPassword', 'new password is required')
+    .exists()
+    .not()
+    .isEmpty()
+    .isLength({ min: 7 })
+    .withMessage('The new password must have min 7 characters'),
+];

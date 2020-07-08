@@ -33,8 +33,8 @@ exports.createBlog = async (req, res, next) => {
         upload_preset: 'bloggingplatform',
       });
 
-      blogData.bgImg.image_url = result.secure_url;
-      blogData.bgImg.large_image_url = result.eager[0].secure_url;
+      blogData.bgImg.image_url = result.eager[0].secure_url;
+      blogData.bgImg.large_image_url = result.secure_url;
     }
 
     if (
@@ -91,8 +91,8 @@ exports.updateBlog = async (req, res, next) => {
         upload_preset: 'bloggingplatform',
       });
 
-      blogData.bgImg.image_url = result.secure_url;
-      blogData.bgImg.large_image_url = result.eager[0].secure_url;
+      blogData.bgImg.image_url = result.eager[0].secure_url;
+      blogData.bgImg.large_image_url = result.secure_url;
     }
 
     if (

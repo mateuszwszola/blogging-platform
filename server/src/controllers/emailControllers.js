@@ -47,7 +47,6 @@ exports.sendPasswordResetEmail = async (req, res, next) => {
         return res.status(400).json({ message: 'Unable to send email' });
       }
       return res.json({
-        body,
         message: 'Success! Check your email inbox and follow the steps',
       });
     });
@@ -67,18 +66,18 @@ exports.receiveNewPassword = async (req, res, next) => {
   try {
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: 'No user with that email found' });
+      return res.status(400).json({ message: 'Unable to verify the user' });
     }
 
     const secret = user.password + '-' + user.createdAt.getTime();
 
     jwt.verify(token, secret, (err, payload) => {
       if (err || !payload) {
-        return res.status(401).json({ message: 'Unable to verify the user' });
+        return res.status(400).json({ message: 'Unable to verify the user' });
       }
 
       if (payload && payload.userId !== user.id) {
-        return res.status(401).json({ message: 'Unable to verify the user' });
+        return res.status(400).json({ message: 'Unable to verify the user' });
       }
 
       bcrypt.genSalt(10, (err, salt) => {

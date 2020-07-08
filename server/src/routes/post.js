@@ -66,21 +66,21 @@ router.delete(
 );
 
 /*
-  @route   GET api/posts/all
+  @route   GET api/posts/all?title=[]
   @desc    Get all posts
   @access  Public
  */
 router.get('/all', auth.optional, postControllers.getAllPosts);
 
 /*
-  @route   GET api/posts
+  @route   GET api/posts?title=[]
   @desc    Get auth user posts
   @access  Private
  */
 router.get('/', auth.required, postControllers.getAuthUserPosts);
 
 /*
-  @route   GET api/posts/user/:userId
+  @route   GET api/posts/user/:userId?title=[]
   @desc    Get user posts
   @access  Public
  */
@@ -92,7 +92,7 @@ router.get(
 );
 
 /*
-  @route   GET api/posts/blog/:blogId
+  @route   GET api/posts/blog/:blogId?title=[]
   @desc    Get blog posts
   @access  Public
  */
@@ -104,7 +104,7 @@ router.get(
 );
 
 /*
-  @route   GET api/posts/user/:userId/favorites
+  @route   GET api/posts/user/:userId/favorites?title=[]
   @desc    Get user favorites
   @access  Public
  */

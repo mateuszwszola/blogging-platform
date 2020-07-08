@@ -120,7 +120,7 @@ exports.updatePost = async (req, res, next) => {
       { new: true }
     );
 
-    // TODO: remove old image
+    // Remove old image from cloudinary
     if (
       post.bgImg &&
       post.bgImg.image_url &&
@@ -158,7 +158,7 @@ exports.deletePost = async (req, res, next) => {
       },
     });
 
-    // TODO: remove image
+    // Delete image from cloudinary
     if (post.bgImg && post.bgImg.image_url) {
       await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
     }
@@ -170,8 +170,13 @@ exports.deletePost = async (req, res, next) => {
 };
 
 exports.getAllPosts = async (req, res, next) => {
+  const { title } = req.query;
+  const condition = title
+    ? { title: { $regex: new RegExp(title), $options: 'i' } }
+    : {};
+
   try {
-    const posts = await Post.find({})
+    const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({ createdAt: -1 });
@@ -189,8 +194,15 @@ exports.getAllPosts = async (req, res, next) => {
 };
 
 exports.getAuthUserPosts = async (req, res, next) => {
+  const { title } = req.query;
+  const condition = title
+    ? { title: { $regex: new RegExp(title), $options: 'i' } }
+    : {};
+
+  condition.user = req.user._id;
+
   try {
-    const posts = await Post.find({ user: req.user._id })
+    const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({
@@ -207,6 +219,12 @@ exports.getAuthUserPosts = async (req, res, next) => {
 
 exports.getUserPosts = async (req, res, next) => {
   const { userId } = req.params;
+  const { title } = req.query;
+  const condition = title
+    ? { title: { $regex: new RegExp(title), $options: 'i' } }
+    : {};
+
+  condition.user = userId;
 
   try {
     const user = await User.findById(userId);
@@ -214,7 +232,7 @@ exports.getUserPosts = async (req, res, next) => {
       throw new ErrorHandler(404, 'user not found');
     }
 
-    const posts = await Post.find({ user: userId })
+    const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({
@@ -235,6 +253,12 @@ exports.getUserPosts = async (req, res, next) => {
 
 exports.getBlogPosts = async (req, res, next) => {
   const { blogId } = req.params;
+  const { title } = req.query;
+  const condition = title
+    ? { title: { $regex: new RegExp(title), $options: 'i' } }
+    : {};
+
+  condition.blog = blogId;
 
   try {
     const blog = await Blog.findById(blogId);
@@ -242,7 +266,7 @@ exports.getBlogPosts = async (req, res, next) => {
       throw new ErrorHandler(404, 'blog not found');
     }
 
-    const posts = await Post.find({ blog: blogId })
+    const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
       .sort({ createdAt: -1 });
@@ -261,6 +285,10 @@ exports.getBlogPosts = async (req, res, next) => {
 
 exports.getFavorites = async (req, res, next) => {
   const { userId } = req.params;
+  const { title } = req.query;
+  const condition = title
+    ? { title: { $regex: new RegExp(title), $options: 'i' } }
+    : {};
 
   try {
     const user = await User.findById(userId);
@@ -268,7 +296,7 @@ exports.getFavorites = async (req, res, next) => {
       throw new ErrorHandler(404, 'User not found');
     }
 
-    const posts = await Post.find()
+    const posts = await Post.find(condition)
       .where('_id')
       .in(user.favorites)
       .populate('user', ['name', 'bio', 'avatar'])

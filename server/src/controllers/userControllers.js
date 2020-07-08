@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const Blog = require('../models/Blog');
 const Post = require('../models/Post');
-const Comment = require('../models/Comment');
 const { ErrorHandler } = require('../utils/error');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 const { dataUri } = require('../middleware');
@@ -64,8 +63,39 @@ exports.uploadPhoto = async (req, res, next) => {
   }
 };
 
-exports.deleteUser = async (req, res, next) => {
+exports.deleteAccount = async (req, res, next) => {
   try {
+    await User.findByIdAndDelete(req.user._id);
+    if (req.user.avatar && req.user.avatar.image_url) {
+      await deleteImageFromCloudinary(
+        req.user.avatar.image_url,
+        'bloggingplatform-avatar'
+      );
+    }
+
+    const blogs = await Blog.find({ user: req.user._id }).select('bgImg');
+    blogs.forEach(async (blog) => {
+      if (blog.bgImg && blog.bgImg.image_url) {
+        await deleteImageFromCloudinary(
+          blog.bgImg.image_url,
+          'bloggingplatform'
+        );
+      }
+    });
+    await Blog.deleteMany({ user: req.user._id });
+
+    const posts = await Post.find({ user: req.user._id }).select('bgImg');
+    posts.forEach(async (post) => {
+      if (post.bgImg && post.bgImg.image_url) {
+        await deleteImageFromCloudinary(
+          post.bgImg.image_url,
+          'bloggingplatform'
+        );
+      }
+    });
+    await Post.deleteMany({ user: req.user._id });
+
+    return res.json({ message: 'Account deleted' });
   } catch (err) {
     next(err);
   }

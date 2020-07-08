@@ -3,7 +3,11 @@ const { ErrorHandler } = require('../utils/error');
 
 exports.getUserProfileById = async (req, res, next) => {
   try {
-    res.json({ profile: req.profile.toProfileJSONFor(null) });
+    if (req.user) {
+      return res.json({ profile: req.profile.toProfileJSONFor(req.user) });
+    } else {
+      return res.json({ profile: req.profile.toProfileJSONFor(null) });
+    }
   } catch (err) {
     next(err);
   }

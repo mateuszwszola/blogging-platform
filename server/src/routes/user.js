@@ -1,11 +1,9 @@
 const router = require('express').Router();
-// const emailRouter = require('./email');
 const profileRouter = require('./profile');
 const userControllers = require('../controllers/userControllers');
 const userValidation = require('../validations/user');
 const { auth, multerUploads, validate } = require('../middleware');
 
-// router.use('/user', emailRouter);
 router.use('/profile', profileRouter);
 
 /*
@@ -44,6 +42,6 @@ router.post(
   @desc    Delete user account
   @access  Private
  */
-router.delete('/', auth.required, userControllers.deleteUser);
+router.delete('/', auth.required, userControllers.deleteAccount);
 
 module.exports = router;
