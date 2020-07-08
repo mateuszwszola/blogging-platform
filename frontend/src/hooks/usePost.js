@@ -19,36 +19,51 @@ import {
 } from 'api/post';
 
 function useUserPosts(userId) {
-  return useQuery(userId && ['posts', userId], () =>
-    getUserPosts(userId).then((res) => res.posts)
+  return useQuery(
+    ['posts', userId],
+    () => getUserPosts(userId).then((res) => res.posts),
+    {
+      enabled: userId,
+    }
   );
 }
 
 function useUserFavoritePosts(userId) {
-  return useQuery(userId && ['posts', userId, { type: 'favorite' }], () =>
-    getUserFavorites(userId).then((res) => res.posts)
+  return useQuery(
+    ['posts', userId, { type: 'favorite' }],
+    () => getUserFavorites(userId).then((res) => res.posts),
+    {
+      enabled: userId,
+    }
   );
 }
 
 function useBlogPosts(blogId) {
-  return useQuery(blogId && ['posts', blogId], () =>
-    getBlogPosts(blogId).then((res) => res.posts)
+  return useQuery(
+    ['posts', blogId],
+    () => getBlogPosts(blogId).then((res) => res.posts),
+    {
+      enabled: blogId,
+    }
   );
 }
 
 function usePostBySlug(slug) {
-  return useQuery({
-    queryKey: slug && ['post', slug],
-    queryFn: () => getPostBySlug(slug).then((res) => res.post),
-    config: {
-      // staleTime: 0,
-    },
-  });
+  return useQuery(
+    ['post', slug],
+    () => getPostBySlug(slug).then((res) => res.post),
+    {
+      enabled: slug,
+    }
+  );
 }
 
 function useCreatePost() {
-  return useMutation(({ blogId, values }) =>
-    addBlogPost(blogId, values).then((res) => res.post)
+  return useMutation(
+    (data) => addBlogPost(data.blogId, data.values).then((res) => res.post),
+    {
+      onSuccess: () => queryCache.invalidateQueries('posts'),
+    }
   );
 }
 
@@ -70,7 +85,12 @@ function useUpdatePost() {
 }
 
 function useDeletePost() {
-  return useMutation((postId) => deletePost(postId));
+  return useMutation((postId) => deletePost(postId), {
+    onSuccess: (deletedPost) => {
+      queryCache.removeQueries(['post', deletedPost.slug]);
+      queryCache.invalidateQueries('posts');
+    },
+  });
 }
 
 function useFavoritePost() {
@@ -91,17 +111,9 @@ function useFavoritePost() {
     },
     onSettled: (slug, error, variables, rollback) => {
       if (error) {
-        console.log({ slug, error, variables, rollback });
         rollback();
       }
     },
-    // onSuccess: (data, slug) => {
-    //   queryCache.setQueryData(['post', slug], (post) => ({
-    //     ...post,
-    //     favoritesCount: data.post.favoritesCount,
-    //     favorited: data.post.favorited,
-    //   }));
-    // },
   });
 }
 

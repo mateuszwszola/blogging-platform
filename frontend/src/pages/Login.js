@@ -7,7 +7,7 @@ import { useAuth } from 'context/AuthContext';
 import validate from 'utils/loginFormValidationRules';
 import { InputGroup, InputSubmit } from 'components/layout/Input';
 import { LoadingWithOverlay } from 'components/Loading';
-import { EnvelopeIcon, LockOpenIcon, KeyIcon } from 'icons';
+import { EnvelopeIcon, LockClosedIcon, KeyIcon } from 'icons';
 
 function Login({
   email,
@@ -23,7 +23,7 @@ function Login({
       <div className="flex flex-col justify-center items-center max-w-xs sm:max-w-sm w-full relative">
         {loading && <LoadingWithOverlay />}
         <div className={`${loading ? 'opacity-50 ' : ''}text-red-500 z-20`}>
-          <LockOpenIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
+          <LockClosedIcon className="w-32 h-32 sm:w-40 sm:h-40 fill-current" />
         </div>
 
         {errors.message && (

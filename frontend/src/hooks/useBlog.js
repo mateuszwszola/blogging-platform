@@ -16,14 +16,22 @@ import {
 } from 'api/blog';
 
 function useUserBlogs(userId) {
-  return useQuery(userId && ['blogs', userId], () =>
-    getUserBlogs(userId).then((res) => res.blogs)
+  return useQuery(
+    ['blogs', userId],
+    () => getUserBlogs(userId).then((res) => res.blogs),
+    {
+      enabled: userId,
+    }
   );
 }
 
 function useBlogBySlug(slug) {
-  return useQuery(slug && ['blog', slug], () =>
-    getBlogBySlugName(slug).then((res) => res.blog)
+  return useQuery(
+    ['blog', slug],
+    () => getBlogBySlugName(slug).then((res) => res.blog),
+    {
+      enabled: slug,
+    }
   );
 }
 
@@ -33,7 +41,7 @@ function useAllBlogs() {
 
 function useCreateBlog() {
   return useMutation((values) => createBlog(values).then((res) => res.blog), {
-    onSuccess: () => queryCache.refetchQueries('blogs'),
+    onSuccess: () => queryCache.invalidateQueries('blogs'),
   });
 }
 
@@ -42,8 +50,14 @@ function useUpdateBlog() {
     (data) => updateBlog(data.blogId, data.formData).then((res) => res.blog),
     {
       onSuccess: (updatedBlog) => {
-        queryCache.refetchQueries(['blog', updatedBlog.slug]);
-        queryCache.refetchQueries(['blogs', updatedBlog.user]);
+        const oldBlogData =
+          queryCache.getQueryData(['blog', updatedBlog.slug]) || {};
+        const { user, ...newBlogData } = updatedBlog;
+        queryCache.setQueryData(['blog', updatedBlog.slug], {
+          ...oldBlogData,
+          ...newBlogData,
+        });
+        queryCache.invalidateQueries('blogs');
       },
     }
   );
@@ -51,8 +65,9 @@ function useUpdateBlog() {
 
 function useDeleteBlog() {
   return useMutation((blogId) => deleteBlog(blogId), {
-    onSuccess: () => {
-      queryCache.refetchQueries('blogs');
+    onSuccess: (deletedBlog) => {
+      queryCache.invalidateQueries('blogs');
+      queryCache.removeQueries(['blog', deletedBlog.slug]);
     },
   });
 }
