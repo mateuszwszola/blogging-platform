@@ -52,6 +52,12 @@ function receiveNewPassword({ userId, token, password }) {
   });
 }
 
+function updatePassword({ currentPassword, newPassword }) {
+  return client('auth/user/password', {
+    body: { currentPassword, newPassword },
+  });
+}
+
 function logout() {
   queryCache.clear();
   window.localStorage.removeItem(localStorageKey);
@@ -73,5 +79,6 @@ export {
   getUser,
   sendResetPasswordEmail,
   receiveNewPassword,
+  updatePassword,
   isLoggedIn,
 };

@@ -5,7 +5,7 @@ import { Button } from 'components/layout/Button';
 
 const Account = () => {
   const [showDialog, setShowDialog] = useState(false);
-  const [deleteAccount, { status, error }] = useDeleteAccount();
+  const [deleteAccount, { isError }] = useDeleteAccount();
 
   const handleAccountDelete = async () => {
     try {
@@ -26,6 +26,11 @@ const Account = () => {
         </div>
       </div>
       <div className="mt-6">
+        {isError && (
+          <p className="text-center text-red-500">
+            There was a problem deleting your account
+          </p>
+        )}
         <h3 className="text-2xl text-center py-1">Delete account</h3>
         <hr />
         <div className="flex flex-col items-center mt-4">
