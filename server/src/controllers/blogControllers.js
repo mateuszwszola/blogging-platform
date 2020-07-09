@@ -9,9 +9,19 @@ exports.createBlog = async (req, res, next) => {
   const { name } = req.body;
 
   try {
-    const blog = await Blog.findOne({ name });
+    const blog = await Blog.findOne({ name }).exec();
     if (blog) {
       throw new ErrorHandler(422, 'blog name already in use');
+    }
+
+    const userBlogsCount = await Blog.countDocuments({
+      user: req.user._id,
+    }).exec();
+
+    if (userBlogsCount >= 5) {
+      return res
+        .status(422)
+        .json({ message: 'The maximum number of blogs owned by a user is 5' });
     }
 
     const blogData = { user: req.user._id, name, bgImg: {} };

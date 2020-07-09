@@ -53,7 +53,7 @@ const AvatarUpload = () => {
         <Loading />
       ) : (
         <>
-          <div className="relative">
+          <div style={{ minHeight: '14rem' }} className="relative">
             <UserAvatar avatarURL={photo || userAvatarSrc} size="lg" />
 
             <label className="group absolute top-0 left-0 bottom-0 right-0 text-blue-400 rounded-full hover:bg-gray-100 cursor-pointer focus:outline-none">
