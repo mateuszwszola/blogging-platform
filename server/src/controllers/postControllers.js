@@ -170,24 +170,34 @@ exports.deletePost = async (req, res, next) => {
 };
 
 exports.getAllPosts = async (req, res, next) => {
-  const { title } = req.query;
+  const { title, cursor = 0 } = req.query;
   const condition = title
     ? { title: { $regex: new RegExp(title), $options: 'i' } }
     : {};
+
+  const postsLimit = 10;
 
   try {
     const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-      .sort({ createdAt: -1 });
+      .skip(Number(cursor))
+      .limit(postsLimit)
+      .sort({ createdAt: -1 })
+      .exec();
 
+    const body = {};
     if (req.user) {
-      return res.json({
-        posts: posts.map((post) => post.toPostJSONFor(req.user)),
-      });
+      body.posts = posts.map((post) => post.toPostJSONFor(req.user));
     } else {
-      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+      body.posts = posts.map((post) => post.toPostJSONFor(null));
     }
+
+    if (body.posts.length === postsLimit) {
+      body.nextCursor = cursor + postsLimit;
+    }
+
+    return res.json(body);
   } catch (err) {
     next(err);
   }

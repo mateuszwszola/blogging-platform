@@ -1,4 +1,9 @@
-import { useQuery, useMutation, queryCache } from 'react-query';
+import {
+  useQuery,
+  useMutation,
+  queryCache,
+  useInfiniteQuery,
+} from 'react-query';
 import useThunkReducer from './useThunkReducer';
 import {
   postsReducer,
@@ -7,6 +12,7 @@ import {
   initialPostsState,
 } from 'reducers/postReducer';
 import {
+  getHomepagePosts,
   getUserPosts,
   getBlogPosts,
   getPostBySlug,
@@ -17,6 +23,12 @@ import {
   unfavoritePost,
   getUserFavorites,
 } from 'api/post';
+
+function useHomepagePosts() {
+  return useInfiniteQuery('posts', getHomepagePosts, {
+    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+  });
+}
 
 function useUserPosts(userId) {
   return useQuery(
@@ -154,6 +166,7 @@ function usePosts() {
 }
 
 export {
+  useHomepagePosts,
   useUserPosts,
   useBlogPosts,
   usePostBySlug,

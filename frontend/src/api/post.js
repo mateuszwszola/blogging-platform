@@ -1,5 +1,9 @@
 import client from './client';
 
+function getHomepagePosts(key, cursor = 0) {
+  return client(`posts/all?cursor=${cursor}`);
+}
+
 function getBlogPosts(blogId) {
   return client(`posts/blog/${blogId}`);
 }
@@ -37,6 +41,7 @@ function getUserFavorites(userId) {
 }
 
 export {
+  getHomepagePosts,
   getBlogPosts,
   getPostBySlug,
   deletePost,

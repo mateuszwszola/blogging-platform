@@ -66,7 +66,7 @@ router.delete(
 );
 
 /*
-  @route   GET api/posts/all?title=[]
+  @route   GET api/posts/all?title=[]?cursor=
   @desc    Get all posts
   @access  Public
  */
