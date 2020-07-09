@@ -29,17 +29,6 @@ function Homepage() {
             You follow and from blogs, You like to read
           </p>
         </div>
-
-        {/* <div className="w-full md:w-1/2 flex flex-col items-center">
-          <label htmlFor="search" className="font-semibold text-gray-600">
-            Search
-          </label>
-          <input
-            id="search"
-            type="text"
-            className="block w-full max-w-xs border border-gray-500 bg-gray-200 rounded px-4 py-2"
-          />
-        </div> */}
       </div>
 
       <div className="mt-8">

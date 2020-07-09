@@ -40,10 +40,7 @@ function Profile() {
         <div className="w-full py-16 px-2 max-w-screen-xl mx-auto">
           <div className="flex flex-col">
             <div className="mt-8 w-full max-w-xs mx-auto bg-white rounded-t-md shadow-md">
-              <div
-                style={{ minHeight: '14rem' }}
-                className="w-full flex justify-center items-center py-2"
-              >
+              <div className="w-full flex justify-center items-center py-2">
                 <UserAvatar
                   avatarURL={profile.avatar && profile.avatar.image_url}
                 />

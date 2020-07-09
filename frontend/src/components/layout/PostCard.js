@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import Moment from 'react-moment';
-import { CalendarIcon, HeartIcon } from 'icons';
+import { CalendarIcon } from 'icons';
+import DisplayDate from './DisplayDate';
 
 function PostCard({ post }) {
   const bgImgUrl =
@@ -21,7 +21,7 @@ function PostCard({ post }) {
         <div className="flex items-center my-2">
           <CalendarIcon className="w-4 h-4 fill-current text-gray-600" />
           <span className="text-gray-600 text-sm ml-2">
-            <Moment format="LL">{post.createdAt}</Moment>
+            <DisplayDate date={post.createdAt} />
           </span>
         </div>
 
@@ -36,13 +36,6 @@ function PostCard({ post }) {
             {post.blog.name}
           </Link>
         )}
-
-        {/* <div className="flex items-center mt-2">
-          <HeartIcon className="w-5 h-5 fill-current text-gray-600" />
-          <span className="text-gray-600 ml-2 select-none">
-            {post.favoritesCount}
-          </span>
-        </div> */}
 
         <div className="mt-4 py-6 border-t border-gray-200 flex items-center">
           {post.user.avatar?.image_url && (
