@@ -1,4 +1,9 @@
-import { useQuery, useMutation, queryCache } from 'react-query';
+import {
+  useQuery,
+  useMutation,
+  queryCache,
+  useInfiniteQuery,
+} from 'react-query';
 import useThunkReducer from './useThunkReducer';
 import {
   blogReducer,
@@ -36,7 +41,9 @@ function useBlogBySlug(slug) {
 }
 
 function useAllBlogs() {
-  return useQuery('blogs', () => getAllBlogs().then((res) => res.blogs));
+  return useInfiniteQuery('blogs', getAllBlogs, {
+    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+  });
 }
 
 function useCreateBlog() {

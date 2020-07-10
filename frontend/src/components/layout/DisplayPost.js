@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import clsx from 'clsx';
 import profileImg from 'img/undraw_profile.svg';
 import EditorContentPreview from '../Editor/EditorContentPreview';
@@ -61,9 +62,12 @@ function DisplayPost({ post, onLike }) {
             alt="profile"
             className="shadow w-16 rounded-full"
           />
-          <h3 className="text-base text-gray-700 uppercase font-semibold mt-2 md:mt-0 md:ml-4">
+          <Link
+            to={`/profile/${post.user._id}`}
+            className="block text-base text-gray-700 uppercase font-semibold mt-2 md:mt-0 md:ml-4"
+          >
             {post.user.name}
-          </h3>
+          </Link>
         </div>
       </div>
 

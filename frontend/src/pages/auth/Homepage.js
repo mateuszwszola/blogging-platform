@@ -1,10 +1,9 @@
 import React from 'react';
-import clsx from 'clsx';
 import { useHomepagePosts } from 'hooks/usePost';
 import { Button } from 'components/layout/Button';
 import DisplayError from 'components/DisplayError';
 import Loading from 'components/Loading';
-import PostCard from 'components/layout/PostCard';
+import Posts from 'components/Posts';
 
 function Homepage() {
   const {
@@ -17,7 +16,7 @@ function Homepage() {
     canFetchMore,
   } = useHomepagePosts();
 
-  const numberOfPosts = data && data.map((group) => group.posts).flat().length;
+  const posts = data ? data.map((group) => group.posts).flat() : [];
 
   return (
     <div className="w-full max-w-screen-xl mx-auto px-2 py-16">
@@ -38,28 +37,9 @@ function Homepage() {
           <DisplayError msg={error.message} />
         ) : (
           <>
-            <div
-              className={clsx(
-                'grid grid-cols-1 row-gap-20 col-gap-12',
-                numberOfPosts > 1 && 'lg:grid-cols-2'
-              )}
-            >
-              {numberOfPosts > 0 ? (
-                <>
-                  {data.map((group, i) => (
-                    <React.Fragment key={i}>
-                      {group.posts.map((post) => (
-                        <PostCard key={post._id} post={post} />
-                      ))}
-                    </React.Fragment>
-                  ))}
-                </>
-              ) : (
-                <h2 className="text-center text-2xl">There are no posts</h2>
-              )}
-            </div>
+            <Posts posts={posts} />
 
-            {numberOfPosts > 0 && canFetchMore ? (
+            {posts.length > 0 && canFetchMore ? (
               <div className="flex justify-center mt-20">
                 <Button
                   onClick={() => fetchMore()}

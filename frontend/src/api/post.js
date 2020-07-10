@@ -1,6 +1,6 @@
 import client from './client';
 
-function getHomepagePosts(key, cursor = 0) {
+function getHomepagePosts(cursor = 0) {
   return client(`posts/all?cursor=${cursor}`);
 }
 
@@ -8,12 +8,16 @@ function getBlogPosts(blogId) {
   return client(`posts/blog/${blogId}`);
 }
 
-function getPostBySlug(slug) {
-  return client(`posts/slug/${slug}`);
+function getUserPosts(userId, cursor = 0) {
+  return client(`posts/user/${userId}?cursor=${cursor}`);
 }
 
-function getUserPosts(userId) {
-  return client(`posts/user/${userId}`);
+function getUserFavorites(userId, cursor = 0) {
+  return client(`posts/user/${userId}/favorites?cursor=${cursor}`);
+}
+
+function getPostBySlug(slug) {
+  return client(`posts/slug/${slug}`);
 }
 
 function addBlogPost(blogId, data) {
@@ -34,10 +38,6 @@ function favoritePost(slug) {
 
 function unfavoritePost(slug) {
   return client(`posts/${slug}/favorite`, { method: 'DELETE' });
-}
-
-function getUserFavorites(userId) {
-  return client(`posts/user/${userId}/favorites`);
 }
 
 export {

@@ -4,8 +4,8 @@ function getBlogBySlugName(slug) {
   return client(`blogs/slug/${slug}`);
 }
 
-function getAllBlogs() {
-  return client('blogs/all');
+function getAllBlogs(key, cursor = 0) {
+  return client(`blogs/all?cursor=${cursor}`);
 }
 
 function getUserBlogs(userId) {

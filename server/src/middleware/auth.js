@@ -8,28 +8,33 @@ const generateNewToken = (user) => {
   });
 };
 
-const verifyToken = (token, secret = config.secrets.jwt) => {
+const verifyToken = (token) => {
   return new Promise((resolve, reject) => {
-    jwt.verify(token, secret, (err, payload) => {
+    jwt.verify(token, config.secrets.jwt, (err, payload) => {
       if (err) return reject(err);
-      resolve(payload);
+      return resolve(payload);
     });
   });
 };
 
 const auth = {
   required: async (req, res, next) => {
-    const token = req.header('x-auth-token');
     const errMsg = 'Not authorized to access this resource';
+    const token = req.header('x-auth-token');
     if (!token) {
       return res.status(401).json({ message: errMsg });
     }
+
     try {
-      const data = await verifyToken(token);
-      const user = await User.findById(data.user.id).select('-password');
+      const payload = await verifyToken(token);
+      const user = await User.findById(payload.user.id)
+        .select('-password')
+        .exec();
+
       if (!user) {
         return res.status(401).json({ message: errMsg });
       }
+
       req.user = user;
       req.token = token;
     } catch (err) {
@@ -40,17 +45,26 @@ const auth = {
   },
   optional: async (req, res, next) => {
     const token = req.header('x-auth-token');
-    if (token) {
-      const data = await verifyToken(token);
-      if (data) {
-        const user = await User.findById(data.user.id).select('-password');
-        if (user) {
-          req.user = user;
-        }
-      }
+
+    if (!token) {
+      return next();
     }
 
-    next();
+    jwt.verify(token, config.secrets.jwt, (err, payload) => {
+      if (err || !payload) {
+        return next();
+      }
+
+      User.findById(payload.user.id)
+        .select('-password')
+        .exec()
+        .then((user) => {
+          if (user) {
+            req.user = user;
+          }
+          return next();
+        });
+    });
   },
 };
 

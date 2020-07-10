@@ -46,7 +46,7 @@ function Profile() {
                 />
               </div>
 
-              <div className="border-t py-4">
+              <div className="border-t py-4 px-2">
                 <h3 className="text-2xl text-center font-semibold text-gray-800">
                   {profile.name}
                 </h3>

@@ -7,6 +7,8 @@ const { dataUri } = require('../middleware');
 const { uploader } = require('../services/cloudinary');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 
+const POSTS_PER_PAGE_LIMIT = 10;
+
 exports.createPost = async (req, res, next) => {
   const { blogId } = req.params;
   const { title, body } = req.body;
@@ -170,31 +172,32 @@ exports.deletePost = async (req, res, next) => {
 };
 
 exports.getAllPosts = async (req, res, next) => {
-  const { title, cursor = 0 } = req.query;
+  const { title } = req.query;
   const condition = title
     ? { title: { $regex: new RegExp(title), $options: 'i' } }
     : {};
 
-  const postsLimit = 10;
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
 
   try {
     const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-      .skip(Number(cursor))
-      .limit(postsLimit)
+      .skip(cursor)
+      .limit(POSTS_PER_PAGE_LIMIT)
       .sort({ createdAt: -1 })
       .exec();
 
     const body = {};
+
     if (req.user) {
       body.posts = posts.map((post) => post.toPostJSONFor(req.user));
     } else {
       body.posts = posts.map((post) => post.toPostJSONFor(null));
     }
 
-    if (body.posts.length === postsLimit) {
-      body.nextCursor = cursor + postsLimit;
+    if (posts.length === POSTS_PER_PAGE_LIMIT) {
+      body.nextCursor = cursor + POSTS_PER_PAGE_LIMIT;
     }
 
     return res.json(body);
@@ -211,17 +214,26 @@ exports.getAuthUserPosts = async (req, res, next) => {
 
   condition.user = req.user._id;
 
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+
   try {
     const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-      .sort({
-        createdAt: -1,
-      });
+      .skip(cursor)
+      .limit(POSTS_PER_PAGE_LIMIT)
+      .sort({ createdAt: -1 })
+      .exec();
 
-    return res.json({
+    const body = {
       posts: posts.map((post) => post.toPostJSONFor(req.user)),
-    });
+    };
+
+    if (posts.length === POSTS_PER_PAGE_LIMIT) {
+      body.nextCursor = cursor + POSTS_PER_PAGE_LIMIT;
+    }
+
+    return res.json(body);
   } catch (err) {
     next(err);
   }
@@ -236,6 +248,8 @@ exports.getUserPosts = async (req, res, next) => {
 
   condition.user = userId;
 
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -245,17 +259,26 @@ exports.getUserPosts = async (req, res, next) => {
     const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
+      .skip(cursor)
+      .limit(POSTS_PER_PAGE_LIMIT)
       .sort({
         createdAt: -1,
-      });
+      })
+      .exec();
+
+    const body = {};
 
     if (req.user) {
-      return res.json({
-        posts: posts.map((post) => post.toPostJSONFor(req.user)),
-      });
+      body.posts = posts.map((post) => post.toPostJSONFor(req.user));
     } else {
-      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+      body.posts = posts.map((post) => post.toPostJSONFor(null));
     }
+
+    if (posts.length === POSTS_PER_PAGE_LIMIT) {
+      body.nextCursor = cursor + POSTS_PER_PAGE_LIMIT;
+    }
+
+    return res.json(body);
   } catch (err) {
     next(err);
   }
@@ -270,6 +293,8 @@ exports.getBlogPosts = async (req, res, next) => {
 
   condition.blog = blogId;
 
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+
   try {
     const blog = await Blog.findById(blogId);
     if (!blog) {
@@ -279,15 +304,24 @@ exports.getBlogPosts = async (req, res, next) => {
     const posts = await Post.find(condition)
       .populate('user', ['name', 'bio', 'avatar'])
       .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-      .sort({ createdAt: -1 });
+      .skip(cursor)
+      .limit(POSTS_PER_PAGE_LIMIT)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const body = {};
 
     if (req.user) {
-      return res.json({
-        posts: posts.map((post) => post.toPostJSONFor(req.user)),
-      });
+      body.posts = posts.map((post) => post.toPostJSONFor(req.user));
     } else {
-      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+      body.posts = posts.map((post) => post.toPostJSONFor(null));
     }
+
+    if (posts.length === POSTS_PER_PAGE_LIMIT) {
+      body.nextCursor = cursor + POSTS_PER_PAGE_LIMIT;
+    }
+
+    return res.json(body);
   } catch (err) {
     next(err);
   }
@@ -300,6 +334,8 @@ exports.getFavorites = async (req, res, next) => {
     ? { title: { $regex: new RegExp(title), $options: 'i' } }
     : {};
 
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+
   try {
     const user = await User.findById(userId);
     if (!user) {
@@ -310,15 +346,25 @@ exports.getFavorites = async (req, res, next) => {
       .where('_id')
       .in(user.favorites)
       .populate('user', ['name', 'bio', 'avatar'])
-      .populate('blog', ['name', 'slug', 'description', 'bgImg']);
+      .populate('blog', ['name', 'slug', 'description', 'bgImg'])
+      .skip(cursor)
+      .limit(POSTS_PER_PAGE_LIMIT)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const body = {};
 
     if (req.user) {
-      return res.json({
-        posts: posts.map((post) => post.toPostJSONFor(req.user)),
-      });
+      body.posts = posts.map((post) => post.toPostJSONFor(req.user));
     } else {
-      return res.json({ posts: posts.map((post) => post.toPostJSONFor(null)) });
+      body.posts = posts.map((post) => post.toPostJSONFor(null));
     }
+
+    if (posts.length === POSTS_PER_PAGE_LIMIT) {
+      body.nextCursor = cursor + POSTS_PER_PAGE_LIMIT;
+    }
+
+    return res.json(body);
   } catch (err) {
     next(err);
   }

@@ -176,14 +176,24 @@ exports.getAllBlogs = async (req, res, next) => {
     ? { name: { $regex: new RegExp(name), $options: 'i' } }
     : {};
 
-  try {
-    const blogs = await Blog.find(condition).populate('user', [
-      'name',
-      'bio',
-      'avatar',
-    ]);
+  const blogsLimit = 10;
 
-    return res.json({ blogs });
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+
+  try {
+    const blogs = await Blog.find(condition)
+      .populate('user', ['name', 'bio', 'avatar'])
+      .skip(cursor)
+      .limit(blogsLimit)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const body = { blogs };
+    if (blogs.length === blogsLimit) {
+      body.nextCursor = cursor + blogsLimit;
+    }
+
+    return res.json(body);
   } catch (err) {
     next(err);
   }

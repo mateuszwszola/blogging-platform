@@ -25,15 +25,22 @@ import {
 } from 'api/post';
 
 function useHomepagePosts() {
-  return useInfiniteQuery('posts', getHomepagePosts, {
-    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
-  });
+  return useInfiniteQuery(
+    'posts',
+    (key, nextCursor) => getHomepagePosts(nextCursor),
+    {
+      getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    }
+  );
 }
 
 function useUserPosts(userId) {
-  return useQuery(
+  return useInfiniteQuery(
     ['posts', userId],
-    () => getUserPosts(userId).then((res) => res.posts),
+    (key, userId, nextCursor) => getUserPosts(userId, nextCursor),
+    {
+      getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    },
     {
       enabled: userId,
     }
@@ -41,9 +48,12 @@ function useUserPosts(userId) {
 }
 
 function useUserFavoritePosts(userId) {
-  return useQuery(
+  return useInfiniteQuery(
     ['posts', userId, { type: 'favorite' }],
-    () => getUserFavorites(userId).then((res) => res.posts),
+    (key, userId, type, nextCursor) => getUserFavorites(userId, nextCursor),
+    {
+      getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    },
     {
       enabled: userId,
     }
