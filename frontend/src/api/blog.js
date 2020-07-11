@@ -4,8 +4,12 @@ function getBlogBySlugName(slug) {
   return client(`blogs/slug/${slug}`);
 }
 
-function getAllBlogs(key, cursor = 0) {
-  return client(`blogs/all?cursor=${cursor}`);
+function getAllBlogs(cursor = 0, name) {
+  let url = `blogs/all?cursor=${cursor}`;
+  if (name) {
+    url += `&name=${name}`;
+  }
+  return client(url);
 }
 
 function getUserBlogs(userId) {

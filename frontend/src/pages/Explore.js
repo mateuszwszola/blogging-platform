@@ -1,12 +1,17 @@
 import React from 'react';
 import clsx from 'clsx';
 import { useAllBlogs } from 'hooks/useBlog';
+import useInput from 'hooks/useInput';
+import useDebouncedSearchKey from 'hooks/useDebouncedSearchKey';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import BlogCard from 'components/layout/BlogCard';
 import { Button } from 'components/layout/Button';
+import { SearchIcon } from 'icons';
 
 function Explore() {
+  const [inputValue, handleInputValueChange] = useInput('');
+  const searchKey = useDebouncedSearchKey(inputValue);
   const {
     status,
     data,
@@ -15,13 +20,30 @@ function Explore() {
     isFetchingMore,
     fetchMore,
     canFetchMore,
-  } = useAllBlogs();
+  } = useAllBlogs(searchKey);
 
-  const numberOfBlogs = data && data.map((group) => group.blogs).flat().length;
+  const blogs = data ? data.map((group) => group.blogs).flat() : [];
 
   return (
     <div className="py-16 max-w-screen-xl w-full mx-auto">
-      <h1 className="text-3xl text-center leading-loose my-8">Explore Blogs</h1>
+      <h1 className="text-4xl font-semibold text-center leading-loose my-8">
+        Explore Blogs
+      </h1>
+
+      <div className="flex w-full justify-end items-center">
+        <SearchIcon className="w-5 h-5 fill-current mr-2 text-gray-500" />
+        <label htmlFor="search-term" className="sr-only">
+          Search
+        </label>
+        <input
+          type="text"
+          name="search-term"
+          value={inputValue}
+          onChange={handleInputValueChange}
+          className="border border-gray-300 rounded py-1 px-2"
+          placeholder="Search"
+        />
+      </div>
 
       <div className="px-2 mt-8 w-full">
         {status === 'loading' ? (
@@ -30,30 +52,24 @@ function Explore() {
           <DisplayError msg={error.message} />
         ) : (
           <div className="w-full">
-            {numberOfBlogs > 0 ? (
+            {blogs.length > 0 ? (
               <div
                 className={clsx(
                   'grid grid-cols-1 gap-4 p-2',
-                  numberOfBlogs > 1 && 'lg:grid-cols-2'
+                  blogs.length > 1 && 'lg:grid-cols-2'
                 )}
               >
-                {data.map((group, i) => (
-                  <React.Fragment key={i}>
-                    {group.blogs.map((blog) => (
-                      <BlogCard key={blog._id} blog={blog} />
-                    ))}
-                  </React.Fragment>
+                {blogs.map((blog) => (
+                  <BlogCard key={blog._id} blog={blog} />
                 ))}
               </div>
             ) : (
-              <h2 className="text-center text-2xl">
-                There are no blogs... Be the first to create!
-              </h2>
+              <h2 className="text-center text-2xl">No search results...</h2>
             )}
           </div>
         )}
 
-        {numberOfBlogs > 0 && canFetchMore ? (
+        {blogs.length > 0 && canFetchMore ? (
           <div className="flex justify-center mt-20">
             <Button
               onClick={() => fetchMore()}

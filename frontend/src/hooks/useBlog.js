@@ -40,10 +40,14 @@ function useBlogBySlug(slug) {
   );
 }
 
-function useAllBlogs() {
-  return useInfiniteQuery('blogs', getAllBlogs, {
-    getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
-  });
+function useAllBlogs(searchKey = '') {
+  return useInfiniteQuery(
+    ['blogs', searchKey],
+    (key, searchKey, nextCursor) => getAllBlogs(nextCursor, searchKey),
+    {
+      getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
+    }
+  );
 }
 
 function useCreateBlog() {

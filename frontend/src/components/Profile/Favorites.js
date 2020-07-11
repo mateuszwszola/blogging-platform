@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import clsx from 'clsx';
 import { useUserFavoritePosts } from 'hooks/usePost';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import PostCard from 'components/layout/PostCard';
 import { Button } from 'components/layout/Button';
+import Posts from 'components/Posts';
 
 function ProfileFavorites({ profileId }) {
   const {
@@ -28,20 +27,7 @@ function ProfileFavorites({ profileId }) {
         <DisplayError msg={error.message} />
       ) : (
         <>
-          {posts.length > 0 ? (
-            <div
-              className={clsx(
-                'grid grid-cols-1 row-gap-20 col-gap-12',
-                posts.length > 1 && 'lg:grid-cols-2'
-              )}
-            >
-              {posts.map((post) => (
-                <PostCard key={post._id} post={post} />
-              ))}
-            </div>
-          ) : (
-            <h2 className="text-center text-2xl">There are no posts</h2>
-          )}
+          <Posts posts={posts} />
 
           {posts.length > 0 && canFetchMore ? (
             <div className="flex justify-center mt-20">

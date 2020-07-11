@@ -21,3 +21,4 @@ export { SaveIcon } from './SaveIcon';
 export { GridIcon } from './GridIcon';
 export { HeartIcon } from './HeartIcon';
 export { GlobeIcon } from './GlobeIcon';
+export { SearchIcon } from './SearchIcon';
