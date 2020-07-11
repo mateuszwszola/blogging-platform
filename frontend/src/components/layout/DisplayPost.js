@@ -2,15 +2,11 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import profileImg from 'img/undraw_profile.svg';
 import EditorContentPreview from '../Editor/EditorContentPreview';
 import DisplayDate from './DisplayDate';
-import { HeartIcon } from 'icons';
+import { HeartIcon, UserCircleIcon } from 'icons';
 
 function DisplayPost({ post, onLike }) {
-  const userAvatar =
-    (post.user && post.user.avatar && post.user.avatar.image_url) || null;
-
   const filteredTags = post.tags && post.tags.filter((t) => t);
 
   return (
@@ -57,11 +53,15 @@ function DisplayPost({ post, onLike }) {
         </div>
 
         <div className="flex flex-col md:flex-row mt-4 items-center">
-          <img
-            src={userAvatar || profileImg}
-            alt="profile"
-            className="shadow w-16 rounded-full"
-          />
+          {post.user?.avatar?.image_url ? (
+            <img
+              src={post.user.avatar.image_url}
+              alt="profile"
+              className="shadow w-16 h-16 rounded-full"
+            />
+          ) : (
+            <UserCircleIcon className="w-16 h-16 rounded-full fill-current text-gray-600" />
+          )}
           <Link
             to={`/profile/${post.user._id}`}
             className="block text-base text-gray-700 uppercase font-semibold mt-2 md:mt-0 md:ml-4"

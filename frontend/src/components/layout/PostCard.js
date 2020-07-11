@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { CalendarIcon } from 'icons';
+import { UserCircleIcon, CalendarIcon } from 'icons';
 import DisplayDate from './DisplayDate';
 
 function PostCard({ post }) {
@@ -37,19 +37,25 @@ function PostCard({ post }) {
           </Link>
         )}
 
-        <div className="mt-4 py-6 border-t border-gray-200 flex items-center">
-          {post.user.avatar?.image_url && (
-            <img
-              className="rounded-full w-10 h-10"
-              src={post.user.avatar.image_url}
-              alt="User avatar"
-            />
-          )}
+        <div className="mt-4 py-6 border-t border-gray-200">
           <Link
-            className="block ml-3 uppercase font-medium text-gray-600 text-base"
+            className="no-underline text-gray-600"
             to={`/profile/${post.user._id}`}
           >
-            {post.user.name}
+            <div className="flex items-center">
+              {post.user.avatar?.image_url ? (
+                <img
+                  className="rounded-full w-10 h-10"
+                  src={post.user.avatar.image_url}
+                  alt="User avatar"
+                />
+              ) : (
+                <UserCircleIcon className="w-10 h-10 rounded-full fill-current text-gray-600" />
+              )}
+              <span className="block ml-3 uppercase font-medium">
+                {post.user.name}
+              </span>
+            </div>
           </Link>
         </div>
       </div>

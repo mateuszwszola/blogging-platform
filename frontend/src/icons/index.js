@@ -2,6 +2,7 @@ export { CloseIcon } from './CloseIcon';
 export { MenuIcon } from './MenuIcon';
 export { HomeIcon } from './HomeIcon';
 export { UserIcon } from './UserIcon';
+export { UserCircleIcon } from './UserCircleIcon';
 export { LockOpenIcon } from './LockOpenIcon';
 export { LockClosedIcon } from './LockClosedIcon';
 export { ArrowDownIcon } from './ArrowDownIcon';

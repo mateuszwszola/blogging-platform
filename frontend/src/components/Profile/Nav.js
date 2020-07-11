@@ -7,7 +7,7 @@ function ProfileNav({ isOwner }) {
   const { url } = useRouteMatch();
 
   return (
-    <ul className="list-none flex justify-center space-x-8">
+    <ul className="list-none flex flex-col items-center sm:flex-row sm:justify-center space-y-4 sm:space-x-8 sm:space-y-0">
       <NavLink
         to={url}
         className="text-gray-600"
@@ -23,7 +23,7 @@ function ProfileNav({ isOwner }) {
         className="text-gray-600"
         activeClassName="text-gray-900 font-semibold"
       >
-        <li className="flex items-center p-2">
+        <li className="flex flex-1 items-center p-2">
           <GlobeIcon className="fill-current w-5 h-5" />
           <span className="uppercase ml-2">Blogs</span>
         </li>
@@ -34,7 +34,7 @@ function ProfileNav({ isOwner }) {
           className="text-gray-600"
           activeClassName="text-gray-900 font-semibold"
         >
-          <li className="flex items-center p-2">
+          <li className="flex flex-1 items-center p-2">
             <HeartIcon className="fill-current w-5 h-5" />
             <span className="uppercase ml-2">Favorite</span>
           </li>

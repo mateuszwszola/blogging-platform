@@ -41,12 +41,10 @@ function Profile() {
           <div className="flex flex-col">
             <div className="mt-8 w-full max-w-xs mx-auto bg-white rounded-t-md shadow-md">
               <div className="w-full flex justify-center items-center py-2">
-                <UserAvatar
-                  avatarURL={profile.avatar && profile.avatar.image_url}
-                />
+                <UserAvatar avatarURL={profile.avatar?.image_url} />
               </div>
 
-              <div className="border-t py-4 px-2">
+              <div className="border-t sm:py-4 px-2">
                 <h3 className="text-2xl text-center font-semibold text-gray-800">
                   {profile.name}
                 </h3>

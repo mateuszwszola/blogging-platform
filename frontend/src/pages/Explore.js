@@ -25,7 +25,7 @@ function Explore() {
   const blogs = data ? data.map((group) => group.blogs).flat() : [];
 
   return (
-    <div className="py-16 max-w-screen-xl w-full mx-auto">
+    <div className="py-16 max-w-screen-xl w-full mx-auto px-2">
       <h1 className="text-4xl font-semibold text-center leading-loose my-8">
         Explore Blogs
       </h1>
@@ -47,7 +47,7 @@ function Explore() {
             {blogs.length > 0 ? (
               <div
                 className={clsx(
-                  'grid grid-cols-1 gap-4 p-2',
+                  'grid grid-cols-1 row-gap-20 col-gap-12',
                   blogs.length > 1 && 'lg:grid-cols-2'
                 )}
               >

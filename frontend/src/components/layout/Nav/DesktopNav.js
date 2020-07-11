@@ -4,9 +4,9 @@ import { useAuth } from 'context/AuthContext';
 import { useUser } from 'context/UserContext';
 import useOnClickOutside from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
-import profileImg from 'img/undraw_profile.svg';
 import NavLink from './NavLink';
 import DropdownMenuLink from './DropdownMenuLink';
+import { UserCircleIcon } from 'icons';
 
 const DesktopNav = () => {
   const { logout } = useAuth();
@@ -23,8 +23,6 @@ const DesktopNav = () => {
 
   const hideNav = () => setIsOpen(false);
 
-  const userAvatar = user && user.avatar && user.avatar.image_url;
-
   const authLinks = (
     <>
       <NavLink onClick={hideNav} to="/explore">
@@ -40,18 +38,14 @@ const DesktopNav = () => {
             aria-label="Toggle profile menu"
             className="max-w-xs flex items-center text-sm rounded-full text-white focus:outline-none focus:shadow-outline"
           >
-            {userAvatar ? (
+            {user?.avatar?.image_url ? (
               <img
-                className="h-10 w-10 rounded-full border-2 border-gray-700"
-                src={userAvatar}
+                className="w-10 h-10 rounded-full border-2 border-gray-700"
+                src={user.avatar.image_url}
                 alt=""
               />
             ) : (
-              <img
-                className="h-10 w-10 rounded-full border border-gray-700"
-                src={profileImg}
-                alt="User Profile"
-              />
+              <UserCircleIcon className="w-10 h-10 rounded-full fill-current text-gray-400 border-2 border-gray-700" />
             )}
           </button>
         </div>

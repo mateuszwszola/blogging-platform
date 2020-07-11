@@ -29,8 +29,9 @@ function Homepage() {
         <div className="py-16 md:w-1/2">
           <h1 className="text-6xl font-semibold leading-loose">Posts</h1>
           <p className="text-gray-600 text-xl">
-            These posts are a collection of newest posts created by You, users
-            You follow and from blogs, You like to read
+            {/* These posts are a collection of newest posts created by You, users
+            You follow and from blogs, You like to read */}
+            These posts are a collection of newest posts created by users
           </p>
         </div>
       </div>
