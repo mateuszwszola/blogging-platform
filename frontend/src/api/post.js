@@ -1,7 +1,11 @@
 import client from './client';
 
-function getHomepagePosts(cursor = 0) {
-  return client(`posts/all?cursor=${cursor}`);
+function getHomepagePosts(cursor = 0, searchKey) {
+  let url = `posts/all?cursor=${cursor}`;
+  if (searchKey) {
+    url += `&title=${searchKey}`;
+  }
+  return client(url);
 }
 
 function getBlogPosts(blogId) {

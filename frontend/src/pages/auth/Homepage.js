@@ -4,8 +4,13 @@ import { Button } from 'components/layout/Button';
 import DisplayError from 'components/DisplayError';
 import Loading from 'components/Loading';
 import Posts from 'components/Posts';
+import useDebouncedSearchKey from 'hooks/useDebouncedSearchKey';
+import useInput from 'hooks/useInput';
+import SearchBar from 'components/layout/SearchBar';
 
 function Homepage() {
+  const [inputValue, handleInputValueChange] = useInput('');
+  const searchKey = useDebouncedSearchKey(inputValue);
   const {
     status,
     data,
@@ -14,7 +19,7 @@ function Homepage() {
     isFetchingMore,
     fetchMore,
     canFetchMore,
-  } = useHomepagePosts();
+  } = useHomepagePosts(searchKey);
 
   const posts = data ? data.map((group) => group.posts).flat() : [];
 
@@ -28,6 +33,13 @@ function Homepage() {
             You follow and from blogs, You like to read
           </p>
         </div>
+      </div>
+
+      <div className="flex w-full justify-end items-center">
+        <SearchBar
+          inputValue={inputValue}
+          handleInputValueChange={handleInputValueChange}
+        />
       </div>
 
       <div className="mt-8">

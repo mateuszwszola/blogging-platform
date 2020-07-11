@@ -7,7 +7,7 @@ import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import BlogCard from 'components/layout/BlogCard';
 import { Button } from 'components/layout/Button';
-import { SearchIcon } from 'icons';
+import SearchBar from 'components/layout/SearchBar';
 
 function Explore() {
   const [inputValue, handleInputValueChange] = useInput('');
@@ -31,17 +31,9 @@ function Explore() {
       </h1>
 
       <div className="flex w-full justify-end items-center">
-        <SearchIcon className="w-5 h-5 fill-current mr-2 text-gray-500" />
-        <label htmlFor="search-term" className="sr-only">
-          Search
-        </label>
-        <input
-          type="text"
-          name="search-term"
-          value={inputValue}
-          onChange={handleInputValueChange}
-          className="border border-gray-300 rounded py-1 px-2"
-          placeholder="Search"
+        <SearchBar
+          inputValue={inputValue}
+          handleInputValueChange={handleInputValueChange}
         />
       </div>
 

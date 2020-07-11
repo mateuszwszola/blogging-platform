@@ -24,10 +24,10 @@ import {
   getUserFavorites,
 } from 'api/post';
 
-function useHomepagePosts() {
+function useHomepagePosts(searchKey = '') {
   return useInfiniteQuery(
-    'posts',
-    (key, nextCursor) => getHomepagePosts(nextCursor),
+    ['posts', searchKey],
+    (key, searchKey, nextCursor) => getHomepagePosts(nextCursor, searchKey),
     {
       getFetchMore: (lastGroup, allGroups) => lastGroup.nextCursor,
     }
