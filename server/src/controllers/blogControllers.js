@@ -63,26 +63,19 @@ exports.createBlog = async (req, res, next) => {
 };
 
 exports.updateBlog = async (req, res, next) => {
-  const { blogId } = req.params;
-
   try {
-    const blog = await Blog.findById(blogId);
-    if (!blog) {
-      throw new ErrorHandler(404, 'Blog Not Found');
-    }
-
-    if (!blog.user.equals(req.user._id)) {
+    if (!req.blog.user.equals(req.user._id)) {
       throw new ErrorHandler(403, 'You are not allowed to update the blog');
     }
 
-    if (blog.name.toLowerCase() !== req.body.name.toLowerCase()) {
+    if (req.blog.name.toLowerCase() !== req.body.name.toLowerCase()) {
       const doc = await Blog.findOne({ name: req.body.name });
       if (doc) {
         throw new ErrorHandler(422, 'blog name aready in use');
       }
     }
 
-    const blogData = { name: req.body.name, bgImg: { ...blog.bgImg } };
+    const blogData = { name: req.body.name, bgImg: { ...req.blog.bgImg } };
 
     if (typeof req.body.description !== 'undefined') {
       blogData.description = req.body.description;
@@ -112,19 +105,22 @@ exports.updateBlog = async (req, res, next) => {
       blogData.bgImg.img_attribution = req.body.imgAttribution;
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(blogId, blogData, {
+    const updatedBlog = await Blog.findByIdAndUpdate(req.blog._id, blogData, {
       new: true,
     });
 
     // Delete old image
     if (
-      blog.bgImg &&
-      blog.bgImg.image_url &&
+      req.blog.bgImg &&
+      req.blog.bgImg.image_url &&
       updatedBlog.bgImg &&
       updatedBlog.bgImg.image_url &&
-      blog.bgImg.image_url !== updatedBlog.bgImg.image_url
+      req.blog.bgImg.image_url !== updatedBlog.bgImg.image_url
     ) {
-      await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
+      await deleteImageFromCloudinary(
+        req.blog.bgImg.image_url,
+        'bloggingplatform'
+      );
     }
 
     return res.status(200).json({ blog: updatedBlog });
@@ -140,10 +136,6 @@ exports.getBlogById = async (req, res, next) => {
       'bio',
       'avatar',
     ]);
-
-    if (!blog) {
-      throw new ErrorHandler(404, 'Blog Not Found');
-    }
 
     return res.json({ blog });
   } catch (err) {
@@ -242,20 +234,14 @@ exports.getUserBlogs = async (req, res, next) => {
 };
 
 exports.deleteBlog = async (req, res, next) => {
-  const { blogId } = req.params;
+  const { blog } = req;
 
   try {
-    const blog = await Blog.findById(blogId);
-
-    if (!blog) {
-      throw new ErrorHandler(404, 'Blog not found');
-    }
-
     if (!blog.user.equals(req.user._id)) {
       throw new ErrorHandler(403, 'You are not authorized to delete a blog');
     }
 
-    await Blog.deleteOne({ _id: blogId });
+    await Blog.deleteOne({ _id: blog._id });
 
     if (blog.bgImg && blog.bgImg.image_url) {
       await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
@@ -273,6 +259,47 @@ exports.deleteBlog = async (req, res, next) => {
     });
 
     return res.status(200).json({ message: 'Blog deleted', blog });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getBookmarks = async (req, res, next) => {
+  try {
+    const blogs = await Blog.find({
+      _id: { $in: req.user.bookmarks },
+    }).populate('user', ['name', 'bio', 'avatar']);
+
+    return res.json({ blogs });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.bookmark = async (req, res, next) => {
+  let { user, blog } = req;
+
+  try {
+    if (user._id.equals(blog._id)) {
+      throw new ErrorHandler(403, 'you cannot bookmark your own blog');
+    }
+    await user.bookmark(blog._id);
+    blog = await blog.updateBookmarksCount();
+
+    return res.json({ blog });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.unbookmark = async (req, res, next) => {
+  let { user, blog } = req;
+
+  try {
+    await user.unbookmark(blog._id);
+    blog = await blog.updateBookmarksCount();
+
+    return res.json({ blog });
   } catch (err) {
     next(err);
   }

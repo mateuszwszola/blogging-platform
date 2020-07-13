@@ -206,6 +206,45 @@ exports.getAllPosts = async (req, res, next) => {
   }
 };
 
+exports.getHomepagePosts = async (req, res, next) => {
+  const { title } = req.query;
+  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+
+  const condition = {
+    $or: [
+      { user: req.user._id },
+      { user: { $in: req.user.following } },
+      { blog: { $in: req.user.bookmarks } },
+    ],
+  };
+
+  if (title) {
+    condition.title = { $regex: new RegExp(title), $options: 'i' };
+  }
+
+  try {
+    const posts = await Post.find(condition)
+      .populate('user', ['name', 'bio', 'avatar'])
+      .populate('blog', ['name', 'slug', 'description', 'bgImg'])
+      .skip(cursor)
+      .limit(POSTS_PER_PAGE_LIMIT)
+      .sort({ createdAt: -1 })
+      .exec();
+
+    const body = {
+      posts: posts.map((post) => post.toPostJSONFor(req.user)),
+    };
+
+    if (posts.length === POSTS_PER_PAGE_LIMIT) {
+      body.nextCursor = cursor + POSTS_PER_PAGE_LIMIT;
+    }
+
+    return res.json(body);
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getAuthUserPosts = async (req, res, next) => {
   const { title } = req.query;
   const condition = title

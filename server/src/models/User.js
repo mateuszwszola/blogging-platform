@@ -42,6 +42,7 @@ const UserSchema = new mongoose.Schema(
     },
     favorites: [{ type: mongoose.ObjectId, ref: 'Post' }],
     following: [{ type: mongoose.ObjectId, ref: 'User' }],
+    bookmarks: [{ type: mongoose.ObjectId, ref: 'Blog' }],
   },
   { timestamps: true }
 );
@@ -98,6 +99,7 @@ UserSchema.methods.toProfileJSONFor = function (user) {
     avatar: this.avatar,
     favorites: this.favorites,
     following: this.following,
+    bookmarks: this.bookmarks,
     isFollowing: user ? user.isFollowing(this._id) : false,
     isOwner: user ? user._id.toString() === this._id.toString() : false,
     createdAt: this.createdAt,
@@ -105,6 +107,7 @@ UserSchema.methods.toProfileJSONFor = function (user) {
   };
 };
 
+// Favoriting
 UserSchema.methods.favorite = function (id) {
   if (this.favorites.indexOf(id) === -1) {
     this.favorites.push(id);
@@ -124,6 +127,7 @@ UserSchema.methods.isFavorite = function (id) {
   });
 };
 
+// Following
 UserSchema.methods.follow = function (id) {
   if (this.following.indexOf(id) === -1) {
     this.following.push(id);
@@ -140,6 +144,26 @@ UserSchema.methods.unfollow = function (id) {
 UserSchema.methods.isFollowing = function (id) {
   return this.following.some(function (followId) {
     return followId.toString() === id.toString();
+  });
+};
+
+// Bookmarks
+UserSchema.methods.bookmark = function (blogId) {
+  if (this.bookmarks.indexOf(blogId) === -1) {
+    this.bookmarks.push(blogId);
+  }
+
+  return this.save();
+};
+
+UserSchema.methods.unbookmark = function (blogId) {
+  this.bookmarks.remove(blogId);
+  return this.save();
+};
+
+UserSchema.methods.isBookmarking = function (blogId) {
+  return this.bookmarks.some(function (id) {
+    return id.toString() === blogId.toString();
   });
 };
 

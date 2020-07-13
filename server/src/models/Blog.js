@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const slugify = require('slugify');
 
 const specifiedStringLength = require('../validations/specifiedStringLength');
+const User = require('./User');
 
 const requiredString = {
   type: String,
@@ -32,6 +33,10 @@ const BlogSchema = new mongoose.Schema(
       large_image_url: String,
       img_attribution: String,
     },
+    bookmarksCount: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );
@@ -51,6 +56,15 @@ BlogSchema.methods.slugify = function () {
   ).toString(36)}`;
 };
 
+BlogSchema.methods.updateBookmarksCount = async function () {
+  const blog = this;
+
+  const count = await User.countDocuments({ bookmarks: { $in: [blog._id] } });
+  blog.bookmarksCount = count;
+
+  return await blog.save();
+};
+
 BlogSchema.methods.toBlogJSON = function () {
   return {
     _id: this._id,
@@ -58,6 +72,7 @@ BlogSchema.methods.toBlogJSON = function () {
     slug: this.slug,
     description: this.description,
     bgImg: this.bgImg,
+    bookmarksCount: this.bookmarksCount,
     user: this.user,
     createdAt: this.createdAt,
     updatedAt: this.updatedAt,

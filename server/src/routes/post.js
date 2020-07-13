@@ -8,6 +8,9 @@ const Post = require('../models/Post');
 const { ErrorHandler } = require('../utils/error');
 const { auth, multerUploads, validate } = require('../middleware');
 
+router.param('blogId', validateParamObjectId('blogId'));
+router.param('postId', validateParamObjectId('postId'));
+router.param('userId', validateParamObjectId('userId'));
 // Preload post on routes with ':slug'
 router.param('slug', async (req, res, next, slug) => {
   try {
@@ -33,7 +36,6 @@ router.param('slug', async (req, res, next, slug) => {
 router.post(
   '/:blogId',
   auth.required,
-  validateParamObjectId('blogId'),
   multerUploads,
   validate(postValidation.validatePost),
   postControllers.createPost
@@ -47,7 +49,6 @@ router.post(
 router.put(
   '/:postId',
   auth.required,
-  validateParamObjectId('postId'),
   multerUploads,
   validate(postValidation.validatePost),
   postControllers.updatePost
@@ -58,59 +59,50 @@ router.put(
   @desc    Delete a post
   @access  Private
  */
-router.delete(
-  '/:postId',
-  auth.required,
-  validateParamObjectId('postId'),
-  postControllers.deletePost
-);
+router.delete('/:postId', auth.required, postControllers.deletePost);
 
 /*
-  @route   GET api/posts/all?title=[]?cursor=
+  @route   GET api/posts/all?title=[]&cursor=0
   @desc    Get all posts
   @access  Public
  */
 router.get('/all', auth.optional, postControllers.getAllPosts);
 
 /*
-  @route   GET api/posts?title=[]
+  @route   GET api/posts/homepage?title=[]&cursor=0
+  @desc    Get homepage posts
+  @access  Private
+ */
+router.get('/homepage', auth.required, postControllers.getHomepagePosts);
+
+/*
+  @route   GET api/posts?title=[]&cursor=0
   @desc    Get auth user posts
   @access  Private
  */
 router.get('/', auth.required, postControllers.getAuthUserPosts);
 
 /*
-  @route   GET api/posts/user/:userId?title=[]
+  @route   GET api/posts/user/:userId?title=[]&cursor=0
   @desc    Get user posts
   @access  Public
  */
-router.get(
-  '/user/:userId',
-  validateParamObjectId('userId'),
-  auth.optional,
-  postControllers.getUserPosts
-);
+router.get('/user/:userId', auth.optional, postControllers.getUserPosts);
 
 /*
-  @route   GET api/posts/blog/:blogId?title=[]
+  @route   GET api/posts/blog/:blogId?title=[]&cursor=0
   @desc    Get blog posts
   @access  Public
  */
-router.get(
-  '/blog/:blogId',
-  validateParamObjectId('blogId'),
-  auth.optional,
-  postControllers.getBlogPosts
-);
+router.get('/blog/:blogId', auth.optional, postControllers.getBlogPosts);
 
 /*
-  @route   GET api/posts/user/:userId/favorites?title=[]
+  @route   GET api/posts/user/:userId/favorites?title=[]&cursor=0
   @desc    Get user favorites
   @access  Public
  */
 router.get(
   '/user/:userId/favorites',
-  validateParamObjectId('userId'),
   auth.optional,
   postControllers.getFavorites
 );
