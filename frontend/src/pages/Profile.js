@@ -16,18 +16,34 @@ import ProfileNav from 'components/Profile/Nav';
 import { UserAvatar } from 'components/UserAvatar';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
+import { Button } from 'components/layout/Button';
 import { ArrowLeftIcon, SettingsIcon } from 'icons';
+import { useFollowProfile, useUnfollowProfile } from 'hooks/useProfile';
 
 function Profile() {
   const history = useHistory();
   const { path } = useRouteMatch();
   const { userId } = useParams();
-  const { logout } = useAuth();
+  const { data, logout } = useAuth();
   const { data: profile, status, error } = useUserProfile(userId);
+  const [followProfile] = useFollowProfile();
+  const [unfollowProfile] = useUnfollowProfile();
+
+  const isAuthenticated = !!data.user;
 
   const handleLogout = async () => {
     await logout();
     history.push('/');
+  };
+
+  const handleFollow = () => {
+    if (!isAuthenticated || !profile) return;
+
+    if (profile.isFollowing) {
+      unfollowProfile(profile._id);
+    } else {
+      followProfile(profile._id);
+    }
   };
 
   return (
@@ -55,7 +71,7 @@ function Profile() {
                 )}
               </div>
 
-              {profile.isOwner && (
+              {profile.isOwner ? (
                 <div className="flex flex-col w-full">
                   <Link
                     className="p-4 bg-gray-200 hover:bg-gray-300 text-gray-600 hover:text-gray-700 border-t border-b border-gray-300 flex justify-between items-center"
@@ -73,6 +89,14 @@ function Profile() {
                     <ArrowLeftIcon className="fill-current w-5 h-5" />
                   </button>
                 </div>
+              ) : isAuthenticated ? (
+                <div className="pt-2 pb-4 px-4 flex justify-center">
+                  <Button onClick={handleFollow} fullWidth version="secondary">
+                    {profile.isFollowing ? 'Unfollow' : 'Follow'}
+                  </Button>
+                </div>
+              ) : (
+                ''
               )}
             </div>
 

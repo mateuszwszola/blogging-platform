@@ -1,15 +1,19 @@
 import client from 'api/client';
 
+function getProfiles() {
+  return client('users/profile');
+}
+
 function getUserProfileById(userId) {
   return client(`users/profile/${userId}`);
 }
 
-function followUserProfile(userId) {
-  return client(`users/${userId}/follow`, { method: 'POST' });
+function followProfile(userId) {
+  return client(`users/profile/${userId}/follow`, { method: 'POST' });
 }
 
-function unfollowUserProfile(userId) {
-  return client(`users/${userId}/follow`, { method: 'DELETE' });
+function unfollowProfile(userId) {
+  return client(`users/profile/${userId}/follow`, { method: 'DELETE' });
 }
 
-export { getUserProfileById, followUserProfile, unfollowUserProfile };
+export { getProfiles, getUserProfileById, followProfile, unfollowProfile };
