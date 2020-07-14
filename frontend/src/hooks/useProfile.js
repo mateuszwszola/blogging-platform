@@ -1,6 +1,7 @@
 import { useQuery, useMutation, queryCache } from 'react-query';
 import {
-  getUserProfileById,
+  getProfileById,
+  getProfileFollowings,
   followProfile,
   unfollowProfile,
 } from 'api/profile';
@@ -8,7 +9,17 @@ import {
 function useUserProfile(userId) {
   return useQuery(
     ['profile', userId],
-    () => getUserProfileById(userId).then((res) => res.profile),
+    () => getProfileById(userId).then((res) => res.profile),
+    {
+      enabled: userId,
+    }
+  );
+}
+
+function useProfileFollowing(userId) {
+  return useQuery(
+    ['profile', userId, { type: 'following' }],
+    () => getProfileFollowings(userId).then((res) => res.profiles),
     {
       enabled: userId,
     }
@@ -55,4 +66,9 @@ function useUnfollowProfile() {
   });
 }
 
-export { useUserProfile, useFollowProfile, useUnfollowProfile };
+export {
+  useUserProfile,
+  useProfileFollowing,
+  useFollowProfile,
+  useUnfollowProfile,
+};

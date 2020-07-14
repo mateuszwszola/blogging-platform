@@ -4,8 +4,12 @@ function getProfiles() {
   return client('users/profile');
 }
 
-function getUserProfileById(userId) {
+function getProfileById(userId) {
   return client(`users/profile/${userId}`);
+}
+
+function getProfileFollowings(userId) {
+  return client(`users/profile/${userId}/following`);
 }
 
 function followProfile(userId) {
@@ -16,4 +20,10 @@ function unfollowProfile(userId) {
   return client(`users/profile/${userId}/follow`, { method: 'DELETE' });
 }
 
-export { getProfiles, getUserProfileById, followProfile, unfollowProfile };
+export {
+  getProfiles,
+  getProfileById,
+  getProfileFollowings,
+  followProfile,
+  unfollowProfile,
+};

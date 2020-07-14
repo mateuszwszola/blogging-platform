@@ -9,9 +9,11 @@ import {
 } from 'react-router-dom';
 import { useAuth } from 'context/AuthContext';
 import { useUserProfile } from 'hooks/useProfile';
+import OwnerProtectedRoute from 'components/OwnerProtectedRoute';
 import ProfilePosts from 'components/Profile/Posts';
 import ProfileBlogs from 'components/Profile/Blogs';
 import ProfileFavorites from 'components/Profile/Favorites';
+import ProfileFollowing from 'components/Profile/Following';
 import ProfileNav from 'components/Profile/Nav';
 import { UserAvatar } from 'components/UserAvatar';
 import Loading from 'components/Loading';
@@ -111,11 +113,25 @@ function Profile() {
                   <Route path={`${path}/blogs`}>
                     <ProfileBlogs profileId={profile._id} />
                   </Route>
-                  {profile.isOwner && (
-                    <Route path={`${path}/favorites`}>
-                      <ProfileFavorites profileId={profile._id} />
-                    </Route>
-                  )}
+                  <OwnerProtectedRoute
+                    path={`${path}/favorites`}
+                    isOwner={profile.isOwner}
+                  >
+                    <ProfileFavorites
+                      profileId={profile._id}
+                      isOwner={profile.isOwner}
+                    />
+                  </OwnerProtectedRoute>
+
+                  <OwnerProtectedRoute
+                    path={`${path}/following`}
+                    isOwner={profile.isOwner}
+                  >
+                    <ProfileFollowing
+                      profileId={profile._id}
+                      isOwner={profile.isOwner}
+                    />
+                  </OwnerProtectedRoute>
                 </Switch>
               </div>
             </div>
