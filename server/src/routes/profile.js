@@ -21,11 +21,29 @@ router.param('userId', async (req, res, next, userId) => {
 });
 
 /*
+  @route   GET api/users/profile
+  @desc    Get all profiles
+  @access  Public
+ */
+router.get('/', auth.optional, profileControllers.getProfiles);
+
+/*
   @route   GET api/users/profile/:userId
   @desc    Get user profile by Id
   @access  Public
  */
 router.get('/:userId', auth.optional, profileControllers.getUserProfileById);
+
+/*
+  @route   GET api/users/profile/:userId/following
+  @desc    Get profile's list of followed user
+  @access  Public
+ */
+router.get(
+  '/:userId/following',
+  auth.optional,
+  profileControllers.getFollowing
+);
 
 /*
   @route   POST api/users/profile/:userId/follow

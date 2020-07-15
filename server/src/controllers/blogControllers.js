@@ -264,6 +264,31 @@ exports.deleteBlog = async (req, res, next) => {
   }
 };
 
+exports.deleteImage = async (req, res, next) => {
+  try {
+    if (!req.user._id.equals(req.blog.user)) {
+      throw new ErrorHandler(
+        403,
+        'You are not authorized to remove blog image'
+      );
+    }
+
+    if (req.blog.bgImg && req.blog.bgImg.image_url) {
+      await deleteImageFromCloudinary(
+        req.blog.bgImg.image_url,
+        'bloggingplatform'
+      );
+      req.blog.bgImg = {};
+      await req.blog.save();
+      return res.json({ message: 'Successfully removed image' });
+    } else {
+      return res.status(400).json({ message: 'Unable to remove image' });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getBookmarks = async (req, res, next) => {
   try {
     const blogs = await Blog.find({

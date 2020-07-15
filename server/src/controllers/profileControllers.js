@@ -1,12 +1,51 @@
 const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
 
+exports.getProfiles = async (req, res, next) => {
+  try {
+    const users = await User.find({});
+
+    if (req.user) {
+      return res.json({
+        profiles: users.map((user) => user.toProfileJSONFor(req.user)),
+      });
+    } else {
+      return res.json({
+        profiles: users.map((user) => user.toProfileJSONFor(null)),
+      });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getUserProfileById = async (req, res, next) => {
   try {
     if (req.user) {
       return res.json({ profile: req.profile.toProfileJSONFor(req.user) });
     } else {
       return res.json({ profile: req.profile.toProfileJSONFor(null) });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getFollowing = async (req, res, next) => {
+  try {
+    const users = await User.find({})
+      .where('_id')
+      .in(req.profile.following)
+      .exec();
+
+    if (req.user) {
+      return res.json({
+        profiles: users.map((user) => user.toProfileJSONFor(req.user)),
+      });
+    } else {
+      return res.json({
+        profiles: users.map((user) => user.toProfileJSONFor(null)),
+      });
     }
   } catch (err) {
     next(err);

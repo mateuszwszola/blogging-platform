@@ -171,6 +171,31 @@ exports.deletePost = async (req, res, next) => {
   }
 };
 
+exports.deleteImage = async (req, res, next) => {
+  try {
+    if (!req.user._id.equals(req.post.user)) {
+      throw new ErrorHandler(
+        403,
+        'You are not authorized to remove post image'
+      );
+    }
+
+    if (req.post.bgImg && req.post.bgImg.image_url) {
+      await deleteImageFromCloudinary(
+        req.post.bgImg.image_url,
+        'bloggingplatform'
+      );
+      req.post.bgImg = {};
+      await req.post.save();
+      return res.json({ message: 'Successfully removed image' });
+    } else {
+      return res.status(400).json({ message: 'Unable to remove image' });
+    }
+  } catch (err) {
+    next(err);
+  }
+};
+
 exports.getAllPosts = async (req, res, next) => {
   const { title } = req.query;
   const condition = title

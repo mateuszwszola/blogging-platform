@@ -27,7 +27,7 @@ router.get('/me', auth.required, userControllers.getUser);
 
 /*
   @route   POST api/users/photo
-  @desc    Upload user photo
+  @desc    Upload user avatar
   @access  Private
  */
 router.post(
@@ -36,6 +36,13 @@ router.post(
   multerUploads,
   userControllers.uploadPhoto
 );
+
+/*
+  @route   DELETE api/users/photo
+  @desc    Delete user avatar
+  @access  Private
+ */
+router.delete('/photo', auth.required, userControllers.deleteAvatar);
 
 /*
   @route   DELETE api/users

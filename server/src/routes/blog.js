@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Blog = require('../models/Blog');
+const { Blog } = require('../models');
 const blogControllers = require('../controllers/blogControllers');
 const blogValidation = require('../validations/blog');
 const {
@@ -101,6 +101,13 @@ router.get('/slug/:slug', blogControllers.getBlogBySlugName);
   @access  Private
  */
 router.delete('/:blogId', auth.required, blogControllers.deleteBlog);
+
+/*
+  @route   DELETE api/blogs/:blogId/image
+  @desc    Remove blog background image
+  @access  Private
+*/
+router.delete('/:blogId/image', auth.required, blogControllers.deleteImage);
 
 /*
   @route   POST api/blogs/:blogId/bookmark

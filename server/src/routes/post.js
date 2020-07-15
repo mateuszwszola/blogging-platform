@@ -62,6 +62,13 @@ router.put(
 router.delete('/:postId', auth.required, postControllers.deletePost);
 
 /*
+  @route   DELETE api/posts/:postId/image
+  @desc    Remove post background image
+  @access  Private
+ */
+router.delete('/:postId/image', auth.required, postControllers.deleteImage);
+
+/*
   @route   GET api/posts/all?title=[]&cursor=0
   @desc    Get all posts
   @access  Public

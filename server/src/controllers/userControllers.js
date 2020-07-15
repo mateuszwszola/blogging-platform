@@ -52,12 +52,30 @@ exports.uploadPhoto = async (req, res, next) => {
     // Remove old avatar from cloudinary
     if (req.user.avatar && req.user.avatar.image_url) {
       await deleteImageFromCloudinary(
-        user.avatar.image_url,
-        'bloggingplatform-avatar'
+        req.user.avatar.image_url,
+        'bloggingplatform'
       );
     }
 
     return res.json({ avatarURL: user.avatar.image_url });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteAvatar = async (req, res, next) => {
+  try {
+    if (req.user.avatar && req.user.avatar.image_url) {
+      await deleteImageFromCloudinary(
+        req.user.avatar.image_url,
+        'bloggingplatform'
+      );
+
+      req.user.avatar = {};
+      await req.user.save();
+    }
+
+    return res.json({ message: 'Successfully deleted user avatar' });
   } catch (err) {
     next(err);
   }
@@ -69,7 +87,7 @@ exports.deleteAccount = async (req, res, next) => {
     if (req.user.avatar && req.user.avatar.image_url) {
       await deleteImageFromCloudinary(
         req.user.avatar.image_url,
-        'bloggingplatform-avatar'
+        'bloggingplatform'
       );
     }
 
