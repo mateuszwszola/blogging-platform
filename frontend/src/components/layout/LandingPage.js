@@ -15,10 +15,10 @@ const LandingPage = () => (
       <div className="h-full flex flex-col justify-center items-center px-2 fadein">
         <div className="my-3 text-center select-none">
           <h1 className="text-3xl sm:text-4xl md:text-5xl">
-            Blogging Platform
+            Blogging platform
           </h1>
           <p className="text-base sm:text-lg md:text-2xl text-gray-400 py-1 font-light">
-            Create and manage your personal blog
+            Create and manage your blog
           </p>
         </div>
         <Link to="/login" className="mt-2 no-underline">
