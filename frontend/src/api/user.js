@@ -11,8 +11,12 @@ async function uploadUserAvatar(photoFile) {
   return await client('users/photo', { formData });
 }
 
+function deleteUserAvatar() {
+  return client('users/photo', { method: 'DELETE' });
+}
+
 async function deleteAccount() {
   return await client('users', { method: 'DELETE' });
 }
 
-export { updateUser, uploadUserAvatar, deleteAccount };
+export { updateUser, uploadUserAvatar, deleteUserAvatar, deleteAccount };

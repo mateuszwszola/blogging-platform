@@ -31,8 +31,8 @@ const About = () => (
       <div className="flex flex-col items-center md:flex-row md:justify-between py-12 md:py-16">
         <img className="max-w-sm w-4/5" src={teamSpiritImg} alt="blogging" />
         <div className="text-center mt-4 md:mt-0 leading-loose md:mx-6 md:max-w-lg md:text-lg">
-          Explore other bloggers, search by topics you are interested the most
-          about, and enjoy!
+          Explore other bloggers, follow users you like and search through posts
+          to find something interesting for you
         </div>
       </div>
     </div>

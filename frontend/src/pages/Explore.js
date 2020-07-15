@@ -56,7 +56,7 @@ function Explore() {
                 ))}
               </div>
             ) : (
-              <h2 className="text-center text-2xl">No search results...</h2>
+              <h2 className="text-center text-2xl">No results found...</h2>
             )}
           </div>
         )}

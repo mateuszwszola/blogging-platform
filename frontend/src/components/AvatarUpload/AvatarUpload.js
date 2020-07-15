@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation } from 'react-query';
 import { useAlert } from 'context/AlertContext';
 import { useUploadUserAvatar } from 'hooks/useUser';
 import usePhotoFile from 'hooks/usePhotoFile';
@@ -7,6 +8,7 @@ import Loading from '../Loading';
 import { Button } from '../layout/Button';
 import { UserAvatar } from '../UserAvatar';
 import { UploadIcon } from 'icons/UploadIcon';
+import { deleteUserAvatar } from 'api/user';
 
 const AvatarUpload = () => {
   const { user, setUser } = useUser();
@@ -14,6 +16,9 @@ const AvatarUpload = () => {
   const [photo, setPhoto] = useState(null);
   const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
   const [uploadUserAvatar, { status: avatarStatus }] = useUploadUserAvatar();
+  const [removeAvatar, { status: removeStatus }] = useMutation(
+    deleteUserAvatar
+  );
 
   const userAvatarSrc = user.avatar && user.avatar.image_url;
 
@@ -34,7 +39,7 @@ const AvatarUpload = () => {
       { photoFile },
       {
         onSuccess: (avatarURL) => {
-          setAlert('success', 'Img uploaded');
+          setAlert('success', 'Avatar uploaded');
           setUser({ avatar: { ...user.avatar, image_url: avatarURL } });
         },
         onSettled: () => {
@@ -47,13 +52,29 @@ const AvatarUpload = () => {
     );
   };
 
+  const handleAvatarRemove = () => {
+    if (!user.avatar?.image_url) return;
+
+    removeAvatar()
+      .then((res) => {
+        setAlert('success', res.message);
+        setUser({ avatar: {} });
+      })
+      .catch((err) => {
+        setAlert('error', err.message);
+      });
+  };
+
   return (
-    <div className="w-full flex flex-col justify-center items-center relative">
-      {avatarStatus === 'loading' ? (
+    <div
+      style={{ minHeight: '14rem' }}
+      className="w-full flex flex-col justify-center items-center relative"
+    >
+      {avatarStatus === 'loading' || removeStatus === 'loading' ? (
         <Loading />
       ) : (
         <>
-          <div style={{ minHeight: '14rem' }} className="relative">
+          <div className="relative">
             <UserAvatar avatarURL={photo || userAvatarSrc} size="lg" />
 
             <label className="group absolute top-0 left-0 bottom-0 right-0 text-blue-400 rounded-full hover:bg-gray-100 cursor-pointer focus:outline-none">
@@ -73,7 +94,8 @@ const AvatarUpload = () => {
               </div>
             </label>
           </div>
-          {photoFile && (
+
+          {photoFile ? (
             <div className="w-full flex flex-wrap justify-center mt-2 p-2 space-x-4">
               <div className="flex-1">
                 <Button
@@ -96,6 +118,14 @@ const AvatarUpload = () => {
                 </Button>
               </div>
             </div>
+          ) : user.avatar?.image_url ? (
+            <div className="mt-2">
+              <Button size="sm" version="delete" onClick={handleAvatarRemove}>
+                Remove avatar
+              </Button>
+            </div>
+          ) : (
+            ''
           )}
         </>
       )}

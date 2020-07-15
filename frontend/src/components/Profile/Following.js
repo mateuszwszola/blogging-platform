@@ -6,7 +6,7 @@ import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
 import ProfileCard from 'components/layout/ProfileCard';
 
-function Following({ profileId }) {
+function ProfileFollowing({ profileId }) {
   const { status, data: profiles, error } = useProfileFollowing(profileId);
   return (
     <div>
@@ -42,8 +42,8 @@ function Following({ profileId }) {
   );
 }
 
-Following.propTypes = {
+ProfileFollowing.propTypes = {
   profileId: PropTypes.string.isRequired,
 };
 
-export default Following;
+export default ProfileFollowing;

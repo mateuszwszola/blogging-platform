@@ -37,7 +37,12 @@ function BlogPostForm({
         </p>
       ) : null}
 
-      <form onSubmit={handleSubmit} method="POST" encType="multipart/form-data">
+      <form
+        onSubmit={handleSubmit}
+        method="POST"
+        encType="multipart/form-data"
+        className={`${loading ? 'opacity-50' : 'opacity-100'}`}
+      >
         <InputGroup
           isError={!!(Object.keys(errors).length > 0 && errors.title)}
           errors={errors}
@@ -76,7 +81,7 @@ function BlogPostForm({
           </Button>
           {photoFile && (
             <Button onClick={handlePhotoReset} version="basic" size="sm">
-              Remove Photo
+              Unselect photo
             </Button>
           )}
         </div>

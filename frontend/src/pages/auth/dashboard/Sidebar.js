@@ -19,7 +19,7 @@ function Sidebar({ blogs }) {
       <div className="mt-8">
         <h2 className="text-center text-2xl">Select Blog</h2>
         {blogs.length === 0 ? (
-          <p className="text-center mt-8">There is no blogs</p>
+          <p className="text-center mt-8">You don't have any blogs yet</p>
         ) : (
           <ul className="mt-8 h-full space-y-4 flex flex-col items-center list-none max-w-xs mx-auto">
             {blogs.map((blog) => (

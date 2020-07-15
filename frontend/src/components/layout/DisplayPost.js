@@ -53,20 +53,19 @@ function DisplayPost({ post, onLike }) {
         </div>
 
         <div className="flex flex-col md:flex-row mt-4 items-center">
-          {post.user?.avatar?.image_url ? (
-            <img
-              src={post.user.avatar.image_url}
-              alt="profile"
-              className="shadow w-16 h-16 rounded-full"
-            />
-          ) : (
-            <UserCircleIcon className="w-16 h-16 rounded-full fill-current text-gray-600" />
-          )}
-          <Link
-            to={`/profile/${post.user._id}`}
-            className="block text-base text-gray-700 uppercase font-semibold mt-2 md:mt-0 md:ml-4"
-          >
-            {post.user.name}
+          <Link to={`/profile/${post.user._id}`} className="no-underline">
+            {post.user?.avatar?.image_url ? (
+              <img
+                src={post.user.avatar.image_url}
+                alt="profile"
+                className="inline-block shadow w-16 h-16 rounded-full"
+              />
+            ) : (
+              <UserCircleIcon className="inline-block w-16 h-16 rounded-full fill-current text-gray-600" />
+            )}
+            <span className="inline-block mt-2 md:mt-0 md:ml-4 text-base text-gray-700 uppercase font-semibold">
+              {post.user.name}
+            </span>
           </Link>
         </div>
       </div>

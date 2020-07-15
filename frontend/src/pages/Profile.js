@@ -10,11 +10,13 @@ import {
 import { useAuth } from 'context/AuthContext';
 import { useUserProfile } from 'hooks/useProfile';
 import OwnerProtectedRoute from 'components/OwnerProtectedRoute';
-import ProfilePosts from 'components/Profile/Posts';
-import ProfileBlogs from 'components/Profile/Blogs';
-import ProfileFavorites from 'components/Profile/Favorites';
-import ProfileFollowing from 'components/Profile/Following';
-import ProfileNav from 'components/Profile/Nav';
+import {
+  ProfileBlogs,
+  ProfileFavorites,
+  ProfileFollowing,
+  ProfilePosts,
+  ProfileNav,
+} from 'components/Profile';
 import { UserAvatar } from 'components/UserAvatar';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';

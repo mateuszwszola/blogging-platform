@@ -80,7 +80,7 @@ function BlogForm({
         </Button>
         {photoFile && (
           <Button onClick={handlePhotoReset} version="basic" size="sm">
-            Remove Photo
+            Unselect photo
           </Button>
         )}
       </div>
