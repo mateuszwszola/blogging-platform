@@ -1,8 +1,12 @@
 const jwt = require('jsonwebtoken');
-const User = require('../../models/User');
-const { generateNewToken, verifyToken, auth } = require('../auth');
+const { User } = require('../../../src/models');
+const {
+  generateNewToken,
+  verifyToken,
+  auth,
+} = require('../../../src/middleware/auth');
 
-const dummyUser = require('../../seeds/user.seed.json')[0];
+const dummyUser = require('../../../seeds/user.seed.json')[0];
 
 describe('Authorization', () => {
   describe('generateNewToken', () => {

@@ -1,8 +1,8 @@
 const request = require('supertest');
-const User = require('../../models/User');
+const { User } = require('../../src/models');
 const dummyUser = require('../../seeds/user.seed.json')[0];
 
-const { app } = require('../../app');
+const { app } = require('../../src/app');
 
 describe('Auth API tests', () => {
   describe('POST api/auth/signup', () => {

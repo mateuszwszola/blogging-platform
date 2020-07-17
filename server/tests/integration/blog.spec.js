@@ -1,10 +1,8 @@
 const request = require('supertest');
 const sinon = require('sinon');
-const User = require('../../models/User');
-const Blog = require('../../models/Blog');
-const { testValidationResults } = require('../../utils/testsHelpers');
-
-const { uploader } = require('../../services/cloudinary');
+const { User, Blog, Post } = require('../../src/models');
+const { testValidationResults } = require('../../src/utils/testsHelpers');
+const { uploader } = require('../../src/services/cloudinary');
 
 sinon.stub(uploader, 'upload').callsFake(() => {
   return new Promise((resolve) => {
@@ -15,8 +13,7 @@ sinon.stub(uploader, 'upload').callsFake(() => {
   });
 });
 
-const { app } = require('../../app');
-const Post = require('../../models/Post');
+const { app } = require('../../src/app');
 
 describe('Blog API tests', () => {
   let user;
@@ -133,7 +130,7 @@ describe('Blog API tests', () => {
       const res = await request(app)
         .post('/api/blogs')
         .set('x-auth-token', token)
-        .attach('photo', 'src/fixtures/background.png')
+        .attach('photo', 'fixtures/background.png')
         .field('name', blogData.name)
         .field('imgAttribution', blogData.imgAttribution);
 
@@ -239,7 +236,7 @@ describe('Blog API tests', () => {
       const res = await request(app)
         .put(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token)
-        .attach('photo', 'src/fixtures/background.png')
+        .attach('photo', 'fixtures/background.png')
         .field('name', newName);
 
       expect(res.statusCode).toBe(200);

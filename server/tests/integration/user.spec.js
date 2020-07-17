@@ -1,10 +1,10 @@
 const request = require('supertest');
 const sinon = require('sinon');
-const User = require('../../models/User');
-const { generateNewToken } = require('../../middleware/auth');
+const { User } = require('../../src/models');
+const { generateNewToken } = require('../../src/middleware/auth');
 const dummyUser = require('../../seeds/user.seed.json')[0];
 
-const { uploader } = require('../../services/cloudinary');
+const { uploader } = require('../../src/services/cloudinary');
 
 sinon.stub(uploader, 'upload').callsFake(() => {
   return new Promise((resolve) => {
@@ -14,7 +14,7 @@ sinon.stub(uploader, 'upload').callsFake(() => {
   });
 });
 
-const { app } = require('../../app');
+const { app } = require('../../src/app');
 
 describe('User API tests', () => {
   describe('GET api/users/me', () => {
@@ -125,7 +125,7 @@ describe('User API tests', () => {
       const res = await request(app)
         .post('/api/users/photo')
         .set('x-auth-token', token)
-        .attach('photo', 'src/fixtures/avatar.png');
+        .attach('photo', 'fixtures/avatar.png');
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('avatarURL');

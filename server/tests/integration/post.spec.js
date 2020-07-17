@@ -1,14 +1,12 @@
 const request = require('supertest');
 const sinon = require('sinon');
-const User = require('../../models/User');
-const Blog = require('../../models/Blog');
-const Post = require('../../models/Post');
-const { testValidationResults } = require('../../utils/testsHelpers');
+const { User, Blog, Post } = require('../../src/models');
+const { testValidationResults } = require('../../src/utils/testsHelpers');
 const dummyUsers = require('../../seeds/user.seed.json');
 const dummyBlogs = require('../../seeds/blog.seed.json');
 const dummyPosts = require('../../seeds/post.seed.json');
 
-const { uploader } = require('../../services/cloudinary');
+const { uploader } = require('../../src/services/cloudinary');
 
 sinon.stub(uploader, 'upload').callsFake(() => {
   return new Promise((resolve) => {
@@ -19,7 +17,7 @@ sinon.stub(uploader, 'upload').callsFake(() => {
   });
 });
 
-const { app } = require('../../app');
+const { app } = require('../../src/app');
 
 describe('Post API tests', () => {
   let user;
@@ -166,7 +164,7 @@ describe('Post API tests', () => {
         .field('title', title)
         .field('body', body)
         .field('imgAttribution', imgAttribution)
-        .attach('photo', 'src/fixtures/background.png');
+        .attach('photo', 'fixtures/background.png');
 
       expect(res.statusCode).toBe(201);
       expect(res.body).toHaveProperty('post');
@@ -323,7 +321,7 @@ describe('Post API tests', () => {
         .set('x-auth-token', token)
         .field('title', title)
         .field('body', body)
-        .attach('photo', 'src/fixtures/background.png');
+        .attach('photo', 'fixtures/background.png');
 
       expect(res.statusCode).toBe(200);
       expect(res.body.post.title).toBe(title);

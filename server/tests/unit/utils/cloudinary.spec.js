@@ -1,4 +1,4 @@
-const { getPublicIdFromImageUrl } = require('../cloudinary');
+const { getPublicIdFromImageUrl } = require('../../../src/utils/cloudinary');
 
 describe('getPublicIdFromImageUrl', () => {
   test('returns empty string if imageUrl is empty string', () => {

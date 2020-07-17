@@ -1,8 +1,8 @@
 const supertest = require('supertest');
-const User = require('../../models/User');
+const { User } = require('../../src/models');
 const dummyUsers = require('../../seeds/user.seed.json');
 
-const { app } = require('../../app');
+const { app } = require('../../src/app');
 const request = supertest(app);
 
 describe('Profile API tests', () => {
