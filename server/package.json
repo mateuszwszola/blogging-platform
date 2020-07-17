@@ -39,7 +39,7 @@
     "helmet": "^3.21.3",
     "jimp": "^0.10.3",
     "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "mailgun-js": "^0.22.0",
     "mongoose": "^5.9.4",
     "morgan": "^1.9.1",
