@@ -37,35 +37,47 @@ These instructions will get you a copy of the project up and running on your loc
 
 Install server dependencies
 
-```
-cd server
-npm install
+```bash
+$ cd server
+$ npm install
 ```
 
 Install client dependencies
 
-```
-cd frontend
-npm install
+```bash
+$ cd frontend
+$ npm install
 ```
 
 ### Running the server in development mode
 
-```
-cd server
-npm run dev
+```bash
+$ cd server
+$ npm run dev
 ```
 
 ### Running the frontend
 
-```
-cd frontend
-npm start
+```bash
+$ cd frontend
+$ npm start
 ```
 
 ## Running the tests
 
-To run server endpoint tests along with some unit tests, run `npm test` from the server directory
+### Server
+
+Unit tests:
+
+```bash
+$ npm run test:unit
+```
+
+Integration tests:
+
+```bash
+$ npm run test:integration
+```
 
 ## Author
 
