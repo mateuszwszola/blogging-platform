@@ -1,9 +1,6 @@
-const supertest = require('supertest');
+const request = require('supertest');
 const { User } = require('../../src/models');
 const dummyUsers = require('../../seeds/user.seed.json');
-
-const { app } = require('../../src/app');
-const request = supertest(app);
 
 describe('Profile API tests', () => {
   let user;
@@ -18,14 +15,16 @@ describe('Profile API tests', () => {
     test('should error 404', async () => {
       const userId = global.newId();
 
-      const res = await request.get(`/api/users/profile/${userId}`);
+      const res = await request(global.app).get(`/api/users/profile/${userId}`);
 
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('message');
     });
 
     test('should return user profile', async () => {
-      const res = await request.get(`/api/users/profile/${user._id}`);
+      const res = await request(global.app).get(
+        `/api/users/profile/${user._id}`
+      );
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('profile');
@@ -42,7 +41,7 @@ describe('Profile API tests', () => {
     });
 
     test('should error 400', async () => {
-      const res = await request
+      const res = await request(global.app)
         .post(`/api/users/profile/${user._id}/follow`)
         .set('x-auth-token', token);
 
@@ -51,7 +50,7 @@ describe('Profile API tests', () => {
     });
 
     test('should follow profile', async () => {
-      const res = await request
+      const res = await request(global.app)
         .post(`/api/users/profile/${profile._id}/follow`)
         .set('x-auth-token', token);
 
@@ -70,7 +69,7 @@ describe('Profile API tests', () => {
     });
 
     test('should error 400', async () => {
-      const res = await request
+      const res = await request(global.app)
         .delete(`/api/users/profile/${user._id}/follow`)
         .set('x-auth-token', token);
 
@@ -79,7 +78,7 @@ describe('Profile API tests', () => {
     });
 
     test('should unfollow profile', async () => {
-      const res = await request
+      const res = await request(global.app)
         .delete(`/api/users/profile/${profile._id}/follow`)
         .set('x-auth-token', token);
 

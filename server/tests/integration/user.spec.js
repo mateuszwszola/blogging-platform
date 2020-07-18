@@ -14,19 +14,17 @@ sinon.stub(uploader, 'upload').callsFake(() => {
   });
 });
 
-const { app } = require('../../src/app');
-
 describe('User API tests', () => {
   describe('GET api/users/me', () => {
     test('should error when no token', async () => {
-      const res = await request(app).get('/api/users/me');
+      const res = await request(global.app).get('/api/users/me');
 
       expect(res.statusCode).toBe(401);
       expect(res.body).toHaveProperty('message');
     });
 
     test('should error when invalid token', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .get('/api/users/me')
         .set('x-auth-token', '123');
 
@@ -37,7 +35,7 @@ describe('User API tests', () => {
     test('should error when user does not exists', async () => {
       const token = generateNewToken({ id: global.newId() });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .get('/api/users/me')
         .set('x-auth-token', token);
 
@@ -49,7 +47,7 @@ describe('User API tests', () => {
       const user = await User.create(dummyUser);
       const token = user.generateAuthToken();
 
-      const res = await request(app)
+      const res = await request(global.app)
         .get('/api/users/me')
         .set('x-auth-token', token);
 
@@ -69,7 +67,7 @@ describe('User API tests', () => {
     });
 
     test('should return error when invalid name length provided', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .put('/api/users')
         .set('x-auth-token', token)
         .send({
@@ -82,7 +80,7 @@ describe('User API tests', () => {
     });
 
     test('should reset user bio', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .put('/api/users')
         .set('x-auth-token', token)
         .send({
@@ -101,7 +99,7 @@ describe('User API tests', () => {
         bio: 'My name is Jason',
       };
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put('/api/users')
         .set('x-auth-token', token)
         .send(data);
@@ -122,7 +120,7 @@ describe('User API tests', () => {
     });
 
     test('should upload user avatar', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/users/photo')
         .set('x-auth-token', token)
         .attach('photo', 'fixtures/avatar.png');

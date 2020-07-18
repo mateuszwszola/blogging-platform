@@ -1,7 +1,6 @@
 const request = require('supertest');
 const { User, Post, Comment } = require('../../src/models');
 const dummyUser = require('../../seeds/user.seed.json')[0];
-const { app } = require('../../src/app');
 
 describe('Comment API tests', () => {
   let user;
@@ -22,7 +21,7 @@ describe('Comment API tests', () => {
 
   describe('POST api/comments/:postId', () => {
     test('returns 401 if no token provided', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post(`/api/comments/${post._id}`)
         .send({ body: 'Comment body' });
 
@@ -31,7 +30,7 @@ describe('Comment API tests', () => {
     });
 
     test('returns 422 if invalid post ID', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post(`/api/comments/123`)
         .set('x-auth-token', token)
         .send({ body: 'Comment body' });
@@ -41,7 +40,7 @@ describe('Comment API tests', () => {
     });
 
     test('returns 422 if no comment body provided ', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post(`/api/comments/${post._id}`)
         .set('x-auth-token', token);
 
@@ -50,7 +49,7 @@ describe('Comment API tests', () => {
     });
 
     test('returns 404 if post not found ', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post(`/api/comments/${global.newId()}`)
         .set('x-auth-token', token)
         .send({ body: 'Comment body' });
@@ -60,7 +59,7 @@ describe('Comment API tests', () => {
     });
 
     test('adds a comment', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post(`/api/comments/${post._id}`)
         .set('x-auth-token', token)
         .send({ body: 'Comment body' });
@@ -84,7 +83,9 @@ describe('Comment API tests', () => {
         body: 'Comment body',
       });
 
-      const res = await request(app).delete(`/api/comments/${comment._id}`);
+      const res = await request(global.app).delete(
+        `/api/comments/${comment._id}`
+      );
 
       expect(res.statusCode).toBe(401);
       expect(res.body).toHaveProperty('message');
@@ -97,7 +98,7 @@ describe('Comment API tests', () => {
         body: 'Comment body',
       });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .delete(`/api/comments/${comment._id}`)
         .set('x-auth-token', token);
 
@@ -106,7 +107,7 @@ describe('Comment API tests', () => {
     });
 
     test('returns 404 if comment not found', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .delete(`/api/comments/${global.newId()}`)
         .set('x-auth-token', token);
 
@@ -121,7 +122,7 @@ describe('Comment API tests', () => {
         body: 'Comment body',
       });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .delete(`/api/comments/${comment._id}`)
         .set('x-auth-token', token);
 
@@ -131,7 +132,9 @@ describe('Comment API tests', () => {
 
   describe('GET api/comments/:postId', () => {
     test('returns 404 if post not found', async () => {
-      const res = await request(app).get(`/api/comments/${global.newId()}`);
+      const res = await request(global.app).get(
+        `/api/comments/${global.newId()}`
+      );
 
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('message');
@@ -153,7 +156,7 @@ describe('Comment API tests', () => {
 
       await Comment.create(comments);
 
-      const res = await request(app).get(`/api/comments/${post._id}`);
+      const res = await request(global.app).get(`/api/comments/${post._id}`);
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('comments');

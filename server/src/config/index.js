@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { merge } = require('lodash');
 const env = process.env.NODE_ENV || 'development';
 

@@ -1,13 +1,9 @@
 const mongoose = require('mongoose');
 const cuid = require('cuid');
 const _ = require('lodash');
-const User = require('./src/models/User');
-const Post = require('./src/models/Post');
-const Blog = require('./src/models/Blog');
-const Comment = require('./src/models/Comment');
 const { dbUrl } = require('./src/config');
-
-const models = { User, Post, Blog, Comment };
+const models = require('./src/models');
+const { expressApp } = require('./src/app');
 
 global.newId = () => {
   return mongoose.Types.ObjectId();
@@ -23,6 +19,11 @@ const remove = (collection) => {
       });
   });
 };
+
+beforeAll(async (done) => {
+  global.app = await expressApp();
+  done();
+});
 
 beforeEach(async (done) => {
   const db = cuid();

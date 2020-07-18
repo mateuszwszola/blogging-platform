@@ -13,8 +13,6 @@ sinon.stub(uploader, 'upload').callsFake(() => {
   });
 });
 
-const { app } = require('../../src/app');
-
 describe('Blog API tests', () => {
   let user;
   let token;
@@ -37,13 +35,13 @@ describe('Blog API tests', () => {
 
   describe('POST /api/blogs', () => {
     test('should error when no token', async () => {
-      const res = await request(app).post('/api/blogs');
+      const res = await request(global.app).post('/api/blogs');
 
       expect(res.statusCode).toBe(401);
     });
 
     test('should error when no name provided', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token);
 
@@ -52,7 +50,7 @@ describe('Blog API tests', () => {
     });
 
     test('should error when invalid name length', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send({ name: 'B' });
@@ -64,7 +62,7 @@ describe('Blog API tests', () => {
     test('should error when invalid description length', async () => {
       const description = 'Blog description'.repeat(9);
 
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send({ name: 'Blog name', description });
@@ -76,7 +74,7 @@ describe('Blog API tests', () => {
     test('should error when invalid imgAttribution length', async () => {
       const imgAttribution = 'Image Attribution'.repeat(4);
 
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send({ name: 'Blog name', imgAttribution });
@@ -86,7 +84,7 @@ describe('Blog API tests', () => {
     });
 
     test('should error when bgImgUrl is invalid url', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send({ name: 'Blog name', bgImgUrl: 'image-url' });
@@ -100,7 +98,7 @@ describe('Blog API tests', () => {
 
       await Blog.create({ name });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send({ name });
@@ -110,7 +108,7 @@ describe('Blog API tests', () => {
     });
 
     test('should create a blog', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .send(blogData);
@@ -127,7 +125,7 @@ describe('Blog API tests', () => {
     });
 
     test('should create a blog with uploaded photo', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/blogs')
         .set('x-auth-token', token)
         .attach('photo', 'fixtures/background.png')
@@ -146,7 +144,7 @@ describe('Blog API tests', () => {
     test('should error when no token', async () => {
       const blog = await Blog.create({ user: user._id, name: blogData.name });
 
-      const res = await request(app).put(`/api/blogs/${blog._id}`);
+      const res = await request(global.app).put(`/api/blogs/${blog._id}`);
 
       expect(res.statusCode).toBe(401);
       expect(res.body).toHaveProperty('message');
@@ -155,7 +153,7 @@ describe('Blog API tests', () => {
     test('should error when no blog name provided', async () => {
       const blog = await Blog.create({ user: user._id, name: blogData.name });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token);
 
@@ -166,7 +164,7 @@ describe('Blog API tests', () => {
     test('should error when blog does not exists', async () => {
       const blogId = global.newId();
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put(`/api/blogs/${blogId}`)
         .set('x-auth-token', token)
         .send({ name: blogData.name });
@@ -179,7 +177,7 @@ describe('Blog API tests', () => {
       const userId = global.newId();
       const blog = await Blog.create({ user: userId, name: blogData.name });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token)
         .send({ name: 'Different blog name' });
@@ -194,7 +192,7 @@ describe('Blog API tests', () => {
         { user: user._id, name: 'Blog name #2' },
       ]);
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put(`/api/blogs/${blogs[0]._id}`)
         .set('x-auth-token', token)
         .send({ name: blogs[1].name });
@@ -213,7 +211,7 @@ describe('Blog API tests', () => {
         imgAttribution: 'photo by someone',
       };
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token)
         .send({ ...newBlogData });
@@ -233,7 +231,7 @@ describe('Blog API tests', () => {
 
       const newName = 'New Name';
 
-      const res = await request(app)
+      const res = await request(global.app)
         .put(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token)
         .attach('photo', 'fixtures/background.png')
@@ -248,14 +246,14 @@ describe('Blog API tests', () => {
 
   describe('GET /api/blogs', () => {
     test('should error when no token', async () => {
-      const res = await request(app).get('/api/blogs');
+      const res = await request(global.app).get('/api/blogs');
 
       expect(res.statusCode).toBe(401);
       expect(res.body).toHaveProperty('message');
     });
 
     test('should return empty blogs array', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .get('/api/blogs')
         .set('x-auth-token', token);
 
@@ -284,7 +282,7 @@ describe('Blog API tests', () => {
 
       await Blog.create(blogs);
 
-      const res = await request(app)
+      const res = await request(global.app)
         .get('/api/blogs')
         .set('x-auth-token', token);
 
@@ -305,7 +303,7 @@ describe('Blog API tests', () => {
 
   describe('GET /api/blogs/all', () => {
     test('should return empty array of blogs', async () => {
-      const res = await request(app).get('/api/blogs/all');
+      const res = await request(global.app).get('/api/blogs/all');
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('blogs');
@@ -332,7 +330,7 @@ describe('Blog API tests', () => {
 
       await Blog.create(blogs);
 
-      const res = await request(app).get('/api/blogs/all');
+      const res = await request(global.app).get('/api/blogs/all');
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('blogs');
@@ -351,7 +349,7 @@ describe('Blog API tests', () => {
 
   describe('GET /api/blogs/:blogId', () => {
     test('should return error when invalid object ID', async () => {
-      const res = await request(app).get('/api/blogs/123');
+      const res = await request(global.app).get('/api/blogs/123');
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('message');
@@ -359,7 +357,7 @@ describe('Blog API tests', () => {
 
     test('should return error when blog does not exists', async () => {
       const blogId = global.newId();
-      const res = await request(app).get(`/api/blogs/${blogId}`);
+      const res = await request(global.app).get(`/api/blogs/${blogId}`);
 
       expect(res.statusCode).toBe(404);
       expect(res.body).toHaveProperty('message');
@@ -372,7 +370,7 @@ describe('Blog API tests', () => {
         description: blogData.description,
       });
 
-      const res = await request(app).get(`/api/blogs/${blog._id}`);
+      const res = await request(global.app).get(`/api/blogs/${blog._id}`);
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('blog');
@@ -388,7 +386,7 @@ describe('Blog API tests', () => {
 
   describe('GET /api/blogs/slug/:slugName', () => {
     test('should error when blog not found', async () => {
-      const res = await request(app).get('/api/blogs/slug/slug');
+      const res = await request(global.app).get('/api/blogs/slug/slug');
 
       expect(res.statusCode).toBe(404);
       expect(typeof res.body.message).toBe('string');
@@ -401,7 +399,7 @@ describe('Blog API tests', () => {
         description: blogData.description,
       });
 
-      const res = await request(app).get(`/api/blogs/slug/${blog.slug}`);
+      const res = await request(global.app).get(`/api/blogs/slug/${blog.slug}`);
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('blog');
@@ -417,7 +415,7 @@ describe('Blog API tests', () => {
 
   describe('GET /api/blogs/user/:userId', () => {
     test('should error when invalid user id', async () => {
-      const res = await request(app).get('/api/blogs/user/123');
+      const res = await request(global.app).get('/api/blogs/user/123');
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('message');
@@ -443,7 +441,7 @@ describe('Blog API tests', () => {
 
       await Blog.create(blogs);
 
-      const res = await request(app).get(`/api/blogs/user/${user._id}`);
+      const res = await request(global.app).get(`/api/blogs/user/${user._id}`);
 
       expect(res.statusCode).toBe(200);
       expect(res.body).toHaveProperty('blogs');
@@ -462,7 +460,7 @@ describe('Blog API tests', () => {
 
   describe('DELETE /api/blogs/:blogId', () => {
     test('should error when invalid blog ID', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .delete('/api/blogs/123')
         .set('x-auth-token', token);
 
@@ -472,7 +470,7 @@ describe('Blog API tests', () => {
 
     test('should error when blog not found', async () => {
       const blogId = global.newId();
-      const res = await request(app)
+      const res = await request(global.app)
         .delete(`/api/blogs/${blogId}`)
         .set('x-auth-token', token);
 
@@ -484,7 +482,7 @@ describe('Blog API tests', () => {
       const userId = global.newId();
       const blog = await Blog.create({ user: userId, name: blogData.name });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .delete(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token);
 
@@ -502,7 +500,7 @@ describe('Blog API tests', () => {
         body: 'Post body',
       });
 
-      const res = await request(app)
+      const res = await request(global.app)
         .delete(`/api/blogs/${blog._id}`)
         .set('x-auth-token', token);
 

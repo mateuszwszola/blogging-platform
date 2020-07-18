@@ -40,7 +40,7 @@ router.post('/user/email', emailControllers.sendPasswordResetEmail);
  */
 router.post(
   '/user/receive_new_password/:userId/:token',
-  authValidation.validateNewPassword,
+  validate(authValidation.validateNewPassword),
   emailControllers.receiveNewPassword
 );
 

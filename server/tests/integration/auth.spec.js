@@ -2,12 +2,10 @@ const request = require('supertest');
 const { User } = require('../../src/models');
 const dummyUser = require('../../seeds/user.seed.json')[0];
 
-const { app } = require('../../src/app');
-
 describe('Auth API tests', () => {
   describe('POST api/auth/signup', () => {
     test('returns errors when empty body', async () => {
-      const res = await request(app).post('/api/auth/signup');
+      const res = await request(global.global.app).post('/api/auth/signup');
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('errors');
@@ -15,7 +13,7 @@ describe('Auth API tests', () => {
     });
 
     test('returns error when invalid name length', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/auth/signup')
         .send({
           ...dummyUser,
@@ -28,7 +26,7 @@ describe('Auth API tests', () => {
     });
 
     test('returns error when invalid email', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/auth/signup')
         .send({
           ...dummyUser,
@@ -41,7 +39,7 @@ describe('Auth API tests', () => {
     });
 
     test('returns error when invalid password length', async () => {
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/auth/signup')
         .send({
           ...dummyUser,
@@ -55,7 +53,7 @@ describe('Auth API tests', () => {
 
     test('returns error when email already exists', async () => {
       await User.create({ ...dummyUser });
-      const res = await request(app)
+      const res = await request(global.app)
         .post('/api/auth/signup')
         .send({
           ...dummyUser,
@@ -67,7 +65,9 @@ describe('Auth API tests', () => {
     });
 
     test('saves user to database and returns user and token', async () => {
-      const res = await request(app).post('/api/auth/signup').send(dummyUser);
+      const res = await request(global.app)
+        .post('/api/auth/signup')
+        .send(dummyUser);
 
       expect(res.statusCode).toBe(201);
 
@@ -82,7 +82,7 @@ describe('Auth API tests', () => {
 
   describe('POST api/auth/signin', () => {
     test('returns errors when empty body', async () => {
-      const res = await request(app).post('/api/auth/signin');
+      const res = await request(global.app).post('/api/auth/signin');
 
       expect(res.statusCode).toBe(422);
       expect(res.body).toHaveProperty('errors');
@@ -92,7 +92,7 @@ describe('Auth API tests', () => {
     test('returns error when invalid credentials', async () => {
       await User.create(dummyUser);
 
-      const res = await request(app).post('/api/auth/signin').send({
+      const res = await request(global.app).post('/api/auth/signin').send({
         email: dummyUser.email,
         password: 'password',
       });
@@ -104,7 +104,7 @@ describe('Auth API tests', () => {
     test('should login user and return user and token', async () => {
       await User.create(dummyUser);
 
-      const res = await request(app).post('/api/auth/signin').send({
+      const res = await request(global.app).post('/api/auth/signin').send({
         email: dummyUser.email,
         password: dummyUser.password,
       });
