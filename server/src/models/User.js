@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
@@ -81,35 +82,30 @@ UserSchema.methods.toJSON = function () {
   return user;
 };
 
+const authParams = ['_id', 'name', 'email', 'bio', 'avatar'];
+
 UserSchema.methods.toAuthJSON = function () {
-  return {
-    _id: this._id,
-    name: this.name,
-    email: this.email,
-    bio: this.bio,
-    avatar: this.avatar,
-  };
+  return _.pick(this, authParams);
 };
 
 UserSchema.methods.toProfileJSONFor = function (user) {
   return {
-    _id: this._id,
-    name: this.name,
-    bio: this.bio,
-    avatar: this.avatar,
-    favorites: this.favorites,
-    following: this.following,
-    bookmarks: this.bookmarks,
+    ..._.pick(this, [
+      ...authParams,
+      'favorites',
+      'following',
+      'bookmarks',
+      'createdAt',
+      'updatedAt',
+    ]),
     isFollowing: user ? user.isFollowing(this._id) : false,
     isOwner: user ? user._id.toString() === this._id.toString() : false,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt,
   };
 };
 
 // Favoriting
 UserSchema.methods.favorite = function (id) {
-  if (this.favorites.indexOf(id) === -1) {
+  if (!this.favorites.includes(id)) {
     this.favorites.push(id);
   }
 
@@ -122,9 +118,9 @@ UserSchema.methods.unfavorite = function (id) {
 };
 
 UserSchema.methods.isFavorite = function (id) {
-  return this.favorites.some(function (favoriteId) {
-    return favoriteId.toString() === id.toString();
-  });
+  return this.favorites.some(
+    (favoriteId) => favoriteId.toString() === id.toString()
+  );
 };
 
 // Following

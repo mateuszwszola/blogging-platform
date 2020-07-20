@@ -1,5 +1,6 @@
 const Photo = require('../models/Photo');
 
+// TODO: upload obrazków do bazy danych? To jest taki anty-pattern. Masz S3 więc może to tutaj to tylko legacy code?
 exports.uploadPhoto = async (req, res, next) => {
   try {
     const photo = new Photo(req.body);
@@ -16,6 +17,7 @@ exports.uploadPhoto = async (req, res, next) => {
 
 exports.getPhotos = async (req, res, next) => {
   try {
+    // TODO: wszystkie obrazki które masz w bazie? To taki słaby pomysł. Zawsze powinna być jakaś paginacja
     const photos = await Photo.find({});
     res.json({ photos });
   } catch (err) {

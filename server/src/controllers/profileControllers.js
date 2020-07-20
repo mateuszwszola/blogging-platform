@@ -1,19 +1,19 @@
 const User = require('../models/User');
 const { ErrorHandler } = require('../utils/error');
 
+// TODO: Zamiast wszędzie dodawać try {} catch { next(err) } sugeruję dodać moduł express-async-errors
+
 exports.getProfiles = async (req, res, next) => {
   try {
+    // TODO: zawsze powinieneś implementować paginację dla takich przypadków. Choćby i ustawioną na jakąś wysoką ilość
+    //  defaultowo w stylu 100
     const users = await User.find({});
 
-    if (req.user) {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-      });
-    } else {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(null)),
-      });
-    }
+    // TODO: DRY
+    //  mógłbyś zrobić niby req.user || null, ale po co
+    return res.json({
+      profiles: users.map((user) => user.toProfileJSONFor(req.user)),
+    });
   } catch (err) {
     next(err);
   }
@@ -21,11 +21,7 @@ exports.getProfiles = async (req, res, next) => {
 
 exports.getUserProfileById = async (req, res, next) => {
   try {
-    if (req.user) {
-      return res.json({ profile: req.profile.toProfileJSONFor(req.user) });
-    } else {
-      return res.json({ profile: req.profile.toProfileJSONFor(null) });
-    }
+    return res.json({ profile: req.profile.toProfileJSONFor(req.user) });
   } catch (err) {
     next(err);
   }
@@ -38,15 +34,9 @@ exports.getFollowing = async (req, res, next) => {
       .in(req.profile.following)
       .exec();
 
-    if (req.user) {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-      });
-    } else {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(null)),
-      });
-    }
+    return res.json({
+      profiles: users.map((user) => user.toProfileJSONFor(req.user)),
+    });
   } catch (err) {
     next(err);
   }

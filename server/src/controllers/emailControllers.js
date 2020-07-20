@@ -71,6 +71,8 @@ exports.receiveNewPassword = async (req, res, next) => {
 
     const secret = user.password + '-' + user.createdAt.getTime();
 
+    // TODO: jak już korzystasz z async/await to sugerowałbym być raczej spójny i przy tym zostać czyli
+    //  new Promise() dla jwt bo bcrypt ma wsparcie
     jwt.verify(token, secret, (err, payload) => {
       if (err || !payload) {
         return res.status(400).json({ message: 'Unable to verify the user' });

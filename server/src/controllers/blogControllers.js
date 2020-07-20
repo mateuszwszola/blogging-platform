@@ -248,6 +248,7 @@ exports.deleteBlog = async (req, res, next) => {
     }
 
     const posts = await Post.find({ blog: blog._id }).exec();
+    // TODO: Na pewno tutaj też nie chcesz czekać aż się skończy delete?
     posts.forEach(async (post) => {
       await Post.deleteOne({ _id: post._id });
       if (post.bgImg && post.bgImg.image_url) {

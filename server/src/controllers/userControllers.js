@@ -92,6 +92,7 @@ exports.deleteAccount = async (req, res, next) => {
     }
 
     const blogs = await Blog.find({ user: req.user._id }).select('bgImg');
+    // TODO: Specjalnie nie czekasz na usunięcie tych obrazków?
     blogs.forEach(async (blog) => {
       if (blog.bgImg && blog.bgImg.image_url) {
         await deleteImageFromCloudinary(

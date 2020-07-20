@@ -450,13 +450,14 @@ exports.getPostBySlug = async (req, res, next) => {
   }
 };
 
+// TODO: często widzę, że wykonujesz kilka akcji które spokojnie mogłyby pójść równolegle
+// TODO: unikaj stosowania let i staraj się nie przekombinowywać kodu
 exports.favorite = async (req, res, next) => {
-  let user = req.user;
-  let post = req.post;
-
   try {
-    user = await user.favorite(post._id);
-    post = await post.updateFavoriteCount();
+    const [user, post] = await Promise.all([
+      req.user.favorite(req.post._id),
+      req.post.updateFavoriteCount(),
+    ]);
 
     return res.json({ post: post.toPostJSONFor(user) });
   } catch (err) {

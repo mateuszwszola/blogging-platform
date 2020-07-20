@@ -1,3 +1,6 @@
+// TODO: dla mnie przekombinowane by przenosić to tutaj. Trzymałbym w authController, póki nie będziesz miał jasnej
+//  potrzeby by to wydzielić
+
 class AuthService {
   constructor(userModel) {
     this.userModel = userModel;
