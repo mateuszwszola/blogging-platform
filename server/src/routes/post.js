@@ -69,42 +69,42 @@ router.delete('/:postId', auth.required, postControllers.deletePost);
 router.delete('/:postId/image', auth.required, postControllers.deleteImage);
 
 /*
-  @route   GET api/posts/all?title=[]&cursor=0
+  @route   GET api/posts/all?title=[]&cursor=0&limit=10
   @desc    Get all posts
   @access  Public
  */
 router.get('/all', auth.optional, postControllers.getAllPosts);
 
 /*
-  @route   GET api/posts/homepage?title=[]&cursor=0
+  @route   GET api/posts/homepage?title=[]&cursor=0&limit=10
   @desc    Get homepage posts
   @access  Private
  */
 router.get('/homepage', auth.required, postControllers.getHomepagePosts);
 
 /*
-  @route   GET api/posts?title=[]&cursor=0
+  @route   GET api/posts?title=[]&cursor=0&limit=10
   @desc    Get auth user posts
   @access  Private
  */
 router.get('/', auth.required, postControllers.getAuthUserPosts);
 
 /*
-  @route   GET api/posts/user/:userId?title=[]&cursor=0
+  @route   GET api/posts/user/:userId?title=[]&cursor=0&limit=10
   @desc    Get user posts
   @access  Public
  */
 router.get('/user/:userId', auth.optional, postControllers.getUserPosts);
 
 /*
-  @route   GET api/posts/blog/:blogId?title=[]&cursor=0
+  @route   GET api/posts/blog/:blogId?title=[]&cursor=0&limit=10
   @desc    Get blog posts
   @access  Public
  */
 router.get('/blog/:blogId', auth.optional, postControllers.getBlogPosts);
 
 /*
-  @route   GET api/posts/user/:userId/favorites?title=[]&cursor=0
+  @route   GET api/posts/user/:userId/favorites?title=[]&cursor=0&limit=10
   @desc    Get user favorites
   @access  Public
  */

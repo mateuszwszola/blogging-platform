@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
 const User = require('./User');
@@ -71,29 +72,36 @@ PostSchema.methods.updateFavoriteCount = async function () {
   const count = await User.countDocuments({ favorites: { $in: [post._id] } });
   post.favoritesCount = count;
 
-  return await post.save();
+  return post.save();
 };
 
 PostSchema.methods.addComment = function (commentId) {
-  this.comments = this.comments.concat(commentId);
+  if (!this.comments.includes(commentId)) {
+    this.comments.push(commentId);
+  }
+
   return this.save();
 };
 
+const postParams = [
+  '_id',
+  'slug',
+  'title',
+  'body',
+  'bgImg',
+  'tags',
+  'comments',
+  'favoritesCount',
+  'user',
+  'blog',
+  'createdAt',
+  'updatedAt',
+];
+
 PostSchema.methods.toPostJSONFor = function (user) {
   return {
-    _id: this._id,
-    slug: this.slug,
-    title: this.title,
-    body: this.body,
-    bgImg: this.bgImg,
-    tags: this.tags,
-    comments: this.comments,
-    favoritesCount: this.favoritesCount,
+    ..._.pick(this, postParams),
     favorited: user ? user.isFavorite(this._id) : false,
-    user: this.user,
-    blog: this.blog,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt,
   };
 };
 

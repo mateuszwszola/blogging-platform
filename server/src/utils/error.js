@@ -13,23 +13,17 @@ const handleNotFound = (req, res, next) => {
   next(error);
 };
 
-const handleError = (err, res) => {
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-
-  const body = {
-    message,
-  };
-
-  if (!isProd) {
-    body.stack = err.stack;
+// eslint-disable-next-line
+const handleError = (err, req, res, next) => {
+  if (res.headersSent) {
+    next(err);
+  } else {
+    res.status(err.statusCode || 500);
+    res.json({
+      message: err.message || 'Internal Server Error',
+      ...(isProd ? null : { stack: err.stack }),
+    });
   }
-
-  res.status(statusCode).json({
-    status: 'error',
-    statusCode,
-    ...body,
-  });
 };
 
 module.exports = {

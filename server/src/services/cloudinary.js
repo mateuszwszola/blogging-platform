@@ -12,6 +12,8 @@ const cloudinaryConfig = () =>
     api_secret: cloudinaryApiSecret,
   });
 
+cloudinaryConfig();
+
 module.exports = {
   cloudinaryConfig,
   uploader,

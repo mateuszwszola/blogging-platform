@@ -1,81 +1,74 @@
-const User = require('../models/User');
+const { User } = require('../models');
 const { ErrorHandler } = require('../utils/error');
 
-// TODO: Zamiast wszędzie dodawać try {} catch { next(err) } sugeruję dodać moduł express-async-errors
+exports.getProfiles = async (req, res) => {
+  const { cursor = 0, limit = 10 } = req.query;
 
-exports.getProfiles = async (req, res, next) => {
-  try {
-    // TODO: zawsze powinieneś implementować paginację dla takich przypadków. Choćby i ustawioną na jakąś wysoką ilość
-    //  defaultowo w stylu 100
-    const users = await User.find({});
+  const users = await User.find({})
+    .limit(limit * 1)
+    .skip(cursor * 1)
+    .exec();
 
-    // TODO: DRY
-    //  mógłbyś zrobić niby req.user || null, ale po co
-    return res.json({
-      profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-    });
-  } catch (err) {
-    next(err);
-  }
+  const count = await User.countDocuments();
+
+  return res.json({
+    profiles: users.map((user) => user.toProfileJSONFor(req.user || null)),
+    hasMore: cursor + users.length < count,
+    totalDocs: count,
+    currentCursor: cursor,
+  });
 };
 
-exports.getUserProfileById = async (req, res, next) => {
-  try {
-    return res.json({ profile: req.profile.toProfileJSONFor(req.user) });
-  } catch (err) {
-    next(err);
-  }
+exports.getUserProfileById = async (req, res) => {
+  return res.json({ profile: req.profile.toProfileJSONFor(req.user || null) });
 };
 
-exports.getFollowing = async (req, res, next) => {
-  try {
-    const users = await User.find({})
-      .where('_id')
-      .in(req.profile.following)
-      .exec();
+exports.getFollowing = async (req, res) => {
+  const { cursor = 0, limit = 10 } = req.query;
 
-    return res.json({
-      profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-    });
-  } catch (err) {
-    next(err);
-  }
+  const users = await User.find({})
+    .limit(limit * 1)
+    .skip(cursor * 1)
+    .where('_id')
+    .in(req.profile.following)
+    .exec();
+
+  const count = await User.countDocuments();
+
+  return res.json({
+    profiles: users.map((user) => user.toProfileJSONFor(req.user)),
+    hasMore: cursor + users.length < count,
+    totalDocs: count,
+    currentCursor: cursor,
+  });
 };
 
-exports.follow = async (req, res, next) => {
+exports.follow = async (req, res) => {
   const userId = req.user._id;
   const profileId = req.profile._id;
 
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
 
-    if (userId.toString() === profileId.toString()) {
-      throw new ErrorHandler(400, 'You cannot follow your own profile');
-    }
-
-    await user.follow(profileId);
-
-    res.json({ profile: req.profile.toProfileJSONFor(user) });
-  } catch (err) {
-    next(err);
+  if (userId.toString() === profileId.toString()) {
+    throw new ErrorHandler(400, 'You cannot follow your own profile');
   }
+
+  await user.follow(profileId);
+
+  return res.json({ profile: req.profile.toProfileJSONFor(user) });
 };
 
-exports.unfollow = async (req, res, next) => {
+exports.unfollow = async (req, res) => {
   const userId = req.user._id;
   const profileId = req.profile._id;
 
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
 
-    if (userId.toString() === profileId.toString()) {
-      throw new ErrorHandler(400, 'You cannot follow your own profile');
-    }
-
-    await user.unfollow(profileId);
-
-    res.json({ profile: req.profile.toProfileJSONFor(user) });
-  } catch (err) {
-    next(err);
+  if (userId.toString() === profileId.toString()) {
+    throw new ErrorHandler(400, 'You cannot follow your own profile');
   }
+
+  await user.unfollow(profileId);
+
+  return res.json({ profile: req.profile.toProfileJSONFor(user) });
 };

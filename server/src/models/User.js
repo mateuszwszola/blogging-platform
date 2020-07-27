@@ -55,14 +55,13 @@ UserSchema.pre('save', async function (next) {
       const hashedPassword = await bcrypt.hash(user.password, 10);
       user.password = hashedPassword;
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
   next();
 });
 
-// example of document/instance method
 UserSchema.methods.generateAuthToken = function () {
   const user = this;
   const payload = {
@@ -125,7 +124,7 @@ UserSchema.methods.isFavorite = function (id) {
 
 // Following
 UserSchema.methods.follow = function (id) {
-  if (this.following.indexOf(id) === -1) {
+  if (!this.following.includes(id)) {
     this.following.push(id);
   }
 
@@ -138,14 +137,14 @@ UserSchema.methods.unfollow = function (id) {
 };
 
 UserSchema.methods.isFollowing = function (id) {
-  return this.following.some(function (followId) {
-    return followId.toString() === id.toString();
-  });
+  return this.following.some(
+    (followId) => followId.toString() === id.toString()
+  );
 };
 
 // Bookmarks
 UserSchema.methods.bookmark = function (blogId) {
-  if (this.bookmarks.indexOf(blogId) === -1) {
+  if (!this.bookmarks.includes(blogId)) {
     this.bookmarks.push(blogId);
   }
 
@@ -158,9 +157,7 @@ UserSchema.methods.unbookmark = function (blogId) {
 };
 
 UserSchema.methods.isBookmarking = function (blogId) {
-  return this.bookmarks.some(function (id) {
-    return id.toString() === blogId.toString();
-  });
+  return this.bookmarks.some((id) => id.toString() === blogId.toString());
 };
 
 // model method

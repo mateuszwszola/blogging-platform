@@ -1,51 +1,29 @@
 const { User } = require('../models');
-const AuthService = require('../services/auth');
 
-const authServiceInstance = new AuthService(User);
-
-exports.registerUser = async (req, res, next) => {
+exports.registerUser = async (req, res) => {
   const { name, email, password } = req.body;
 
-  try {
-    const { user, token } = await authServiceInstance.Signup({
-      name,
-      email,
-      password,
-    });
+  const user = await User.create({ name, email, password });
+  const token = await user.generateAuthToken();
 
-    return res.status(201).json({ user, token });
-  } catch (err) {
-    next(err);
-  }
+  return res.status(201).json({ user, token });
 };
 
-exports.loginUser = async (req, res, next) => {
+exports.loginUser = async (req, res) => {
   const { email, password } = req.body;
 
-  try {
-    const { user, token } = await authServiceInstance.Signin({
-      email,
-      password,
-    });
+  const user = await User.findByCredentials(email, password);
+  const token = await user.generateAuthToken();
 
-    return res.json({ user, token });
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ user, token });
 };
 
-exports.updatePassword = async (req, res, next) => {
+exports.updatePassword = async (req, res) => {
   const { currentPassword, newPassword } = req.body;
 
-  try {
-    await authServiceInstance.ChangePassword(
-      req.user.email,
-      currentPassword,
-      newPassword
-    );
+  const user = await User.findByCredentials(req.user.email, currentPassword);
+  user.password = newPassword;
+  await user.save();
 
-    return res.status(200).json({ message: 'Password successfully updated!' });
-  } catch (err) {
-    next(err);
-  }
+  return res.status(200).json({ message: 'Password successfully updated!' });
 };
