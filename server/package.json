@@ -49,7 +49,6 @@
     "rate-limit-mongo": "^2.1.0",
     "sinon": "^9.0.2",
     "slugify": "^1.4.0",
-    "typedi": "^0.8.0",
     "validator": "^12.2.0"
   },
   "devDependencies": {

@@ -1,5 +1,4 @@
-const Comment = require('../models/Comment');
-const Post = require('../models/Post');
+const { Post, Comment } = require('../models');
 const { ErrorHandler } = require('../utils/error');
 
 exports.addComment = async (req, res) => {
@@ -35,7 +34,7 @@ exports.deleteComment = async (req, res) => {
     throw new ErrorHandler(403, 'you are not authorized to delete a comment');
   }
 
-  await Comment.findByIdAndDelete(comment._id);
+  await Comment.deleteOne({ _id: comment._id });
   return res.json({ comment });
 };
 

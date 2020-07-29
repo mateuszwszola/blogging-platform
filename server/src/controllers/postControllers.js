@@ -4,7 +4,14 @@ const { dataUri } = require('../middleware');
 const { uploader } = require('../services/cloudinary');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 
-const POSTS_PER_PAGE_LIMIT = 10;
+function getEnhancedPostFindQuery(condition, cursor, limit) {
+  return Post.find(condition)
+    .populate('user', ['name', 'bio', 'avatar'])
+    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
+    .limit(limit)
+    .skip(cursor)
+    .sort({ createdAt: -1 });
+}
 
 exports.createPost = async (req, res) => {
   const { blogId } = req.params;
@@ -37,8 +44,7 @@ exports.createPost = async (req, res) => {
   if (req.file || req.body.bgImgUrl) {
     let image;
     if (req.file) {
-      const file = dataUri(req).content;
-      image = file;
+      image = dataUri(req).content;
     } else {
       image = req.body.bgImgUrl;
     }
@@ -87,8 +93,7 @@ exports.updatePost = async (req, res) => {
   if (req.file || req.body.bgImgUrl) {
     let image;
     if (req.file) {
-      const file = dataUri(req).content;
-      image = file;
+      image = dataUri(req).content;
     } else {
       image = req.body.bgImgUrl;
     }
@@ -114,6 +119,8 @@ exports.updatePost = async (req, res) => {
     { new: true }
   );
 
+  res.json({ post: updatedPost.toPostJSONFor(req.user) });
+
   // Remove old image from cloudinary
   if (
     post.bgImg &&
@@ -124,8 +131,6 @@ exports.updatePost = async (req, res) => {
   ) {
     await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
   }
-
-  return res.json({ post: updatedPost.toPostJSONFor(req.user) });
 };
 
 exports.deletePost = async (req, res) => {
@@ -140,20 +145,17 @@ exports.deletePost = async (req, res) => {
     throw new ErrorHandler(403, 'you are not allowed to delete that post');
   }
 
-  const doc = await Post.findByIdAndDelete(postId);
+  await Promise.all([
+    Post.deleteOne({ _id: postId }),
+    Comment.deleteMany({ post: postId }),
+  ]);
 
-  await Comment.deleteMany({
-    _id: {
-      $in: post.comments,
-    },
-  });
+  res.json({ message: 'post deleted', post });
 
   // Delete image from cloudinary
   if (post.bgImg && post.bgImg.image_url) {
     await deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
   }
-
-  return res.json({ message: 'post deleted', post: doc });
 };
 
 exports.deleteImage = async (req, res) => {
@@ -161,34 +163,30 @@ exports.deleteImage = async (req, res) => {
     throw new ErrorHandler(403, 'You are not authorized to remove post image');
   }
 
+  req.post.bgImg = {};
+  const post = await req.post.save();
+  res.json({ message: 'Successfully removed image', post });
+
   if (req.post.bgImg && req.post.bgImg.image_url) {
     await deleteImageFromCloudinary(
       req.post.bgImg.image_url,
       'bloggingplatform'
     );
-    req.post.bgImg = {};
-    await req.post.save();
-    return res.json({ message: 'Successfully removed image' });
-  } else {
-    return res.status(400).json({ message: 'Unable to remove image' });
   }
 };
 
 exports.getAllPosts = async (req, res) => {
-  const { title, cursor = 0, limit = 10 } = req.query;
+  const { title, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
+
   const condition = title
     ? { title: { $regex: new RegExp(title), $options: 'i' } }
     : {};
 
-  const posts = await Post.find(condition)
-    .populate('user', ['name', 'bio', 'avatar'])
-    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-    .limit(Number(limit))
-    .skip(Number(cursor))
-    .sort({ createdAt: -1 })
-    .exec();
-
-  const count = await Post.countDocuments(condition);
+  const [posts, count] = await Promise.all([
+    getEnhancedPostFindQuery(condition, cursor, limit).exec(),
+    Post.countDocuments(condition).exec(),
+  ]);
 
   return res.json({
     posts: posts.map((post) => post.toPostJSONFor(req.user || null)),
@@ -199,7 +197,9 @@ exports.getAllPosts = async (req, res) => {
 };
 
 exports.getHomepagePosts = async (req, res) => {
-  const { title, cursor = 0, limit = 10 } = req.query;
+  const { title, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
+
   const condition = {
     $or: [
       { user: req.user._id },
@@ -212,15 +212,10 @@ exports.getHomepagePosts = async (req, res) => {
     condition.title = { $regex: new RegExp(title), $options: 'i' };
   }
 
-  const posts = await Post.find(condition)
-    .populate('user', ['name', 'bio', 'avatar'])
-    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-    .limit(Number(limit))
-    .skip(Number(cursor))
-    .sort({ createdAt: -1 })
-    .exec();
-
-  const count = await Post.countDocuments(condition);
+  const [posts, count] = await Promise.all([
+    getEnhancedPostFindQuery(condition, cursor, limit).exec(),
+    Post.countDocuments(condition).exec(),
+  ]);
 
   return res.json({
     posts: posts.map((post) => post.toPostJSONFor(req.user)),
@@ -231,22 +226,18 @@ exports.getHomepagePosts = async (req, res) => {
 };
 
 exports.getAuthUserPosts = async (req, res) => {
-  const { title, cursor = 0, limit = 10 } = req.query;
-  const condition = title
-    ? { title: { $regex: new RegExp(title), $options: 'i' } }
-    : {};
+  const { title, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-  condition.user = req.user._id;
+  const condition = {
+    user: req.user._id,
+    ...(title ? { title: { $regex: new RegExp(title), $options: 'i' } } : null),
+  };
 
-  const posts = await Post.find(condition)
-    .populate('user', ['name', 'bio', 'avatar'])
-    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-    .limit(Number(limit))
-    .skip(Number(cursor))
-    .sort({ createdAt: -1 })
-    .exec();
-
-  const count = await Post.countDocuments(condition);
+  const [posts, count] = await Promise.all([
+    getEnhancedPostFindQuery(condition, cursor, limit).exec(),
+    Post.countDocuments(condition).exec(),
+  ]);
 
   return res.json({
     posts: posts.map((post) => post.toPostJSONFor(req.user)),
@@ -258,27 +249,23 @@ exports.getAuthUserPosts = async (req, res) => {
 
 exports.getUserPosts = async (req, res) => {
   const { userId } = req.params;
-  const { title, cursor = 0, limit = 10 } = req.query;
-  const condition = title
-    ? { title: { $regex: new RegExp(title), $options: 'i' } }
-    : {};
+  const { title, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-  condition.user = userId;
+  const condition = {
+    user: userId,
+    ...(title ? { title: { $regex: new RegExp(title), $options: 'i' } } : null),
+  };
 
   const user = await User.findById(userId);
   if (!user) {
     throw new ErrorHandler(404, 'user not found');
   }
 
-  const posts = await Post.find(condition)
-    .populate('user', ['name', 'bio', 'avatar'])
-    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-    .limit(Number(limit))
-    .skip(Number(cursor))
-    .sort({ createdAt: -1 })
-    .exec();
-
-  const count = await Post.countDocuments(condition);
+  const [posts, count] = await Promise.all([
+    getEnhancedPostFindQuery(condition, cursor, limit).exec(),
+    Post.countDocuments(condition).exec(),
+  ]);
 
   return res.json({
     posts: posts.map((post) => post.toPostJSONFor(req.user || null)),
@@ -290,27 +277,23 @@ exports.getUserPosts = async (req, res) => {
 
 exports.getBlogPosts = async (req, res) => {
   const { blogId } = req.params;
-  const { title, cursor = 0, limit = 10 } = req.query;
-  const condition = title
-    ? { title: { $regex: new RegExp(title), $options: 'i' } }
-    : {};
+  const { title, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-  condition.blog = blogId;
+  const condition = {
+    blog: blogId,
+    ...(title ? { title: { $regex: new RegExp(title), $options: 'i' } } : null),
+  };
 
   const blog = await Blog.findById(blogId);
   if (!blog) {
     throw new ErrorHandler(404, 'blog not found');
   }
 
-  const posts = await Post.find(condition)
-    .populate('user', ['name', 'bio', 'avatar'])
-    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-    .limit(Number(limit))
-    .skip(Number(cursor))
-    .sort({ createdAt: -1 })
-    .exec();
-
-  const count = await Post.countDocuments(condition);
+  const [posts, count] = await Promise.all([
+    getEnhancedPostFindQuery(condition, cursor, limit).exec(),
+    Post.countDocuments(condition).exec(),
+  ]);
 
   return res.json({
     posts: posts.map((post) => post.toPostJSONFor(req.user || null)),
@@ -322,7 +305,9 @@ exports.getBlogPosts = async (req, res) => {
 
 exports.getFavorites = async (req, res) => {
   const { userId } = req.params;
-  const { title, cursor = 0, limit = 10 } = req.query;
+  const { title, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
+
   const condition = title
     ? { title: { $regex: new RegExp(title), $options: 'i' } }
     : {};
@@ -332,17 +317,14 @@ exports.getFavorites = async (req, res) => {
     throw new ErrorHandler(404, 'User not found');
   }
 
-  const posts = await Post.find(condition)
+  const postsQuery = getEnhancedPostFindQuery(condition, cursor, limit)
     .where('_id')
-    .in(user.favorites)
-    .populate('user', ['name', 'bio', 'avatar'])
-    .populate('blog', ['name', 'slug', 'description', 'bgImg'])
-    .limit(Number(limit))
-    .skip(Number(cursor))
-    .sort({ createdAt: -1 })
-    .exec();
+    .in(user.favorites);
 
-  const count = await Post.countDocuments(condition);
+  const [posts, count] = await Promise.all([
+    postsQuery.exec(),
+    Post.countDocuments(condition).exec(),
+  ]);
 
   return res.json({
     posts: posts.map((post) => post.toPostJSONFor(req.user || null)),
@@ -361,10 +343,6 @@ exports.getPostBySlug = async (req, res) => {
 };
 
 exports.favorite = async (req, res) => {
-  // const [user, post] = await Promise.all([
-  //   req.user.favorite(req.post._id),
-  //   req.post.updateFavoriteCount(),
-  // ]);
   const user = await req.user.favorite(req.post._id);
   const post = await req.post.updateFavoriteCount();
 
@@ -372,10 +350,6 @@ exports.favorite = async (req, res) => {
 };
 
 exports.unfavorite = async (req, res) => {
-  // const [user, post] = await Promise.all([
-  //   req.user.unfavorite(req.post._id),
-  //   req.post.updateFavoriteCount(),
-  // ]);
   const user = await req.user.unfavorite(req.post._id);
   const post = await req.post.updateFavoriteCount();
 

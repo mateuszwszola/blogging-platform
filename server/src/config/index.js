@@ -17,8 +17,6 @@ const baseConfig = {
 const servicesConfig = {
   mailgunApiKey: process.env.MAILGUN_API_KEY,
   mailgunDomain: process.env.MAILGUN_DOMAIN,
-  awsAccessKeyId: process.env.AWS_ACCCESS_KEY_ID,
-  awsSecretKey: process.env.AWS_SECRET_KEY,
   cloudinaryCloudName: process.env.CLOUDINARY_CLOUD_NAME,
   cloudinaryApiKey: process.env.CLOUDINARY_API_KEY,
   cloudinaryApiSecret: process.env.CLOUDINARY_API_SECRET,

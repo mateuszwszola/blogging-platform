@@ -13,18 +13,14 @@ router.param('blogId', validateParamObjectId('blogId'));
 
 // Preload post on routes with :blogId
 router.param('blogId', async (req, res, next, blogId) => {
-  try {
-    const blog = await Blog.findById(blogId);
+  const blog = await Blog.findById(blogId);
 
-    if (!blog) {
-      throw new ErrorHandler(404, `Blog with ${blogId} ID not found`);
-    }
-
-    req.blog = blog;
-    return next();
-  } catch (err) {
-    next(err);
+  if (!blog) {
+    throw new ErrorHandler(404, `Blog with ${blogId} ID not found`);
   }
+
+  req.blog = blog;
+  return next();
 });
 
 /*
