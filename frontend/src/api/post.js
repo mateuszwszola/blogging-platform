@@ -17,7 +17,7 @@ function getUserPosts(userId, cursor = 0) {
 }
 
 function getUserFavorites(userId, cursor = 0) {
-  return client(`posts/user/${userId}/favorites?cursor=${cursor}`);
+  return client(`posts/user/${userId}/favorites?cursor=${Number(cursor)}`);
 }
 
 function getPostBySlug(slug) {

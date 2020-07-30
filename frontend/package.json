@@ -13,7 +13,7 @@
     "draft-js-hashtag-plugin": "^2.0.4",
     "draft-js-linkify-plugin": "^2.0.2",
     "draft-js-plugins-editor": "^3.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.27.0",
     "react": "^16.13.1",
     "react-async": "^10.0.1",
