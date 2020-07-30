@@ -1,91 +1,76 @@
-const User = require('../models/User');
+const { User } = require('../models');
 const { ErrorHandler } = require('../utils/error');
 
-exports.getProfiles = async (req, res, next) => {
-  try {
-    const users = await User.find({});
+exports.getProfiles = async (req, res) => {
+  const { cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-    if (req.user) {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-      });
-    } else {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(null)),
-      });
-    }
-  } catch (err) {
-    next(err);
-  }
+  const [users, count] = await Promise.all([
+    User.find({}).limit(limit).skip(cursor).exec(),
+    User.countDocuments(),
+  ]);
+
+  return res.json({
+    profiles: users.map((user) => user.toProfileJSONFor(req.user || null)),
+    ...(cursor + users.length < count
+      ? { nextCursor: cursor + users.length }
+      : null),
+  });
 };
 
-exports.getUserProfileById = async (req, res, next) => {
-  try {
-    if (req.user) {
-      return res.json({ profile: req.profile.toProfileJSONFor(req.user) });
-    } else {
-      return res.json({ profile: req.profile.toProfileJSONFor(null) });
-    }
-  } catch (err) {
-    next(err);
-  }
+exports.getUserProfileById = async (req, res) => {
+  return res.json({ profile: req.profile.toProfileJSONFor(req.user || null) });
 };
 
-exports.getFollowing = async (req, res, next) => {
-  try {
-    const users = await User.find({})
-      .where('_id')
-      .in(req.profile.following)
-      .exec();
+exports.getFollowing = async (req, res) => {
+  const { cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-    if (req.user) {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-      });
-    } else {
-      return res.json({
-        profiles: users.map((user) => user.toProfileJSONFor(null)),
-      });
-    }
-  } catch (err) {
-    next(err);
-  }
+  const usersQuery = User.find({})
+    .limit(limit)
+    .skip(cursor)
+    .where('_id')
+    .in(req.profile.following);
+
+  const [users, count] = await Promise.all([
+    usersQuery.exec(),
+    User.countDocuments().exec(),
+  ]);
+
+  return res.json({
+    profiles: users.map((user) => user.toProfileJSONFor(req.user)),
+    ...(cursor + users.length < count
+      ? { nextCursor: cursor + users.length }
+      : null),
+  });
 };
 
-exports.follow = async (req, res, next) => {
-  const userId = req.user._id;
-  const profileId = req.profile._id;
+exports.follow = async (req, res) => {
+  const { _id: userId } = req.user;
+  const { _id: profileId } = req.profile;
 
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
 
-    if (userId.toString() === profileId.toString()) {
-      throw new ErrorHandler(400, 'You cannot follow your own profile');
-    }
-
-    await user.follow(profileId);
-
-    res.json({ profile: req.profile.toProfileJSONFor(user) });
-  } catch (err) {
-    next(err);
+  if (userId.toString() === profileId.toString()) {
+    throw new ErrorHandler(400, 'You cannot follow your own profile');
   }
+
+  await user.follow(profileId);
+
+  return res.json({ profile: req.profile.toProfileJSONFor(user) });
 };
 
-exports.unfollow = async (req, res, next) => {
-  const userId = req.user._id;
-  const profileId = req.profile._id;
+exports.unfollow = async (req, res) => {
+  const { _id: userId } = req.user;
+  const { _id: profileId } = req.profile;
 
-  try {
-    const user = await User.findById(userId);
+  const user = await User.findById(userId);
 
-    if (userId.toString() === profileId.toString()) {
-      throw new ErrorHandler(400, 'You cannot follow your own profile');
-    }
-
-    await user.unfollow(profileId);
-
-    res.json({ profile: req.profile.toProfileJSONFor(user) });
-  } catch (err) {
-    next(err);
+  if (userId.toString() === profileId.toString()) {
+    throw new ErrorHandler(400, 'You cannot follow your own profile');
   }
+
+  await user.unfollow(profileId);
+
+  return res.json({ profile: req.profile.toProfileJSONFor(user) });
 };

@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 const config = require('./config');
 
 async function expressApp() {

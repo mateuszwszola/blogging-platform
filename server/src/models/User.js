@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
@@ -54,14 +55,13 @@ UserSchema.pre('save', async function (next) {
       const hashedPassword = await bcrypt.hash(user.password, 10);
       user.password = hashedPassword;
     } catch (err) {
-      next(err);
+      return next(err);
     }
   }
 
   next();
 });
 
-// example of document/instance method
 UserSchema.methods.generateAuthToken = function () {
   const user = this;
   const payload = {
@@ -81,35 +81,30 @@ UserSchema.methods.toJSON = function () {
   return user;
 };
 
+const authParams = ['_id', 'name', 'email', 'bio', 'avatar'];
+
 UserSchema.methods.toAuthJSON = function () {
-  return {
-    _id: this._id,
-    name: this.name,
-    email: this.email,
-    bio: this.bio,
-    avatar: this.avatar,
-  };
+  return _.pick(this, authParams);
 };
 
 UserSchema.methods.toProfileJSONFor = function (user) {
   return {
-    _id: this._id,
-    name: this.name,
-    bio: this.bio,
-    avatar: this.avatar,
-    favorites: this.favorites,
-    following: this.following,
-    bookmarks: this.bookmarks,
+    ..._.pick(this, [
+      ...authParams,
+      'favorites',
+      'following',
+      'bookmarks',
+      'createdAt',
+      'updatedAt',
+    ]),
     isFollowing: user ? user.isFollowing(this._id) : false,
     isOwner: user ? user._id.toString() === this._id.toString() : false,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt,
   };
 };
 
 // Favoriting
 UserSchema.methods.favorite = function (id) {
-  if (this.favorites.indexOf(id) === -1) {
+  if (!this.favorites.includes(id)) {
     this.favorites.push(id);
   }
 
@@ -122,14 +117,14 @@ UserSchema.methods.unfavorite = function (id) {
 };
 
 UserSchema.methods.isFavorite = function (id) {
-  return this.favorites.some(function (favoriteId) {
-    return favoriteId.toString() === id.toString();
-  });
+  return this.favorites.some(
+    (favoriteId) => favoriteId.toString() === id.toString()
+  );
 };
 
 // Following
 UserSchema.methods.follow = function (id) {
-  if (this.following.indexOf(id) === -1) {
+  if (!this.following.includes(id)) {
     this.following.push(id);
   }
 
@@ -142,14 +137,14 @@ UserSchema.methods.unfollow = function (id) {
 };
 
 UserSchema.methods.isFollowing = function (id) {
-  return this.following.some(function (followId) {
-    return followId.toString() === id.toString();
-  });
+  return this.following.some(
+    (followId) => followId.toString() === id.toString()
+  );
 };
 
 // Bookmarks
 UserSchema.methods.bookmark = function (blogId) {
-  if (this.bookmarks.indexOf(blogId) === -1) {
+  if (!this.bookmarks.includes(blogId)) {
     this.bookmarks.push(blogId);
   }
 
@@ -162,9 +157,7 @@ UserSchema.methods.unbookmark = function (blogId) {
 };
 
 UserSchema.methods.isBookmarking = function (blogId) {
-  return this.bookmarks.some(function (id) {
-    return id.toString() === blogId.toString();
-  });
+  return this.bookmarks.some((id) => id.toString() === blogId.toString());
 };
 
 // model method

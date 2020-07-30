@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-
 const specifiedStringLength = require('../validations/specifiedStringLength');
 const User = require('./User');
 
@@ -65,18 +65,20 @@ BlogSchema.methods.updateBookmarksCount = async function () {
   return await blog.save();
 };
 
+const blogParams = [
+  '_id',
+  'name',
+  'slug',
+  'description',
+  'bgImg',
+  'bookmarksCount',
+  'user',
+  'createdAt',
+  'updatedAt',
+];
+
 BlogSchema.methods.toBlogJSON = function () {
-  return {
-    _id: this._id,
-    name: this.name,
-    slug: this.slug,
-    description: this.description,
-    bgImg: this.bgImg,
-    bookmarksCount: this.bookmarksCount,
-    user: this.user,
-    createdAt: this.createdAt,
-    updatedAt: this.updatedAt,
-  };
+  return _.pick(this, blogParams);
 };
 
 const Blog = mongoose.model('Blog', BlogSchema);

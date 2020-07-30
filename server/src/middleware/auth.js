@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+const { User } = require('../models');
 const config = require('../config');
 
 const generateNewToken = (user) => {
@@ -11,8 +11,11 @@ const generateNewToken = (user) => {
 const verifyToken = (token) => {
   return new Promise((resolve, reject) => {
     jwt.verify(token, config.secrets.jwt, (err, payload) => {
-      if (err) return reject(err);
-      return resolve(payload);
+      if (err) {
+        reject(err);
+      } else {
+        resolve(payload);
+      }
     });
   });
 };

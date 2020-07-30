@@ -1,12 +1,10 @@
-const User = require('../models/User');
-const Blog = require('../models/Blog');
-const Post = require('../models/Post');
+const { User, Blog, Post } = require('../models');
 const { ErrorHandler } = require('../utils/error');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 const { dataUri } = require('../middleware');
 const { uploader } = require('../services/cloudinary');
 
-exports.updateUser = async (req, res, next) => {
+exports.updateUser = async (req, res) => {
   const newUserData = {};
 
   if (typeof req.body.name !== 'undefined') {
@@ -17,104 +15,93 @@ exports.updateUser = async (req, res, next) => {
     newUserData.bio = req.body.bio;
   }
 
-  try {
-    const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
-      new: true,
-    });
+  const newUser = await User.findByIdAndUpdate(req.user._id, newUserData, {
+    new: true,
+  });
 
-    return res.json({ user: newUser });
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ user: newUser });
 };
 
 exports.getUser = async (req, res) => {
   return res.json({ user: req.user });
 };
 
-exports.uploadPhoto = async (req, res, next) => {
-  try {
-    if (!req.file) {
-      throw new ErrorHandler(400, 'cannot upload photo');
-    }
+exports.uploadPhoto = async (req, res) => {
+  if (!req.file) {
+    throw new ErrorHandler(400, 'cannot upload photo');
+  }
 
-    const image = dataUri(req).content;
-    const result = await uploader.upload(image, {
-      upload_preset: 'bloggingplatform-avatar',
-    });
+  const image = dataUri(req).content;
+  const result = await uploader.upload(image, {
+    upload_preset: 'bloggingplatform-avatar',
+  });
 
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { avatar: { image_url: result.secure_url } },
-      { new: true }
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { avatar: { image_url: result.secure_url } },
+    { new: true }
+  );
+
+  res.json({ avatarURL: user.avatar.image_url });
+
+  if (req.user.avatar && req.user.avatar.image_url) {
+    await deleteImageFromCloudinary(
+      req.user.avatar.image_url,
+      'bloggingplatform'
     );
-
-    // Remove old avatar from cloudinary
-    if (req.user.avatar && req.user.avatar.image_url) {
-      await deleteImageFromCloudinary(
-        req.user.avatar.image_url,
-        'bloggingplatform'
-      );
-    }
-
-    return res.json({ avatarURL: user.avatar.image_url });
-  } catch (err) {
-    next(err);
   }
 };
 
-exports.deleteAvatar = async (req, res, next) => {
-  try {
-    if (req.user.avatar && req.user.avatar.image_url) {
-      await deleteImageFromCloudinary(
-        req.user.avatar.image_url,
-        'bloggingplatform'
-      );
+exports.deleteAvatar = async (req, res) => {
+  req.user.avatar = {};
+  await req.user.save();
+  res.json({ message: 'Successfully deleted user avatar' });
 
-      req.user.avatar = {};
-      await req.user.save();
-    }
-
-    return res.json({ message: 'Successfully deleted user avatar' });
-  } catch (err) {
-    next(err);
+  if (req.user.avatar && req.user.avatar.image_url) {
+    await deleteImageFromCloudinary(
+      req.user.avatar.image_url,
+      'bloggingplatform'
+    );
   }
 };
 
-exports.deleteAccount = async (req, res, next) => {
-  try {
-    await User.findByIdAndDelete(req.user._id);
-    if (req.user.avatar && req.user.avatar.image_url) {
-      await deleteImageFromCloudinary(
-        req.user.avatar.image_url,
-        'bloggingplatform'
-      );
-    }
+exports.deleteAccount = async (req, res) => {
+  const { _id: userId } = req.user;
 
-    const blogs = await Blog.find({ user: req.user._id }).select('bgImg');
-    blogs.forEach(async (blog) => {
+  // Store blogs and posts bg images before delete
+  const [blogs, posts] = await Promise.all([
+    Blog.find({ user: userId }).select('bgImg').exec(),
+    Post.find({ user: userId }).select('bgImg').exec(),
+    User.findByIdAndDelete(userId).exec(),
+  ]);
+
+  await Promise.all([
+    Blog.deleteMany({ user: req.user._id }).exec(),
+    Post.deleteMany({ user: req.user._id }).exec(),
+  ]);
+
+  res.json({ message: 'Account deleted' });
+
+  // Remove images from cloudinary
+  await Promise.all([
+    ...blogs.map(async (blog) => {
       if (blog.bgImg && blog.bgImg.image_url) {
         await deleteImageFromCloudinary(
           blog.bgImg.image_url,
           'bloggingplatform'
         );
       }
-    });
-    await Blog.deleteMany({ user: req.user._id });
-
-    const posts = await Post.find({ user: req.user._id }).select('bgImg');
-    posts.forEach(async (post) => {
+    }),
+    ...posts.map(async (post) => {
       if (post.bgImg && post.bgImg.image_url) {
         await deleteImageFromCloudinary(
           post.bgImg.image_url,
           'bloggingplatform'
         );
       }
-    });
-    await Post.deleteMany({ user: req.user._id });
-
-    return res.json({ message: 'Account deleted' });
-  } catch (err) {
-    next(err);
-  }
+    }),
+    req.user.avatar && req.user.avatar.image_url
+      ? deleteImageFromCloudinary(req.user.avatar.image_url, 'bloggingplatform')
+      : null,
+  ]);
 };

@@ -8,9 +8,9 @@ function deleteAssetFromCloudinary(asset) {
   return new Promise((resolve, reject) => {
     uploader.destroy(asset, (error, result) => {
       if (error) {
-        return reject(error);
+        reject(error);
       } else {
-        return resolve(result);
+        resolve(result);
       }
     });
   });

@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const User = require('../models/User');
+const { User } = require('../models');
 const { mailgunConfig } = require('../services/mailgun');
+const { ErrorHandler } = require('../utils/error');
 
 const mg = mailgunConfig();
 
@@ -15,90 +16,67 @@ const {
   resetPasswordTemplate,
 } = require('../utils/email');
 
-exports.sendPasswordResetEmail = async (req, res, next) => {
+exports.sendPasswordResetEmail = async (req, res) => {
   if (typeof req.body.email === 'undefined') {
-    return res.status(400).json({ message: 'Email is required' });
+    throw new ErrorHandler(400, 'Email is required');
   }
 
   const { email } = req.body;
 
-  let user;
-  try {
-    user = await User.findOne({ email }).exec();
-    /*
+  const user = await User.findOne({ email }).exec();
+  /*
       "Always indicate success when the user enters their email address in the forgotten-password page."
     */
-    if (!user) {
-      return res.status(200).json({
-        message: 'Success! Check your email inbox and follow the steps',
-      });
-    }
-  } catch (err) {
-    return next(err);
+  if (!user) {
+    return res.status(200).json({
+      message: 'Success! Check your email inbox and follow the steps',
+    });
   }
 
   const token = usePasswordHashToMakeToken(user);
   const url = getPasswordResetURL(user, token);
   const emailTemplate = resetPasswordTemplate(user, url);
 
-  const sendEmail = () => {
-    mg.messages().send(emailTemplate, (err, body) => {
-      if (err) {
-        return res.status(400).json({ message: 'Unable to send email' });
-      }
-      return res.json({
-        message: 'Success! Check your email inbox and follow the steps',
-      });
-    });
-  };
+  await mg.messages().send(emailTemplate);
 
-  sendEmail();
+  return res.status(200).json({
+    message: 'Success! Check your email inbox and follow the steps',
+  });
 };
 
-exports.receiveNewPassword = async (req, res, next) => {
+exports.receiveNewPassword = async (req, res) => {
   if (typeof req.body.password === 'undefined') {
-    return res.status(400).json({ message: 'Password is required' });
+    throw new ErrorHandler(400, 'Password is required');
   }
 
   const { userId, token } = req.params;
   const { password } = req.body;
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(400).json({ message: 'Unable to verify the user' });
-    }
-
-    const secret = user.password + '-' + user.createdAt.getTime();
-
-    jwt.verify(token, secret, (err, payload) => {
-      if (err || !payload) {
-        return res.status(400).json({ message: 'Unable to verify the user' });
-      }
-
-      if (payload && payload.userId !== user.id) {
-        return res.status(400).json({ message: 'Unable to verify the user' });
-      }
-
-      bcrypt.genSalt(10, (err, salt) => {
-        if (err) {
-          return next(err);
-        }
-        bcrypt.hash(password, salt, (err, hash) => {
-          if (err) {
-            return next(err);
-          }
-          User.findByIdAndUpdate(userId, { password: hash })
-            .then(() => {
-              return res
-                .status(202)
-                .json({ message: 'Successfully changed password' });
-            })
-            .catch((err) => next(err));
-        });
-      });
-    });
-  } catch (err) {
-    return next(err);
+  const user = await User.findById(userId);
+  if (!user) {
+    throw new ErrorHandler(400, 'Unable to verify the user');
   }
+
+  const secret = user.password + '-' + user.createdAt.getTime();
+
+  const payload = await new Promise((resolve, reject) => {
+    jwt.verify(token, secret, (err, payload) => {
+      if (
+        err ||
+        !payload ||
+        (payload && payload.userId.toString() !== user.id.toString())
+      ) {
+        reject(new ErrorHandler(400, 'Unable to verify the user'));
+      } else {
+        resolve(payload);
+      }
+    });
+  });
+
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
+
+  await User.findByIdAndUpdate(payload.userId, { password: hash }).exec();
+
+  return res.status(202).json({ message: 'Successfully changed password' });
 };

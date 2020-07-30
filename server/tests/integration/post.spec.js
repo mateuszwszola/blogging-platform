@@ -1,7 +1,7 @@
 const request = require('supertest');
 const sinon = require('sinon');
 const { User, Blog, Post } = require('../../src/models');
-const { testValidationResults } = require('../../src/utils/testsHelpers');
+const { testValidationResults } = require('../testsHelpers');
 const dummyUsers = require('../../seeds/user.seed.json');
 const dummyBlogs = require('../../seeds/blog.seed.json');
 const dummyPosts = require('../../seeds/post.seed.json');

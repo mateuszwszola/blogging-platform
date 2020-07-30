@@ -1,331 +1,283 @@
-const Blog = require('../models/Blog');
-const Post = require('../models/Post');
+const { Blog, Post } = require('../models');
 const { ErrorHandler } = require('../utils/error');
 const { deleteImageFromCloudinary } = require('../utils/cloudinary');
 const { uploader } = require('../services/cloudinary');
 const { dataUri } = require('../middleware');
 
-exports.createBlog = async (req, res, next) => {
+exports.createBlog = async (req, res) => {
   const { name } = req.body;
 
-  try {
-    const blog = await Blog.findOne({ name }).exec();
-    if (blog) {
-      throw new ErrorHandler(422, 'blog name already in use');
-    }
-
-    const userBlogsCount = await Blog.countDocuments({
+  const [blog, userBlogsCount] = await Promise.all([
+    Blog.findOne({ name }).exec(),
+    Blog.countDocuments({
       user: req.user._id,
-    }).exec();
+    }).exec(),
+  ]);
 
-    if (userBlogsCount >= 5) {
-      return res
-        .status(422)
-        .json({ message: 'The maximum number of blogs owned by a user is 5' });
-    }
-
-    const blogData = { user: req.user._id, name, bgImg: {} };
-
-    if (typeof req.body.description !== 'undefined') {
-      blogData.description = req.body.description;
-    }
-
-    if (req.file || req.body.bgImgUrl) {
-      let image;
-      if (req.file) {
-        const file = dataUri(req).content;
-        image = file;
-      } else {
-        image = req.body.bgImgUrl;
-      }
-
-      const result = await uploader.upload(image, {
-        upload_preset: 'bloggingplatform',
-      });
-
-      blogData.bgImg.image_url = result.eager[0].secure_url;
-      blogData.bgImg.large_image_url = result.secure_url;
-    }
-
-    if (
-      blogData.bgImg.image_url &&
-      typeof req.body.imgAttribution !== 'undefined'
-    ) {
-      blogData.bgImg.img_attribution = req.body.imgAttribution;
-    }
-
-    const newBlog = await Blog.create({ ...blogData });
-
-    return res.status(201).json({ blog: newBlog });
-  } catch (err) {
-    next(err);
+  if (blog) {
+    throw new ErrorHandler(422, 'blog name already in use');
   }
-};
 
-exports.updateBlog = async (req, res, next) => {
-  try {
-    if (!req.blog.user.equals(req.user._id)) {
-      throw new ErrorHandler(403, 'You are not allowed to update the blog');
+  if (userBlogsCount >= 5) {
+    throw new ErrorHandler(
+      422,
+      'the maximum number of blogs owned by a user is 5'
+    );
+  }
+
+  const blogData = { user: req.user._id, name, bgImg: {} };
+
+  if (typeof req.body.description !== 'undefined') {
+    blogData.description = req.body.description;
+  }
+
+  if (req.file || req.body.bgImgUrl) {
+    let image;
+    if (req.file) {
+      image = dataUri(req).content;
+    } else {
+      image = req.body.bgImgUrl;
     }
 
-    if (req.blog.name.toLowerCase() !== req.body.name.toLowerCase()) {
-      const doc = await Blog.findOne({ name: req.body.name });
-      if (doc) {
-        throw new ErrorHandler(422, 'blog name aready in use');
-      }
-    }
-
-    const blogData = { name: req.body.name, bgImg: { ...req.blog.bgImg } };
-
-    if (typeof req.body.description !== 'undefined') {
-      blogData.description = req.body.description;
-    }
-
-    if (req.file || req.body.bgImgUrl) {
-      let image;
-      if (req.file) {
-        const file = dataUri(req).content;
-        image = file;
-      } else {
-        image = req.body.bgImgUrl;
-      }
-
-      const result = await uploader.upload(image, {
-        upload_preset: 'bloggingplatform',
-      });
-
-      blogData.bgImg.image_url = result.eager[0].secure_url;
-      blogData.bgImg.large_image_url = result.secure_url;
-    }
-
-    if (
-      blogData.bgImg.image_url &&
-      typeof req.body.imgAttribution !== 'undefined'
-    ) {
-      blogData.bgImg.img_attribution = req.body.imgAttribution;
-    }
-
-    const updatedBlog = await Blog.findByIdAndUpdate(req.blog._id, blogData, {
-      new: true,
+    const result = await uploader.upload(image, {
+      upload_preset: 'bloggingplatform',
     });
 
-    // Delete old image
-    if (
-      req.blog.bgImg &&
-      req.blog.bgImg.image_url &&
-      updatedBlog.bgImg &&
-      updatedBlog.bgImg.image_url &&
-      req.blog.bgImg.image_url !== updatedBlog.bgImg.image_url
-    ) {
-      await deleteImageFromCloudinary(
-        req.blog.bgImg.image_url,
-        'bloggingplatform'
-      );
+    blogData.bgImg.image_url = result.eager[0].secure_url;
+    blogData.bgImg.large_image_url = result.secure_url;
+  }
+
+  if (
+    blogData.bgImg.image_url &&
+    typeof req.body.imgAttribution !== 'undefined'
+  ) {
+    blogData.bgImg.img_attribution = req.body.imgAttribution;
+  }
+
+  const newBlog = await Blog.create({ ...blogData });
+
+  return res.status(201).json({ blog: newBlog });
+};
+
+exports.updateBlog = async (req, res) => {
+  if (!req.blog.user.equals(req.user._id)) {
+    throw new ErrorHandler(403, 'You are not allowed to update the blog');
+  }
+
+  if (req.blog.name !== req.body.name) {
+    const doc = await Blog.findOne({ name: req.body.name }).exec();
+    if (doc) {
+      throw new ErrorHandler(422, 'blog name aready in use');
+    }
+  }
+
+  const blogData = { name: req.body.name, bgImg: { ...req.blog.bgImg } };
+
+  if (typeof req.body.description !== 'undefined') {
+    blogData.description = req.body.description;
+  }
+
+  if (req.file || req.body.bgImgUrl) {
+    let image;
+    if (req.file) {
+      const file = dataUri(req).content;
+      image = file;
+    } else {
+      image = req.body.bgImgUrl;
     }
 
-    return res.status(200).json({ blog: updatedBlog });
-  } catch (err) {
-    next(err);
+    const result = await uploader.upload(image, {
+      upload_preset: 'bloggingplatform',
+    });
+
+    blogData.bgImg.image_url = result.eager[0].secure_url;
+    blogData.bgImg.large_image_url = result.secure_url;
+  }
+
+  if (
+    blogData.bgImg.image_url &&
+    typeof req.body.imgAttribution !== 'undefined'
+  ) {
+    blogData.bgImg.img_attribution = req.body.imgAttribution;
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(req.blog._id, blogData, {
+    new: true,
+  }).exec();
+
+  res.status(200).json({ blog: updatedBlog });
+
+  // Delete old image
+  if (
+    req.blog.bgImg &&
+    req.blog.bgImg.image_url &&
+    updatedBlog.bgImg &&
+    updatedBlog.bgImg.image_url &&
+    req.blog.bgImg.image_url !== updatedBlog.bgImg.image_url
+  ) {
+    await deleteImageFromCloudinary(
+      req.blog.bgImg.image_url,
+      'bloggingplatform'
+    );
   }
 };
 
-exports.getBlogById = async (req, res, next) => {
-  try {
-    const blog = await Blog.findById(req.params.blogId).populate('user', [
-      'name',
-      'bio',
-      'avatar',
-    ]);
+exports.getBlogById = async (req, res) => {
+  const blog = await Blog.findById(req.params.blogId)
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
-    return res.json({ blog });
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ blog });
 };
 
-exports.getBlogBySlugName = async (req, res, next) => {
+exports.getBlogBySlugName = async (req, res) => {
   const { slug } = req.params;
 
-  try {
-    const blog = await Blog.findOne({ slug }).populate('user', [
-      'name',
-      'bio',
-      'avatar',
-    ]);
-    if (!blog) {
-      throw new ErrorHandler(404, 'Blog Not Found');
-    }
+  const blog = await Blog.findOne({ slug })
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
-    return res.json({ blog });
-  } catch (err) {
-    next(err);
+  if (!blog) {
+    throw new ErrorHandler(404, 'Blog Not Found');
   }
+
+  return res.json({ blog });
 };
 
-exports.getAllBlogs = async (req, res, next) => {
-  const { name } = req.query;
+exports.getAllBlogs = async (req, res) => {
+  const { name, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  // Make sure cursor and limit values are numbers
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
+
   const condition = name
     ? { name: { $regex: new RegExp(name), $options: 'i' } }
     : {};
 
-  const blogsLimit = 10;
+  const blogsQuery = Blog.find(condition)
+    .populate('user', ['name', 'bio', 'avatar'])
+    .skip(cursor)
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
-  let cursor = req.query.cursor ? Number(req.query.cursor) : 0;
+  const countPromise = Blog.countDocuments();
 
-  try {
-    const blogs = await Blog.find(condition)
-      .populate('user', ['name', 'bio', 'avatar'])
-      .skip(cursor)
-      .limit(blogsLimit)
-      .sort({ createdAt: -1 })
-      .exec();
+  const [blogs, count] = await Promise.all([
+    blogsQuery.exec(),
+    countPromise.exec(),
+  ]);
 
-    const body = { blogs };
-    if (blogs.length === blogsLimit) {
-      body.nextCursor = cursor + blogsLimit;
-    }
-
-    return res.json(body);
-  } catch (err) {
-    next(err);
-  }
+  return res.json({
+    blogs,
+    ...(cursor + blogs.length < count
+      ? { nextCursor: cursor + blogs.length }
+      : null),
+  });
 };
 
-exports.getAuthUserBlogs = async (req, res, next) => {
+exports.getAuthUserBlogs = async (req, res) => {
   const { name } = req.query;
-  const condition = name
-    ? { name: { $regex: new RegExp(name), $options: 'i' } }
-    : {};
+  const condition = {
+    user: req.user._id,
+    ...(name ? { name: { $regex: new RegExp(name), $options: 'i' } } : null),
+  };
 
-  condition.user = req.user._id;
+  const blogs = await Blog.find(condition)
+    .limit(10)
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
-  try {
-    const blogs = await Blog.find(condition).populate('user', [
-      'name',
-      'bio',
-      'avatar',
-    ]);
-
-    return res.json({ blogs });
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ blogs });
 };
 
-exports.getUserBlogs = async (req, res, next) => {
+exports.getUserBlogs = async (req, res) => {
   const { name } = req.query;
-  const condition = name
-    ? { name: { $regex: new RegExp(name), $options: 'i' } }
-    : {};
+  const condition = {
+    user: req.params.userId,
+    ...(name ? { name: { $regex: new RegExp(name), $options: 'i' } } : null),
+  };
 
-  condition.user = req.params.userId;
+  const blogs = await Blog.find(condition)
+    .limit(10)
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
-  try {
-    const blogs = await Blog.find(condition).populate('user', [
-      'name',
-      'bio',
-      'avatar',
-    ]);
-
-    return res.json({ blogs });
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ blogs });
 };
 
-exports.deleteBlog = async (req, res, next) => {
+exports.deleteBlog = async (req, res) => {
   const { blog } = req;
 
-  try {
-    if (!blog.user.equals(req.user._id)) {
-      throw new ErrorHandler(403, 'You are not authorized to delete a blog');
-    }
+  if (!blog.user.equals(req.user._id)) {
+    throw new ErrorHandler(403, 'You are not authorized to delete a blog');
+  }
 
-    await Blog.deleteOne({ _id: blog._id });
+  const [posts] = await Promise.all([
+    // Store posts images, before delete them
+    Post.find({ blog: blog._id }).select('bgImg').exec(),
+    Blog.deleteOne({ _id: blog._id }).exec(),
+  ]);
 
-    if (blog.bgImg && blog.bgImg.image_url) {
-      await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
-    }
+  await Post.deleteMany({ blog: blog._id });
 
-    const posts = await Post.find({ blog: blog._id }).exec();
-    posts.forEach(async (post) => {
-      await Post.deleteOne({ _id: post._id });
+  res.status(200).json({ message: 'Blog deleted', blog });
+
+  await Promise.all([
+    ...posts.map(async (post) => {
       if (post.bgImg && post.bgImg.image_url) {
         await deleteImageFromCloudinary(
           post.bgImg.image_url,
           'bloggingplatform'
         );
       }
-    });
+    }),
+    blog.bgImg && blog.bgImg.image_url
+      ? deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform')
+      : null,
+  ]);
+};
 
-    return res.status(200).json({ message: 'Blog deleted', blog });
-  } catch (err) {
-    next(err);
+exports.deleteImage = async (req, res) => {
+  const { user, blog } = req;
+
+  if (!user._id.equals(blog.user)) {
+    throw new ErrorHandler(403, 'You are not authorized to remove blog image');
+  }
+
+  blog.bgImg = {};
+  await blog.save();
+
+  res.json({ message: 'Successfully removed image' });
+
+  if (blog.bgImg && blog.bgImg.image_url) {
+    await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
   }
 };
 
-exports.deleteImage = async (req, res, next) => {
-  try {
-    if (!req.user._id.equals(req.blog.user)) {
-      throw new ErrorHandler(
-        403,
-        'You are not authorized to remove blog image'
-      );
-    }
+exports.getBookmarks = async (req, res) => {
+  const blogs = await Blog.find({
+    _id: { $in: req.user.bookmarks },
+  })
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
-    if (req.blog.bgImg && req.blog.bgImg.image_url) {
-      await deleteImageFromCloudinary(
-        req.blog.bgImg.image_url,
-        'bloggingplatform'
-      );
-      req.blog.bgImg = {};
-      await req.blog.save();
-      return res.json({ message: 'Successfully removed image' });
-    } else {
-      return res.status(400).json({ message: 'Unable to remove image' });
-    }
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ blogs });
 };
 
-exports.getBookmarks = async (req, res, next) => {
-  try {
-    const blogs = await Blog.find({
-      _id: { $in: req.user.bookmarks },
-    }).populate('user', ['name', 'bio', 'avatar']);
-
-    return res.json({ blogs });
-  } catch (err) {
-    next(err);
+exports.bookmark = async (req, res) => {
+  if (req.user._id.equals(req.blog._id)) {
+    throw new ErrorHandler(403, 'you cannot bookmark your own blog');
   }
+
+  await req.user.bookmark(blog._id);
+  const blog = await blog.updateBookmarksCount();
+
+  return res.json({ blog });
 };
 
-exports.bookmark = async (req, res, next) => {
-  let { user, blog } = req;
+exports.unbookmark = async (req, res) => {
+  await req.user.unbookmark(req.blog._id);
 
-  try {
-    if (user._id.equals(blog._id)) {
-      throw new ErrorHandler(403, 'you cannot bookmark your own blog');
-    }
-    await user.bookmark(blog._id);
-    blog = await blog.updateBookmarksCount();
+  const blog = await blog.updateBookmarksCount();
 
-    return res.json({ blog });
-  } catch (err) {
-    next(err);
-  }
-};
-
-exports.unbookmark = async (req, res, next) => {
-  let { user, blog } = req;
-
-  try {
-    await user.unbookmark(blog._id);
-    blog = await blog.updateBookmarksCount();
-
-    return res.json({ blog });
-  } catch (err) {
-    next(err);
-  }
+  return res.json({ blog });
 };

@@ -22,12 +22,9 @@ module.exports = async ({ app }) => {
 
   app.use('/api', require('../routes'));
 
-  // 404 handler
+  // error handlers
   app.use(handleNotFound);
-  // eslint-disable-next-line
-  app.use((err, req, res, next) => {
-    handleError(err, res);
-  });
+  app.use(handleError);
 
   return app;
 };
