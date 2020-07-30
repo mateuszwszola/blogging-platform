@@ -1,7 +1,7 @@
 const request = require('supertest');
 const sinon = require('sinon');
 const { User, Blog, Post } = require('../../src/models');
-const { testValidationResults } = require('../../src/utils/testsHelpers');
+const { testValidationResults } = require('../testsHelpers');
 const { uploader } = require('../../src/services/cloudinary');
 
 sinon.stub(uploader, 'upload').callsFake(() => {

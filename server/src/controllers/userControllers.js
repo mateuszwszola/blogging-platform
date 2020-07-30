@@ -42,49 +42,66 @@ exports.uploadPhoto = async (req, res) => {
     { new: true }
   );
 
-  // Remove old avatar from cloudinary
-  if (req.user.avatar && req.user.avatar.image_url) {
-    deleteImageFromCloudinary(req.user.avatar.image_url, 'bloggingplatform');
-  }
+  res.json({ avatarURL: user.avatar.image_url });
 
-  return res.json({ avatarURL: user.avatar.image_url });
-};
-
-exports.deleteAvatar = async (req, res) => {
   if (req.user.avatar && req.user.avatar.image_url) {
     await deleteImageFromCloudinary(
       req.user.avatar.image_url,
       'bloggingplatform'
     );
-
-    req.user.avatar = {};
-    await req.user.save();
   }
+};
 
-  return res.json({ message: 'Successfully deleted user avatar' });
+exports.deleteAvatar = async (req, res) => {
+  req.user.avatar = {};
+  await req.user.save();
+  res.json({ message: 'Successfully deleted user avatar' });
+
+  if (req.user.avatar && req.user.avatar.image_url) {
+    await deleteImageFromCloudinary(
+      req.user.avatar.image_url,
+      'bloggingplatform'
+    );
+  }
 };
 
 exports.deleteAccount = async (req, res) => {
-  await User.findByIdAndDelete(req.user._id);
-  if (req.user.avatar && req.user.avatar.image_url) {
-    deleteImageFromCloudinary(req.user.avatar.image_url, 'bloggingplatform');
-  }
+  const { _id: userId } = req.user;
 
-  const blogs = await Blog.find({ user: req.user._id }).select('bgImg');
-  blogs.forEach((blog) => {
-    if (blog.bgImg && blog.bgImg.image_url) {
-      deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
-    }
-  });
-  await Blog.deleteMany({ user: req.user._id });
+  // Store blogs and posts bg images before delete
+  const [blogs, posts] = await Promise.all([
+    Blog.find({ user: userId }).select('bgImg').exec(),
+    Post.find({ user: userId }).select('bgImg').exec(),
+    User.findByIdAndDelete(userId).exec(),
+  ]);
 
-  const posts = await Post.find({ user: req.user._id }).select('bgImg');
-  posts.forEach((post) => {
-    if (post.bgImg && post.bgImg.image_url) {
-      deleteImageFromCloudinary(post.bgImg.image_url, 'bloggingplatform');
-    }
-  });
-  await Post.deleteMany({ user: req.user._id });
+  await Promise.all([
+    Blog.deleteMany({ user: req.user._id }).exec(),
+    Post.deleteMany({ user: req.user._id }).exec(),
+  ]);
 
-  return res.json({ message: 'Account deleted' });
+  res.json({ message: 'Account deleted' });
+
+  // Remove images from cloudinary
+  await Promise.all([
+    ...blogs.map(async (blog) => {
+      if (blog.bgImg && blog.bgImg.image_url) {
+        await deleteImageFromCloudinary(
+          blog.bgImg.image_url,
+          'bloggingplatform'
+        );
+      }
+    }),
+    ...posts.map(async (post) => {
+      if (post.bgImg && post.bgImg.image_url) {
+        await deleteImageFromCloudinary(
+          post.bgImg.image_url,
+          'bloggingplatform'
+        );
+      }
+    }),
+    req.user.avatar && req.user.avatar.image_url
+      ? deleteImageFromCloudinary(req.user.avatar.image_url, 'bloggingplatform')
+      : null,
+  ]);
 };

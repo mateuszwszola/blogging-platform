@@ -5,7 +5,7 @@ exports.addComment = async (req, res) => {
   const { body } = req.body;
   const { postId } = req.params;
 
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).exec();
   if (!post) {
     throw new ErrorHandler(404, 'Post not found');
   }
@@ -34,21 +34,20 @@ exports.deleteComment = async (req, res) => {
     throw new ErrorHandler(403, 'you are not authorized to delete a comment');
   }
 
-  await Comment.deleteOne({ _id: comment._id });
+  await Comment.deleteOne({ _id: comment._id }).exec();
   return res.json({ comment });
 };
 
 exports.getPostComments = async (req, res) => {
   const { postId } = req.params;
 
-  const post = await Post.findById(postId);
+  const post = await Post.findById(postId).exec();
   if (!post) {
     throw new ErrorHandler(404, 'Post Not Found');
   }
-  const comments = await Comment.find({ post: postId }).populate('user', [
-    'name',
-    'bio',
-    'avatar',
-  ]);
+  const comments = await Comment.find({ post: postId })
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
+
   return res.json({ comments });
 };

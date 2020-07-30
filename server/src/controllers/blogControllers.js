@@ -65,7 +65,7 @@ exports.updateBlog = async (req, res) => {
   }
 
   if (req.blog.name !== req.body.name) {
-    const doc = await Blog.findOne({ name: req.body.name });
+    const doc = await Blog.findOne({ name: req.body.name }).exec();
     if (doc) {
       throw new ErrorHandler(422, 'blog name aready in use');
     }
@@ -103,7 +103,7 @@ exports.updateBlog = async (req, res) => {
 
   const updatedBlog = await Blog.findByIdAndUpdate(req.blog._id, blogData, {
     new: true,
-  });
+  }).exec();
 
   res.status(200).json({ blog: updatedBlog });
 
@@ -123,11 +123,9 @@ exports.updateBlog = async (req, res) => {
 };
 
 exports.getBlogById = async (req, res) => {
-  const blog = await Blog.findById(req.params.blogId).populate('user', [
-    'name',
-    'bio',
-    'avatar',
-  ]);
+  const blog = await Blog.findById(req.params.blogId)
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
   return res.json({ blog });
 };
@@ -135,11 +133,10 @@ exports.getBlogById = async (req, res) => {
 exports.getBlogBySlugName = async (req, res) => {
   const { slug } = req.params;
 
-  const blog = await Blog.findOne({ slug }).populate('user', [
-    'name',
-    'bio',
-    'avatar',
-  ]);
+  const blog = await Blog.findOne({ slug })
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
+
   if (!blog) {
     throw new ErrorHandler(404, 'Blog Not Found');
   }
@@ -149,23 +146,25 @@ exports.getBlogBySlugName = async (req, res) => {
 
 exports.getAllBlogs = async (req, res) => {
   const { name, cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  // Make sure cursor and limit values are numbers
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
+
   const condition = name
     ? { name: { $regex: new RegExp(name), $options: 'i' } }
     : {};
 
-  // Make sure cursor and limit values are numbers
-  const [cursor, limit] = [+cursorQuery, +limitQuery];
-
-  const blogsPromise = Blog.find(condition)
+  const blogsQuery = Blog.find(condition)
     .populate('user', ['name', 'bio', 'avatar'])
     .skip(cursor)
     .limit(limit)
-    .sort({ createdAt: -1 })
-    .exec();
+    .sort({ createdAt: -1 });
 
   const countPromise = Blog.countDocuments();
 
-  const [blogs, count] = await Promise.all([blogsPromise, countPromise]);
+  const [blogs, count] = await Promise.all([
+    blogsQuery.exec(),
+    countPromise.exec(),
+  ]);
 
   return res.json({
     blogs,
@@ -177,30 +176,30 @@ exports.getAllBlogs = async (req, res) => {
 
 exports.getAuthUserBlogs = async (req, res) => {
   const { name } = req.query;
-  const condition = name
-    ? { name: { $regex: new RegExp(name), $options: 'i' } }
-    : {};
-
-  condition.user = req.user._id;
+  const condition = {
+    user: req.user._id,
+    ...(name ? { name: { $regex: new RegExp(name), $options: 'i' } } : null),
+  };
 
   const blogs = await Blog.find(condition)
     .limit(10)
-    .populate('user', ['name', 'bio', 'avatar']);
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
   return res.json({ blogs });
 };
 
 exports.getUserBlogs = async (req, res) => {
   const { name } = req.query;
-  const condition = name
-    ? { name: { $regex: new RegExp(name), $options: 'i' } }
-    : {};
-
-  condition.user = req.params.userId;
+  const condition = {
+    user: req.params.userId,
+    ...(name ? { name: { $regex: new RegExp(name), $options: 'i' } } : null),
+  };
 
   const blogs = await Blog.find(condition)
     .limit(10)
-    .populate('user', ['name', 'bio', 'avatar']);
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
   return res.json({ blogs });
 };
@@ -212,51 +211,54 @@ exports.deleteBlog = async (req, res) => {
     throw new ErrorHandler(403, 'You are not authorized to delete a blog');
   }
 
-  await Promise.all([
-    Blog.deleteOne({ _id: blog._id }),
-    Post.deleteMany({ blog: blog._id }),
+  const [posts] = await Promise.all([
+    // Store posts images, before delete them
+    Post.find({ blog: blog._id }).select('bgImg').exec(),
+    Blog.deleteOne({ _id: blog._id }).exec(),
   ]);
+
+  await Post.deleteMany({ blog: blog._id });
 
   res.status(200).json({ message: 'Blog deleted', blog });
 
-  if (blog.bgImg && blog.bgImg.image_url) {
-    await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
-  }
-
-  const posts = await Post.find({ blog: blog._id });
-
-  await Promise.all(
-    posts.map(async (post) => {
+  await Promise.all([
+    ...posts.map(async (post) => {
       if (post.bgImg && post.bgImg.image_url) {
         await deleteImageFromCloudinary(
           post.bgImg.image_url,
           'bloggingplatform'
         );
       }
-    })
-  );
+    }),
+    blog.bgImg && blog.bgImg.image_url
+      ? deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform')
+      : null,
+  ]);
 };
 
 exports.deleteImage = async (req, res) => {
-  if (!req.user._id.equals(req.blog.user)) {
+  const { user, blog } = req;
+
+  if (!user._id.equals(blog.user)) {
     throw new ErrorHandler(403, 'You are not authorized to remove blog image');
   }
 
-  if (req.blog.bgImg && req.blog.bgImg.image_url) {
-    req.blog.bgImg = {};
-    await Promise.all([
-      deleteImageFromCloudinary(req.blog.bgImg.image_url, 'bloggingplatform'),
-      req.blog.save(),
-    ]);
-  }
+  blog.bgImg = {};
+  await blog.save();
 
   res.json({ message: 'Successfully removed image' });
+
+  if (blog.bgImg && blog.bgImg.image_url) {
+    await deleteImageFromCloudinary(blog.bgImg.image_url, 'bloggingplatform');
+  }
 };
 
 exports.getBookmarks = async (req, res) => {
   const blogs = await Blog.find({
     _id: { $in: req.user.bookmarks },
-  }).populate('user', ['name', 'bio', 'avatar']);
+  })
+    .populate('user', ['name', 'bio', 'avatar'])
+    .exec();
 
   return res.json({ blogs });
 };

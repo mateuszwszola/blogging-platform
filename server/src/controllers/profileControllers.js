@@ -2,20 +2,19 @@ const { User } = require('../models');
 const { ErrorHandler } = require('../utils/error');
 
 exports.getProfiles = async (req, res) => {
-  const { cursor = 0, limit = 10 } = req.query;
+  const { cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-  const users = await User.find({})
-    .limit(limit * 1)
-    .skip(cursor * 1)
-    .exec();
-
-  const count = await User.countDocuments();
+  const [users, count] = await Promise.all([
+    User.find({}).limit(limit).skip(cursor).exec(),
+    User.countDocuments(),
+  ]);
 
   return res.json({
     profiles: users.map((user) => user.toProfileJSONFor(req.user || null)),
-    hasMore: cursor + users.length < count,
-    totalDocs: count,
-    currentCursor: cursor,
+    ...(cursor + users.length < count
+      ? { nextCursor: cursor + users.length }
+      : null),
   });
 };
 
@@ -24,28 +23,31 @@ exports.getUserProfileById = async (req, res) => {
 };
 
 exports.getFollowing = async (req, res) => {
-  const { cursor = 0, limit = 10 } = req.query;
+  const { cursor: cursorQuery = 0, limit: limitQuery = 10 } = req.query;
+  const [cursor, limit] = [+cursorQuery, +limitQuery];
 
-  const users = await User.find({})
-    .limit(limit * 1)
-    .skip(cursor * 1)
+  const usersQuery = User.find({})
+    .limit(limit)
+    .skip(cursor)
     .where('_id')
-    .in(req.profile.following)
-    .exec();
+    .in(req.profile.following);
 
-  const count = await User.countDocuments();
+  const [users, count] = await Promise.all([
+    usersQuery.exec(),
+    User.countDocuments().exec(),
+  ]);
 
   return res.json({
     profiles: users.map((user) => user.toProfileJSONFor(req.user)),
-    hasMore: cursor + users.length < count,
-    totalDocs: count,
-    currentCursor: cursor,
+    ...(cursor + users.length < count
+      ? { nextCursor: cursor + users.length }
+      : null),
   });
 };
 
 exports.follow = async (req, res) => {
-  const userId = req.user._id;
-  const profileId = req.profile._id;
+  const { _id: userId } = req.user;
+  const { _id: profileId } = req.profile;
 
   const user = await User.findById(userId);
 
@@ -59,8 +61,8 @@ exports.follow = async (req, res) => {
 };
 
 exports.unfollow = async (req, res) => {
-  const userId = req.user._id;
-  const profileId = req.profile._id;
+  const { _id: userId } = req.user;
+  const { _id: profileId } = req.profile;
 
   const user = await User.findById(userId);
 
