@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import BlogCard from './layout/BlogCard';
+import BlogCard from 'components/BlogCard';
 
 function Blogs({ blogs }) {
   return (

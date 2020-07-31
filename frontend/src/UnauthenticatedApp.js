@@ -1,18 +1,16 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import PageContent from 'components/layout/PageContent';
-import {
-  Homepage,
-  Login,
-  Register,
-  ForgotPassword,
-  ResetPassword,
-  NotFound,
-  Explore,
-  Blog,
-  Post,
-  Profile,
-} from 'pages';
+import PageContent from 'components/PageContent';
+import Homepage from 'pages/Homepage';
+import Login from 'pages/Login';
+import Register from 'pages/Register';
+import ForgotPassword from 'pages/ForgotPassword';
+import ResetPassword from 'pages/ResetPassword';
+import Explore from 'pages/Explore';
+import Post from 'pages/Post';
+import Blog from 'pages/Blog';
+import Profile from 'pages/Profile';
+import NotFound from 'pages/NotFound';
 
 function UnauthenticatedApp() {
   return (

@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { useParams, useHistory, Link } from 'react-router-dom';
 import { useAlert } from 'context/AlertContext';
 import { useBlogBySlug, useDeleteBlog } from 'hooks/useBlog';
+import AddBlogPost from 'pages/auth/dashboard/AddBlogPost';
+import UpdateBlog from 'pages/auth/dashboard/UpdateBlog';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import AddBlogPost from './AddBlogPost';
-import { Button } from 'components/layout/Button';
-import UpdateBlog from './UpdateBlog';
+import Button from 'components/Button';
 
 function ManageBlog() {
   const { blogSlug } = useParams();

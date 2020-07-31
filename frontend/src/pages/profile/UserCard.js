@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { useUser } from 'context/UserContext';
 import { useFollowProfile, useUnfollowProfile } from 'hooks/useProfile';
-import { UserAvatar } from 'components/UserAvatar';
-import { Button } from 'components/layout/Button';
 import AuthMenu from 'pages/profile/userCard/AuthMenu';
+import UserAvatar from 'components/UserAvatar';
+import Button from 'components/Button';
 
 function UserCard({ profile }) {
   const { user } = useUser();

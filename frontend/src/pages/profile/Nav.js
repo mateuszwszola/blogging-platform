@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { useRouteMatch } from 'react-router-dom';
-import { GridIcon, HeartIcon, GlobeIcon, UserIcon } from 'icons';
 import Link from 'pages/profile/nav/Link';
+import { GridIcon, HeartIcon, GlobeIcon, UserIcon } from 'icons';
 
 function ProfileNav({ isOwner }) {
   const { url } = useRouteMatch();

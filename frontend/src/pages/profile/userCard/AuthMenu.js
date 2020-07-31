@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeftIcon, SettingsIcon } from 'icons';
 import useLogoutWithRedirect from 'hooks/useLogoutWithRedirect';
+import { ArrowLeftIcon, SettingsIcon } from 'icons';
 
 function AuthMenu() {
   const logout = useLogoutWithRedirect();

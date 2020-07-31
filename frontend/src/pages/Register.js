@@ -1,10 +1,10 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { LockOpenIcon } from 'icons';
-import useStatus from 'hooks/useStatus';
 import { useAuth } from 'context/AuthContext';
+import useStatus from 'hooks/useStatus';
 import { LoadingWithOverlay } from 'components/Loading';
 import Form from 'pages/register/Form';
+import { LockOpenIcon } from 'icons';
 
 function Register() {
   const auth = useAuth();

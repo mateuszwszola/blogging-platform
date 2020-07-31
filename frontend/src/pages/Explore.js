@@ -5,9 +5,9 @@ import useInput from 'hooks/useInput';
 import useDebouncedSearchKey from 'hooks/useDebouncedSearchKey';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import BlogCard from 'components/layout/BlogCard';
-import { Button } from 'components/layout/Button';
-import SearchBar from 'components/layout/SearchBar';
+import BlogCard from 'components/BlogCard';
+import Button from 'components/Button';
+import SearchBar from 'components/SearchBar';
 
 function Explore() {
   const [inputValue, handleInputValueChange] = useInput('');
@@ -70,7 +70,7 @@ function Explore() {
               version="secondary"
             >
               {isFetchingMore
-                ? 'Loading more...'
+                ? 'loading more...'
                 : canFetchMore
                 ? 'Load More'
                 : 'No more posts to load'}

@@ -1,45 +1,39 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
-import { useAlert } from 'context/AlertContext';
 import useEditorState from 'hooks/useEditorState';
 import usePhotoFile from 'hooks/usePhotoFile';
 import useForm from 'hooks/useForm';
-import { useCreatePost } from 'hooks/usePost';
+import { useUpdatePost } from 'hooks/usePost';
 import BlogPostForm from 'components/BlogPostForm';
-import formatBlogPostData from 'utils/formatBlogPostData';
 import validate from 'utils/addBlogPostValidationRules';
+import formatBlogPostData from 'utils/formatBlogPostData';
 
-function AddBlogPost({ blog }) {
-  const [createPost, { status }] = useCreatePost();
+function EditPost({ post, onUpdatePost }) {
+  const [updatePost, { status }] = useUpdatePost();
   const {
     handleChange,
     handleSubmit,
-    handleReset: handleFormReset,
     values: { title, tags, bgImgUrl, imgAttribution },
     errors,
     setErrors,
   } = useForm(
     {
-      title: '',
-      tags: '',
+      title: post.title || '',
+      tags: post.tags.join(',') || '',
       bgImgUrl: '',
-      imgAttribution: '',
+      imgAttribution: (post.bgImg && post.bgImg.img_attribution) || '',
     },
-    handleAddBlogPost,
+    handleUpdateBlogPost,
     validate
   );
   const {
     editorState,
     updateEditorState,
-    resetEditorState,
     editorStatePlainText,
-  } = useEditorState();
+  } = useEditorState(post.body);
   const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
-  const { setAlert } = useAlert();
 
-  function handleAddBlogPost() {
-    if (!blog) return;
+  function handleUpdateBlogPost() {
     if (!editorStatePlainText.trim()) {
       return setErrors({ ...errors, body: 'post content is required' });
     }
@@ -53,20 +47,20 @@ function AddBlogPost({ blog }) {
       imgAttribution,
     });
 
-    createPost(
-      { blogId: blog._id, values: { formData } },
+    updatePost(
+      { postId: post._id, formData },
       {
-        onSuccess() {
-          handleFormReset();
-          resetEditorState();
-          setAlert('success', 'Blog Post Added');
+        onSuccess: () => {
+          onUpdatePost();
         },
-        onError(err) {
+        onError: (err) => {
           if (err.errors) {
             setErrors(err.errors);
           } else {
             setErrors({
-              message: err.message || 'There is a problem with the server',
+              message:
+                err.message ||
+                'There is a problem with the server. Try again later.',
             });
           }
         },
@@ -75,35 +69,32 @@ function AddBlogPost({ blog }) {
   }
 
   return (
-    <div className="max-w-screen-md mx-auto mt-6 relative bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md mb-12">
-      <h1 className="text-2xl lg:text-3xl text-center leading-loose">
-        Add Blog Post To
-        <span className="uppercase text-green-600 hover:text-green-700 pl-4">
-          <Link to={`/blogs/${blog.slug}`}>{blog.name}</Link>
-        </span>
-      </h1>
+    <div className="px-2 py-4">
+      <h1 className="text-center text-2xl md:text-3xl">Edit Post</h1>
 
       <BlogPostForm
-        editorState={editorState}
-        updateEditorState={updateEditorState}
+        photoFile={photoFile}
         title={title}
         tags={tags}
         bgImgUrl={bgImgUrl}
         imgAttribution={imgAttribution}
-        photoFile={photoFile}
         handlePhotoChange={handlePhotoChange}
         handlePhotoReset={handlePhotoReset}
+        editorState={editorState}
+        updateEditorState={updateEditorState}
         handleSubmit={handleSubmit}
         handleChange={handleChange}
         errors={errors}
         loading={status === 'loading'}
+        update={true}
       />
     </div>
   );
 }
 
-AddBlogPost.propTypes = {
-  blog: PropTypes.object,
+EditPost.propTypes = {
+  post: PropTypes.object.isRequired,
+  onUpdatePost: PropTypes.func.isRequired,
 };
 
-export default AddBlogPost;
+export default EditPost;

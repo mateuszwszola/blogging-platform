@@ -1,15 +1,15 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch, useParams } from 'react-router-dom';
 import { useUserProfile } from 'hooks/useProfile';
-import OwnerProtectedRoute from 'components/OwnerProtectedRoute';
 import Posts from 'pages/profile/Posts';
 import Blogs from 'pages/profile/Blogs';
 import Nav from 'pages/profile/Nav';
 import Favorites from 'pages/profile/Favorites';
 import Following from 'pages/profile/Following';
 import UserCard from 'pages/profile/UserCard';
-import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
+import Loading from 'components/Loading';
+import OwnerProtectedRoute from 'components/OwnerProtectedRoute';
 
 function Profile() {
   const { path } = useRouteMatch();

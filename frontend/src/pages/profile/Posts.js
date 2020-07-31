@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useUserPosts } from 'hooks/usePost';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import { Button } from 'components/layout/Button';
+import Button from 'components/Button';
 import Posts from 'components/Posts';
 
 function ProfilePosts({ profileId }) {
@@ -38,7 +38,7 @@ function ProfilePosts({ profileId }) {
                 version="secondary"
               >
                 {isFetchingMore
-                  ? 'Loading more...'
+                  ? 'loading more...'
                   : canFetchMore
                   ? 'Load More'
                   : 'No more posts to load'}

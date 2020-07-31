@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import useForm from 'hooks/useForm';
 import validate from 'utils/loginFormValidationRules';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
+import InputGroup from 'components/InputGroup';
+import InputSubmit from 'components/InputSubmit';
 import { EnvelopeIcon, KeyIcon } from 'icons';
 
 function Form({ onLogin, loading }) {

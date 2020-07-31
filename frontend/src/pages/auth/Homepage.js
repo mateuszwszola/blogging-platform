@@ -1,12 +1,12 @@
 import React from 'react';
+import useDebouncedSearchKey from 'hooks/useDebouncedSearchKey';
+import useInput from 'hooks/useInput';
 import { useHomepagePosts } from 'hooks/usePost';
-import { Button } from 'components/layout/Button';
+import Button from 'components/Button';
 import DisplayError from 'components/DisplayError';
 import Loading from 'components/Loading';
 import Posts from 'components/Posts';
-import useDebouncedSearchKey from 'hooks/useDebouncedSearchKey';
-import useInput from 'hooks/useInput';
-import SearchBar from 'components/layout/SearchBar';
+import SearchBar from 'components/SearchBar';
 
 function Homepage() {
   const [inputValue, handleInputValueChange] = useInput('');
@@ -61,7 +61,7 @@ function Homepage() {
                   version="secondary"
                 >
                   {isFetchingMore
-                    ? 'Loading more...'
+                    ? 'loading more...'
                     : canFetchMore
                     ? 'Load More'
                     : 'No more posts to load'}

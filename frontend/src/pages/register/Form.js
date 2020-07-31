@@ -1,10 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import { UserIcon, EnvelopeIcon, KeyIcon } from 'icons';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
 import useForm from 'hooks/useForm';
+import InputGroup from 'components/InputGroup';
+import InputSubmit from 'components/InputSubmit';
 import validate from 'utils/registerFormValidationRules';
+import { UserIcon, EnvelopeIcon, KeyIcon } from 'icons';
 
 function Form({ onRegister, loading }) {
   const {

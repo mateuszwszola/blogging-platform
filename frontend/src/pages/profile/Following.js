@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useProfileFollowing } from 'hooks/useProfile';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import ProfileCard from 'components/layout/ProfileCard';
+import ProfileCard from 'components/ProfileCard';
 
 function ProfileFollowing({ profileId }) {
   const { status, data: profiles, error } = useProfileFollowing(profileId);
