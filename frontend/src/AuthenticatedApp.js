@@ -5,10 +5,10 @@ import Blog from 'pages/Blog';
 import Post from 'pages/Post';
 import Explore from 'pages/Explore';
 import Profile from 'pages/Profile';
-import NotFound from 'pages/NotFound';
 import Dashboard from 'pages/auth/Dashboard';
 import Settings from 'pages/auth/Settings';
 import Homepage from 'pages/auth/Homepage';
+import NotFound from 'pages/NotFound';
 
 function AuthenticatedApp() {
   return (

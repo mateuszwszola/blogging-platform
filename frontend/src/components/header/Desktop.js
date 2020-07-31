@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { useLocation } from 'react-router-dom';
 import { useUser } from 'context/UserContext';
 import useScrolledAfterVHeight from 'hooks/useScrolledAfterVHeight';
-import { DesktopNav } from '../nav';
+import Nav from 'components/header/desktop/Nav';
 
 const Desktop = (props) => {
   const { pathname } = useLocation();
@@ -17,7 +17,7 @@ const Desktop = (props) => {
       : 'bg-gray-900';
   return (
     <header className={clsx(`fixed w-full z-10 ${headerBgColor}`)}>
-      <DesktopNav />
+      <Nav />
     </header>
   );
 };

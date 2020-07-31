@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MenuIcon, CloseIcon } from 'icons';
-import { MobileNav } from '../nav';
+import Nav from 'components/header/mobile/Nav';
 
 const Mobile = (props) => {
-  const [navOpen, setNavOpen] = React.useState(false);
+  const [navOpen, setNavOpen] = useState(false);
 
   const isExpanded = navOpen ? true : false;
 
@@ -23,7 +23,7 @@ const Mobile = (props) => {
           )}
         </button>
       </div>
-      <MobileNav navOpen={navOpen} setNavOpen={setNavOpen} />
+      <Nav navOpen={navOpen} setNavOpen={setNavOpen} />
     </header>
   );
 };

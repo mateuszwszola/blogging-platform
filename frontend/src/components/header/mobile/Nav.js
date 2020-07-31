@@ -2,12 +2,12 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import { useUser } from 'context/UserContext';
-import MobileNavLink from './MobileNavLink';
+import NavLink from 'components/header/mobile/nav/NavLink';
 
-const MobileNav = ({ navOpen, setNavOpen }) => {
+const Nav = ({ navOpen, setNavOpen }) => {
+  const { user } = useUser();
   const isHidden = navOpen ? true : false;
   const tabIndex = isHidden ? 0 : 1;
-  const { user } = useUser();
 
   const navClassnames = clsx(
     'fixed top-0 left-0 bottom-0 right-0 text-gray-400 transform transition-all duration-300 ease-in-out z-40',
@@ -23,42 +23,38 @@ const MobileNav = ({ navOpen, setNavOpen }) => {
       style={{ backgroundColor: 'rgba(45, 55, 72, 0.95)' }}
     >
       <div className="w-full h-full flex flex-col items-center justify-center">
-        <MobileNavLink onClick={hideNav} to="/" tabIndex={tabIndex}>
+        <NavLink onClick={hideNav} to="/" tabIndex={tabIndex}>
           Home
-        </MobileNavLink>
-        <MobileNavLink onClick={hideNav} to="/explore" tabIndex={tabIndex}>
+        </NavLink>
+        <NavLink onClick={hideNav} to="/explore" tabIndex={tabIndex}>
           Explore
-        </MobileNavLink>
+        </NavLink>
         {user ? (
           <>
-            <MobileNavLink
-              onClick={hideNav}
-              to="/dashboard"
-              tabIndex={tabIndex}
-            >
+            <NavLink onClick={hideNav} to="/dashboard" tabIndex={tabIndex}>
               Dashboard
-            </MobileNavLink>
-            <MobileNavLink
+            </NavLink>
+            <NavLink
               onClick={hideNav}
               to={`/profile/${user._id}`}
               tabIndex={tabIndex}
             >
               Profile
-            </MobileNavLink>
+            </NavLink>
           </>
         ) : (
-          <MobileNavLink onClick={hideNav} to="/login" tabIndex={tabIndex}>
+          <NavLink onClick={hideNav} to="/login" tabIndex={tabIndex}>
             Login
-          </MobileNavLink>
+          </NavLink>
         )}
       </div>
     </nav>
   );
 };
 
-MobileNav.propTypes = {
+Nav.propTypes = {
   navOpen: PropTypes.bool.isRequired,
   setNavOpen: PropTypes.func.isRequired,
 };
 
-export default MobileNav;
+export default Nav;

@@ -2,12 +2,12 @@ import React, { useRef } from 'react';
 import { useUser } from 'context/UserContext';
 import useOnClickOutside from 'hooks/useOnClickOutside';
 import useToggle from 'hooks/useToggle';
-import NavLink from './NavLink';
-import DropdownMenuLink from './DropdownMenuLink';
-import { UserCircleIcon } from 'icons';
 import useLogoutWithRedirect from 'hooks/useLogoutWithRedirect';
+import NavLink from 'components/header/desktop/nav/NavLink';
+import DropdownMenuLink from 'components/header/desktop/nav/DropdownMenuLink';
+import { UserCircleIcon } from 'icons';
 
-const DesktopNav = () => {
+const Nav = () => {
   const { user } = useUser();
   const navNode = useRef();
   const [isOpen, toggleIsOpen, setIsOpen] = useToggle(false);
@@ -95,4 +95,4 @@ const DesktopNav = () => {
   );
 };
 
-export default DesktopNav;
+export default Nav;

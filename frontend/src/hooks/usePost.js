@@ -4,13 +4,6 @@ import {
   queryCache,
   useInfiniteQuery,
 } from 'react-query';
-import useThunkReducer from './useThunkReducer';
-import {
-  postsReducer,
-  postReducer,
-  initialPostState,
-  initialPostsState,
-} from 'reducers/postReducer';
 import {
   getHomepagePosts,
   getUserPosts,
@@ -163,18 +156,6 @@ function useUnfavoritePost() {
   });
 }
 
-function usePost() {
-  const [state, dispatch] = useThunkReducer(postReducer, initialPostState);
-  const { post, loading, error } = state;
-  return { post, loading, error, dispatch };
-}
-
-function usePosts() {
-  const [state, dispatch] = useThunkReducer(postsReducer, initialPostsState);
-  const { posts, loading, error } = state;
-  return { posts, loading, error, dispatch };
-}
-
 export {
   useHomepagePosts,
   useUserPosts,
@@ -182,9 +163,7 @@ export {
   usePostBySlug,
   useCreatePost,
   useUpdatePost,
-  usePosts,
   useDeletePost,
-  usePost,
   useFavoritePost,
   useUnfavoritePost,
   useUserFavoritePosts,
