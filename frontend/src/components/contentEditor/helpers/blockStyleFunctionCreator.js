@@ -1,5 +1,5 @@
 export default (styles) => {
-  return function blockStyleFunction(contentBlock) {
+  return (contentBlock) => {
     const type = contentBlock.getType();
     if (type === 'header-one') {
       return styles.h1;

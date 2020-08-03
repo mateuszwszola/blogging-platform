@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import clsx from 'clsx';
-import EditorContentPreview from 'components/editor/EditorContentPreview';
+import ContentPreview from 'components/contentEditor/ContentPreview';
 import DisplayDate from 'components/DisplayDate';
 import { HeartIcon, UserCircleIcon } from 'icons';
 
@@ -88,7 +88,7 @@ function DisplayPost({ post, onLike }) {
 
         <div className="mt-8 py-4 px-2 border-t border-solid border-gray-300">
           <div className="text-gray-900 font-normal text-lg md:text-lg lg:text-xl leading-loose tracking-wide">
-            <EditorContentPreview body={post.body} />
+            <ContentPreview body={post.body} />
           </div>
         </div>
       </div>

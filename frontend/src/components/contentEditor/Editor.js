@@ -8,18 +8,14 @@ import {
   Modifier,
 } from 'draft-js';
 import 'draft-js/dist/Draft.css';
-import styles from './Editor.module.css';
-import keyBindingFunction from './helpers/keyBindingFunction';
-import blockStyleFunctionCreator from './helpers/blockStyleFunction';
-import InlineStyleButtons from './InlineStyleButtons';
-import BlockTypeButtons from './BlockTypeButtons';
-import EmojiPicker from './EmojiPicker';
-
-const styleMap = {
-  HIGHLIGHT: {
-    backgroundColor: 'yellow',
-  },
-};
+import keyBindingFunction from 'components/contentEditor/helpers/keyBindingFunction';
+import blockStyleFunctionCreator from 'components/contentEditor/helpers/blockStyleFunctionCreator';
+import keyCommandReducer from 'components/contentEditor/helpers/keyCommandReducer';
+import styleMap from 'components/contentEditor/helpers/styleMap';
+import InlineStyleButtons from 'components/contentEditor/InlineStyleButtons';
+import BlockTypeButtons from 'components/contentEditor/BlockTypeButtons';
+import CustomEmojiPicker from 'components/contentEditor/CustomEmojiPicker';
+import styles from 'components/contentEditor/Editor.module.css';
 
 const blockStyleFunction = blockStyleFunctionCreator(styles);
 
@@ -56,11 +52,9 @@ function TextEditor() {
     }
   }
 
-  const editor = useRef(null);
+  const editorRef = useRef(null);
 
-  function focusEditor() {
-    editor.current.focus();
-  }
+  const focusEditor = () => editorRef.current.focus();
 
   useEffect(() => {
     const logState = () => {
@@ -71,30 +65,7 @@ function TextEditor() {
   }, [editorState]);
 
   const handleKeyCommand = (command, editorState) => {
-    let newState = RichUtils.handleKeyCommand(editorState, command);
-
-    if (!newState && command === 'highlight') {
-      newState = RichUtils.toggleInlineStyle(editorState, 'HIGHLIGHT');
-    }
-    if (!newState && command === 'strikethrough') {
-      newState = RichUtils.toggleInlineStyle(editorState, 'STRIKETHROUGH');
-    }
-
-    if (!newState && command === 'blockquote') {
-      newState = RichUtils.toggleInlineStyle(editorState, 'blockquote');
-    }
-
-    if (!newState && command === 'ordered-list') {
-      newState = RichUtils.toggleInlineStyle(editorState, 'ordered-list-item');
-    }
-
-    if (!newState && command === 'unordered-list') {
-      newState = RichUtils.toggleInlineStyle(
-        editorState,
-        'unordered-list-item'
-      );
-    }
-
+    const newState = keyCommandReducer(editorState, command);
     if (newState) {
       setEditorState(newState);
       return 'handled';
@@ -132,7 +103,7 @@ function TextEditor() {
         currentInlineStyle={currentInlineStyle}
       />
 
-      <EmojiPicker onEmojiClick={onEmojiClick} />
+      <CustomEmojiPicker onEmojiClick={onEmojiClick} />
 
       <div
         onClick={focusEditor}
@@ -143,7 +114,7 @@ function TextEditor() {
         <Editor
           customStyleMap={styleMap}
           blockStyleFn={blockStyleFunction}
-          ref={editor}
+          ref={editorRef}
           editorState={editorState}
           onChange={setEditorState}
           handleKeyCommand={handleKeyCommand}
@@ -154,39 +125,5 @@ function TextEditor() {
     </div>
   );
 }
-
-// const HASHTAG_REGEX = /#[A-Za-z0-9]*/g;
-// const LINK_REGEX = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/g;
-
-// function hashtagStrategy(contentBlock, callback, contentState) {
-//   findWithRegex(HASHTAG_REGEX, contentBlock, callback);
-// }
-
-// function linkStrategy(contentBlock, callback, contentState) {
-//   findWithRegex(LINK_REGEX, contentBlock, callback);
-// }
-
-// function findWithRegex(regex, contentBlock, callback) {
-//   const text = contentBlock.getText();
-//   let matchArr, start;
-//   while ((matchArr = regex.exec(text)) !== null) {
-//     start = matchArr.index;
-//     callback(start, start + matchArr[0].length);
-//   }
-// }
-
-// const HashtagSpan = (props) => {
-//   return (
-//     <span className="bg-blue-500 text-white p-1 rounded">{props.children}</span>
-//   );
-// };
-
-// const LinkSpan = (props) => {
-//   return (
-//     <span {...props} className="text-blue-500 font-bold">
-//       {props.children}
-//     </span>
-//   );
-// };
 
 export default TextEditor;

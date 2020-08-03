@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { convertFromRaw, EditorState, Editor } from 'draft-js';
-import blockStyleFunctionCreator from './helpers/blockStyleFunction';
-import styles from './Editor.module.css';
-import styleMap from './helpers/styleMap';
+import styleMap from 'components/contentEditor/helpers/styleMap';
+import blockStyleFunctionCreator from 'components/contentEditor/helpers/blockStyleFunctionCreator';
+import styles from 'components/contentEditor/Editor.module.css';
 
 const blockStyleFunction = blockStyleFunctionCreator(styles);
 
-function EditorContentPreview({ body }) {
+function ContentPreview({ body }) {
   const contentState = convertFromRaw(JSON.parse(body).content);
   const editorState = EditorState.createWithContent(contentState);
 
@@ -21,8 +21,8 @@ function EditorContentPreview({ body }) {
   );
 }
 
-EditorContentPreview.propTypes = {
+ContentPreview.propTypes = {
   body: PropTypes.string.isRequired,
 };
 
-export default EditorContentPreview;
+export default ContentPreview;

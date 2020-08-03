@@ -1,8 +1,8 @@
-import { RichUtils } from 'draft-js';
+import { RichUtils, KeyBindingUtil } from 'draft-js';
 
 const defaultStyles = {
   background: 'yellow',
-  padding: '0.3em',
+  padding: '0 .3em',
 };
 
 export default (style = {}) => {
@@ -14,7 +14,7 @@ export default (style = {}) => {
       },
     },
     keyBindingFn: (e) => {
-      if (e.metaKey && e.key === 'h') {
+      if (KeyBindingUtil.hasCommandModifier(e) && e.key === 'h') {
         return 'highlight';
       }
     },

@@ -9,6 +9,8 @@ import { useCreatePost } from 'hooks/usePost';
 import BlogPostForm from 'components/BlogPostForm';
 import formatBlogPostData from 'utils/formatBlogPostData';
 import validate from 'utils/addBlogPostValidationRules';
+import { debounce } from 'lodash';
+import { convertToRaw, convertFromRaw, EditorState } from 'draft-js';
 
 function AddBlogPost({ blog }) {
   const [createPost, { status }] = useCreatePost();
@@ -37,6 +39,55 @@ function AddBlogPost({ blog }) {
   } = useEditorState();
   const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
   const { setAlert } = useAlert();
+
+  const handleEditorStateChange = (newEditorState) => {
+    updateEditorState(newEditorState);
+  };
+
+  // const saveContent = (content) => {
+  //   const { slug } = blog;
+  //   window.localStorage.setItem(
+  //     `${slug}-tmp`,
+  //     JSON.stringify(convertToRaw(content))
+  //   );
+  // };
+  //
+  // const onEditorStateChange = (newEditorState) => {
+  //   saveContent(newEditorState.getCurrentContent());
+  //   updateEditorState(newEditorState);
+  // };
+  //
+  // React.useEffect(() => {
+  //   const { slug } = blog;
+  //   const content = window.localStorage.getItem(`${slug}-tmp`);
+  //   if (content) {
+  //     updateEditorState(
+  //       EditorState.createWithContent(convertFromRaw(JSON.parse(content)))
+  //     );
+  //   } else {
+  //     updateEditorState(EditorState.createEmpty());
+  //   }
+  // }, []);
+
+  /*
+  React.useEffect(() => {
+    const debouncedSave = debounce(() => {
+      const { slug } = blog;
+      const contentState = editorState.getCurrentContent();
+
+      window.localStorage.setItem(
+        `${slug}-tmp`,
+        JSON.stringify(convertToRaw(contentState))
+      );
+    }, 5000);
+
+    debouncedSave();
+
+    return () => {
+      debouncedSave.cancel();
+    };
+  }, [editorState]);
+  */
 
   function handleAddBlogPost() {
     if (!blog) return;
@@ -85,7 +136,7 @@ function AddBlogPost({ blog }) {
 
       <BlogPostForm
         editorState={editorState}
-        updateEditorState={updateEditorState}
+        updateEditorState={handleEditorStateChange}
         title={title}
         tags={tags}
         bgImgUrl={bgImgUrl}

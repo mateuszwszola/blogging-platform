@@ -4,7 +4,7 @@ import { LoadingWithOverlay } from 'components/Loading';
 import InputGroup from 'components/InputGroup';
 import ImgUploadInput from 'components/ImgUploadInput';
 import Button from 'components/Button';
-import Editor from './editor';
+import ContentEditor from './ContentEditor';
 
 function BlogPostForm({
   title,
@@ -123,13 +123,13 @@ function BlogPostForm({
           <p className="py-2 text-sm uppercase text-gray-800 font-semibold">
             Post content
           </p>
-          <Editor
+          <ContentEditor
             editorState={editorState}
             updateEditorState={updateEditorState}
             isError={
               !!(
                 Object.keys(errors).length > 0 &&
-                (errors.body || errors.messasge)
+                (errors.body || errors.message)
               )
             }
           />

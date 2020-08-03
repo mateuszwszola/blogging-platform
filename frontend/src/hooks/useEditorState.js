@@ -16,20 +16,32 @@ function reducer(state, { type, payload }) {
 
 function init(initialState) {
   /* 
-    If content (raw editorState - result from DB call or persisted localStorage content)
+    If initialState (raw editorState -  stored in db or persisted in localStorage)
     is provided, create state with that content
   */
   if (initialState) {
+    let editorState;
+    try {
+      const parsed = JSON.parse(initialState);
+      if (parsed.content) {
+        editorState = EditorState.createWithContent(
+          convertFromRaw(parsed.content)
+        );
+      } else {
+        editorState = EditorState.createEmpty();
+      }
+    } catch (err) {
+      editorState = EditorState.createEmpty();
+    }
+
     return {
-      editorState: EditorState.createWithContent(
-        convertFromRaw(JSON.parse(initialState).content)
-      ),
-    };
-  } else {
-    return {
-      editorState: EditorState.createEmpty(),
+      editorState,
     };
   }
+
+  return {
+    editorState: EditorState.createEmpty(),
+  };
 }
 
 function useEditorState(initialState) {

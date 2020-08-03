@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-function EmojiPicker({ onEmojiClick }) {
+function CustomEmojiPicker({ onEmojiClick }) {
   return (
     <div>
       <h2>Insert Emoji!</h2>
@@ -36,8 +36,8 @@ function EmojiPicker({ onEmojiClick }) {
   );
 }
 
-EmojiPicker.propTypes = {
+CustomEmojiPicker.propTypes = {
   onEmojiClick: PropTypes.func.isRequired,
 };
 
-export default EmojiPicker;
+export default CustomEmojiPicker;
