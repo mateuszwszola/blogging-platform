@@ -3,6 +3,10 @@ import { EditorState, convertFromRaw } from 'draft-js';
 
 const UPDATE_EDITOR_STATE = 'UPDATE_EDITOR_STATE';
 
+const defaultState = {
+  editorState: EditorState.createEmpty(),
+};
+
 function reducer(state, { type, payload }) {
   if (type === UPDATE_EDITOR_STATE) {
     return {
@@ -16,22 +20,20 @@ function reducer(state, { type, payload }) {
 
 function init(initialState) {
   /* 
-    If initialState (raw editorState -  stored in db or persisted in localStorage)
+    If initialState (raw editorState content from db or localStorage)
     is provided, create state with that content
   */
   if (initialState) {
     let editorState;
     try {
-      const parsed = JSON.parse(initialState);
-      if (parsed.content) {
-        editorState = EditorState.createWithContent(
-          convertFromRaw(parsed.content)
-        );
+      const { content } = JSON.parse(initialState);
+      if (content) {
+        editorState = EditorState.createWithContent(convertFromRaw(content));
       } else {
-        editorState = EditorState.createEmpty();
+        editorState = defaultState.editorState;
       }
     } catch (err) {
-      editorState = EditorState.createEmpty();
+      editorState = defaultState.editorState;
     }
 
     return {
@@ -39,9 +41,7 @@ function init(initialState) {
     };
   }
 
-  return {
-    editorState: EditorState.createEmpty(),
-  };
+  return defaultState;
 }
 
 function useEditorState(initialState) {

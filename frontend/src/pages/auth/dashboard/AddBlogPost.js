@@ -9,11 +9,12 @@ import { useCreatePost } from 'hooks/usePost';
 import BlogPostForm from 'components/BlogPostForm';
 import formatBlogPostData from 'utils/formatBlogPostData';
 import validate from 'utils/addBlogPostValidationRules';
-import { debounce } from 'lodash';
-import { convertToRaw, convertFromRaw, EditorState } from 'draft-js';
+import { convertToRaw } from 'draft-js';
 
 function AddBlogPost({ blog }) {
   const [createPost, { status }] = useCreatePost();
+  const { setAlert } = useAlert();
+  const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
   const {
     handleChange,
     handleSubmit,
@@ -31,65 +32,28 @@ function AddBlogPost({ blog }) {
     handleAddBlogPost,
     validate
   );
+  const postBodyTmp = window.localStorage.getItem(`${blog.slug}-tmp`);
   const {
     editorState,
     updateEditorState,
     resetEditorState,
     editorStatePlainText,
-  } = useEditorState();
-  const { photoFile, handlePhotoChange, handlePhotoReset } = usePhotoFile();
-  const { setAlert } = useAlert();
+  } = useEditorState(postBodyTmp);
+
+  const saveContent = (content) => {
+    const { slug } = blog;
+    window.localStorage.setItem(
+      `${slug}-tmp`,
+      JSON.stringify({ content: convertToRaw(content) })
+    );
+  };
 
   const handleEditorStateChange = (newEditorState) => {
+    saveContent(newEditorState.getCurrentContent());
     updateEditorState(newEditorState);
   };
 
-  // const saveContent = (content) => {
-  //   const { slug } = blog;
-  //   window.localStorage.setItem(
-  //     `${slug}-tmp`,
-  //     JSON.stringify(convertToRaw(content))
-  //   );
-  // };
-  //
-  // const onEditorStateChange = (newEditorState) => {
-  //   saveContent(newEditorState.getCurrentContent());
-  //   updateEditorState(newEditorState);
-  // };
-  //
-  // React.useEffect(() => {
-  //   const { slug } = blog;
-  //   const content = window.localStorage.getItem(`${slug}-tmp`);
-  //   if (content) {
-  //     updateEditorState(
-  //       EditorState.createWithContent(convertFromRaw(JSON.parse(content)))
-  //     );
-  //   } else {
-  //     updateEditorState(EditorState.createEmpty());
-  //   }
-  // }, []);
-
-  /*
-  React.useEffect(() => {
-    const debouncedSave = debounce(() => {
-      const { slug } = blog;
-      const contentState = editorState.getCurrentContent();
-
-      window.localStorage.setItem(
-        `${slug}-tmp`,
-        JSON.stringify(convertToRaw(contentState))
-      );
-    }, 5000);
-
-    debouncedSave();
-
-    return () => {
-      debouncedSave.cancel();
-    };
-  }, [editorState]);
-  */
-
-  function handleAddBlogPost() {
+  async function handleAddBlogPost() {
     if (!blog) return;
     if (!editorStatePlainText.trim()) {
       return setErrors({ ...errors, body: 'post content is required' });
@@ -104,7 +68,7 @@ function AddBlogPost({ blog }) {
       imgAttribution,
     });
 
-    createPost(
+    await createPost(
       { blogId: blog._id, values: { formData } },
       {
         onSuccess() {
@@ -126,7 +90,7 @@ function AddBlogPost({ blog }) {
   }
 
   return (
-    <div className="max-w-screen-md mx-auto mt-6 relative bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md mb-12">
+    <div className="max-w-screen-md mx-auto mt-6 relative bg-white p-2 md:p-4 lg:p-6 xl:p-12 rounded-lg shadow-md mb-64">
       <h1 className="text-2xl lg:text-3xl text-center leading-loose">
         Add Blog Post To
         <span className="uppercase text-green-600 hover:text-green-700 pl-4">

@@ -11,12 +11,12 @@ import styleMap from 'components/contentEditor/helpers/styleMap';
 import BlockTypeButtons from 'components/contentEditor/BlockTypeButtons';
 import InlineStyleButtons from 'components/contentEditor/InlineStyleButtons';
 import Loading from 'components/Loading';
-import styles from 'components/contentEditor/Editor.module.css';
 
 import 'draft-js/dist/Draft.css';
 import 'draft-js-linkify-plugin/lib/plugin.css';
 import 'draft-js-hashtag-plugin/lib/plugin.css';
 import 'draft-js-emoji-plugin/lib/plugin.css';
+import styles from 'components/contentEditor/Editor.module.css';
 
 const { plugins, EmojiSuggestions, EmojiSelect } = initializePlugins();
 const blockStyleFunction = blockStyleFunctionCreator(styles);
@@ -27,10 +27,6 @@ function ContentEditor({ editorState, updateEditorState, isError }) {
   const focus = () => {
     editorRef.current.focus();
   };
-
-  // const handleStateChange = (editorState) => {
-  //   updateEditorState(editorState);
-  // };
 
   const handleKeyCommand = (command, editorState) => {
     const newState = keyCommandReducer(editorState, command);
@@ -107,6 +103,8 @@ function ContentEditor({ editorState, updateEditorState, isError }) {
           plugins={plugins}
         />
         <EmojiSuggestions />
+      </div>
+      <div className={styles.options}>
         <EmojiSelect />
       </div>
     </div>

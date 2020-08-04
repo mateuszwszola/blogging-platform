@@ -159,11 +159,11 @@ exports.getAllBlogs = async (req, res) => {
     .limit(limit)
     .sort({ createdAt: -1 });
 
-  const countPromise = Blog.countDocuments();
+  const countQuery = Blog.countDocuments();
 
   const [blogs, count] = await Promise.all([
     blogsQuery.exec(),
-    countPromise.exec(),
+    countQuery.exec(),
   ]);
 
   return res.json({
