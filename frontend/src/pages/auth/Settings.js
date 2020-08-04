@@ -1,6 +1,8 @@
 import React from 'react';
 import { useRouteMatch, Switch, Route, Redirect } from 'react-router-dom';
-import { Account, Sidebar, Profile } from 'components/Settings';
+import Account from 'pages/auth/settings/Account';
+import Profile from 'pages/auth/settings/Profile';
+import Sidebar from 'pages/auth/settings/Sidebar';
 
 function Settings() {
   const { url, path } = useRouteMatch();

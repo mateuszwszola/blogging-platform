@@ -1,10 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useMutation } from 'react-query';
-import useForm from 'hooks/useForm';
-import { useAlert } from 'context/AlertContext';
 import { receiveNewPassword } from 'api/auth';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
+import { useAlert } from 'context/AlertContext';
+import useForm from 'hooks/useForm';
+import InputGroup from 'components/InputGroup';
+import InputSubmit from 'components/InputSubmit';
 import { KeyIcon, LockOpenIcon } from 'icons';
 
 function ResetPassword() {
@@ -23,7 +24,7 @@ function ResetPassword() {
   const { setAlert } = useAlert();
 
   async function handleSetNewPassword() {
-    setNewPassword(
+    await setNewPassword(
       { userId, token, password },
       {
         onSuccess: (res) => {
@@ -83,7 +84,7 @@ function ResetPassword() {
 
           <div className="w-11/12 mx-auto mt-2 sm:mt-4">
             <InputSubmit
-              value={`${isLoading ? 'Loading...' : 'Set new password'}`}
+              value={`${isLoading ? 'loading...' : 'Set new password'}`}
               disabled={isLoading}
             />
           </div>

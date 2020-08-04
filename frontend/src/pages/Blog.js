@@ -1,6 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { useBlogBySlug } from 'hooks/useBlog';
 import { useBlogPosts } from 'hooks/usePost';
 import Posts from 'components/Posts';

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link, NavLink, useRouteMatch } from 'react-router-dom';
-import { Button } from 'components/layout/Button';
+import Button from 'components/Button';
 
 function Sidebar({ blogs }) {
   const { url } = useRouteMatch();

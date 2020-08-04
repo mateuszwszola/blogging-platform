@@ -1,13 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import useForm from 'hooks/useForm';
-import validate from 'utils/createBlogValidationRules';
-import usePhotoFile from 'hooks/usePhotoFile';
-import BlogForm from 'components/layout/BlogForm';
-import { useUpdateBlog } from 'hooks/useBlog';
-import formatBlogData from 'utils/formatBlogData';
 import { useAlert } from 'context/AlertContext';
+import useForm from 'hooks/useForm';
+import usePhotoFile from 'hooks/usePhotoFile';
+import { useUpdateBlog } from 'hooks/useBlog';
+import BlogForm from 'components/BlogForm';
 import { LoadingWithOverlay } from 'components/Loading';
+import validate from 'utils/createBlogValidationRules';
+import formatBlogData from 'utils/formatBlogData';
 
 function UpdateBlog({ blog, onUpdate }) {
   const [updateBlog, { status, error }] = useUpdateBlog();

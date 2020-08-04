@@ -257,7 +257,7 @@ exports.getUserPosts = async (req, res) => {
     ...(title ? { title: { $regex: new RegExp(title), $options: 'i' } } : null),
   };
 
-  const user = await User.findById(userId);
+  const user = await User.findById(userId).exec();
   if (!user) {
     throw new ErrorHandler(404, 'user not found');
   }
@@ -285,7 +285,7 @@ exports.getBlogPosts = async (req, res) => {
     ...(title ? { title: { $regex: new RegExp(title), $options: 'i' } } : null),
   };
 
-  const blog = await Blog.findById(blogId);
+  const blog = await Blog.findById(blogId).exec();
   if (!blog) {
     throw new ErrorHandler(404, 'blog not found');
   }

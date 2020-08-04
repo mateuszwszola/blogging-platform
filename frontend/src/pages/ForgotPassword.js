@@ -4,7 +4,8 @@ import { useMutation } from 'react-query';
 import { sendResetPasswordEmail } from 'api/auth';
 import { useAlert } from 'context/AlertContext';
 import useInput from 'hooks/useInput';
-import { InputGroup, InputSubmit } from 'components/layout/Input';
+import InputGroup from 'components/InputGroup';
+import InputSubmit from 'components/InputSubmit';
 import { EnvelopeIcon } from 'icons';
 
 function ForgotPassword() {
@@ -63,7 +64,7 @@ function ForgotPassword() {
               disabled={isLoading}
               className="text-red-500 px-4 py-2"
             >
-              {isLoading ? 'Loading...' : 'Login'}
+              {isLoading ? 'loading...' : 'Login'}
             </Link>
           </div>
         </form>

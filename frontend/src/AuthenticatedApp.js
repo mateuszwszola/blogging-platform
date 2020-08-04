@@ -1,8 +1,14 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import PageContent from 'components/layout/PageContent';
-import { Blog, Post, NotFound, Explore, Profile } from 'pages';
-import { Homepage, Dashboard, Settings } from 'pages/auth';
+import PageContent from 'components/PageContent';
+import Blog from 'pages/Blog';
+import Post from 'pages/Post';
+import Explore from 'pages/Explore';
+import Profile from 'pages/Profile';
+import Dashboard from 'pages/auth/Dashboard';
+import Settings from 'pages/auth/Settings';
+import Homepage from 'pages/auth/Homepage';
+import NotFound from 'pages/NotFound';
 
 function AuthenticatedApp() {
   return (

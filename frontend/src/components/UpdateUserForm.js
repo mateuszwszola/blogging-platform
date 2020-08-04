@@ -4,9 +4,10 @@ import { useAlert } from 'context/AlertContext';
 import { useUpdateUser } from 'hooks/useUser';
 import useForm from 'hooks/useForm';
 import updateUserValidationRules from 'utils/updateUserValidationRules';
-import { InputGroup, TextareaGroup } from 'components/layout/Input';
-import { Button } from './layout/Button';
-import { LoadingWithOverlay } from './Loading';
+import InputGroup from 'components/InputGroup';
+import TextareaGroup from 'components/TextareaGroup';
+import Button from 'components/Button';
+import { LoadingWithOverlay } from 'components/Loading';
 
 function UpdateUserForm() {
   const { user, setUser } = useUser();

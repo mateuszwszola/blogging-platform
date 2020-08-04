@@ -4,7 +4,7 @@ import { useAlert } from 'context/AlertContext';
 import { useCreateBlog } from 'hooks/useBlog';
 import usePhotoFile from 'hooks/usePhotoFile';
 import useForm from 'hooks/useForm';
-import BlogForm from 'components/layout/BlogForm';
+import BlogForm from 'components/BlogForm';
 import { LoadingWithOverlay } from 'components/Loading';
 import formatBlogData from 'utils/formatBlogData';
 

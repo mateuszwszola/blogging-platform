@@ -10,30 +10,29 @@ import {
 } from 'hooks/usePost';
 import Loading from 'components/Loading';
 import DisplayError from 'components/DisplayError';
-import DisplayPost from 'components/layout/DisplayPost';
+import DisplayPost from 'components/DisplayPost';
 import isUserPostOwner from 'utils/isUserPostOwner';
 
-const PostControllers = lazy(() => import('components/layout/PostControllers'));
-
-const EditPost = lazy(() => import('./auth/EditPost'));
+const Controllers = lazy(() => import('pages/post/Controllers'));
+const EditPost = lazy(() => import('pages/post/EditPost'));
 
 function Post() {
   const { postSlug } = useParams();
+  const history = useHistory();
+  const { user } = useUser();
+  const { setAlert } = useAlert();
   const { status, error, data: post } = usePostBySlug(postSlug);
   const [deletePost] = useDeletePost();
   const [favoritePost] = useFavoritePost();
   const [unfavoritePost] = useUnfavoritePost();
-  const history = useHistory();
-  const { user } = useUser();
-  const { setAlert } = useAlert();
   const [isEditting, setIsEditting] = useState(false);
 
   const onLike = () => {
     if (!post || !user) return;
     if (post.favorited) {
-      unfavoritePost(postSlug);
+      return unfavoritePost(postSlug);
     } else {
-      favoritePost(postSlug);
+      return favoritePost(postSlug);
     }
   };
 
@@ -41,7 +40,7 @@ function Post() {
     setIsEditting(false);
   };
 
-  const handleDeletePost = () => {
+  const handlePostDelete = () => {
     if (!isUserPostOwner(user, post)) return;
 
     deletePost(post._id, {
@@ -69,10 +68,10 @@ function Post() {
     <div className="mt-16 md:pt-16 pb-16 max-w-screen-md lg:max-w-screen-lg w-full mx-auto">
       <React.Suspense fallback={<Loading />}>
         {isOwner ? (
-          <PostControllers
+          <Controllers
             isEditting={isEditting}
             setIsEditting={setIsEditting}
-            handleDeletePost={handleDeletePost}
+            handlePostDelete={handlePostDelete}
           />
         ) : null}
 
