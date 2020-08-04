@@ -269,7 +269,7 @@ exports.bookmark = async (req, res) => {
   }
 
   await req.user.bookmark(blog._id);
-  const blog = await blog.updateBookmarksCount();
+  const blog = await req.blog.updateBookmarksCount();
 
   return res.json({ blog });
 };
@@ -277,7 +277,7 @@ exports.bookmark = async (req, res) => {
 exports.unbookmark = async (req, res) => {
   await req.user.unbookmark(req.blog._id);
 
-  const blog = await blog.updateBookmarksCount();
+  const blog = await req.blog.updateBookmarksCount();
 
   return res.json({ blog });
 };
