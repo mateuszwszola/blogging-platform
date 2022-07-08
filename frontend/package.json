@@ -14,7 +14,7 @@
     "draft-js-linkify-plugin": "^2.0.2",
     "draft-js-plugins-editor": "^3.0.0",
     "lodash": "^4.17.19",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "prop-types": "^15.7.2",
     "react": "^16.13.1",
     "react-async": "^10.0.1",
