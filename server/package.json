@@ -39,7 +39,7 @@
     "express-validator": "^6.6.1",
     "helmet": "^4.0.0",
     "jimp": "^0.14.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "lodash": "^4.17.21",
     "mailgun-js": "^0.22.0",
     "mongoose": "^5.9.27",
