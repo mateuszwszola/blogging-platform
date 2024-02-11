@@ -2,8 +2,6 @@
 
 A full stack application to start and manage a blog.
 
-https://blogging-platform.netlify.app/
-
 ![project-preview](https://res.cloudinary.com/dtti654qn/image/upload/c_scale,w_1280/v1626618854/github-projects/blogging-platform_myu7xh.png)
 
 ## Tech Stack
